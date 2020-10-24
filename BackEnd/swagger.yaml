@@ -61,12 +61,9 @@ paths:
       - in: "body"
         name: "body"
         description: "The transaction to create."
+        required: true
         schema:
           type: "object"
-          required:
-          - wkn
-          - amount
-          - transactionType
           properties:
             wkn:
               type: "string"
@@ -183,6 +180,7 @@ paths:
       - in: "body"
         name: "user"
         description: "The user to create."
+        required: true
         schema:
           type: "object"
           required:
@@ -213,30 +211,6 @@ paths:
         default:
           description: "successful operation"
   /user/{userid}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user id"
-      description: ""
-      operationId: "getUserById"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "userid"
-        in: "path"
-        description: "The id that needs to be fetched"
-        required: true
-        type: "integer"
-        format: "int64"
-      responses:
-        "200":
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/User"
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
     delete:
       tags:
       - "user"
@@ -257,14 +231,41 @@ paths:
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+  /user/settings:
+    post:
+      tags:
+      - "user"
+      summary: "Create/set settings for logged in user"
+      description: "Create/set the broker settings for the logged in user"
+      operationId: "createUserSettings"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created settings object"
+        required: true
+        schema:
+          $ref: "#/definitions/Settings"
+      responses:
+        default:
+          description: "successful operation"
+    get:
+      tags:
+      - "user"
+      summary: "Get the settings of the logged in user"
+      description: "Returns the settings of the logged in user"
+      operationId: "getUserSettings"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Settings"
+        "404":
+          description: "No settings for the logged in user"
 securityDefinitions:
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
   api_key:
     type: "apiKey"
     name: "api_key"
