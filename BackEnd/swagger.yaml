@@ -6,22 +6,54 @@ info:
 host: "pma.tutorialfactory.org"
 basePath: "/api"
 tags:
-- name: "transaction"
-  description: "Transaction for buying/selling stocks"
+- name: "portfolio"
+  description: "Contains operations about a users portfolio"
 - name: "stock"
   description: "Contains stock information"
 - name: "user"
-  description: "Operations about user"
+  description: "Contains operations about user"
 schemes:
 - "https"
 - "http"
 paths:
-  /transaction:
+  /portfolio:
+    get:
+      tags:
+      - "portfolio"
+      summary: "Get all current positions"
+      description: "Returns all the current stock positions of the logged in user"
+      operationId: "getPortfolio"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PortfolioPosition"
+  /portfolio/value:
+    get:
+      tags:
+      - "portfolio"
+      summary: "Get the performance of the portfolio"
+      description: "Returns the logged in users portfolio performance"
+      operationId: "getPortfolioValue"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/PortfolioValue"
+  /portfolio/transaction:
     post:
       tags:
-      - "transaction"
+      - "portfolio"
       summary: "Create a new stock transaction"
-      description: "Returns all available stocks from the database"
+      description: "Creates and executes a transaction for the logged in user"
       operationId: "createTransaction"
       produces:
       - "application/json"
@@ -300,6 +332,30 @@ definitions:
         type: "string"
       dividend:
         type: "string"
+  PortfolioPosition:
+    type: "object"
+    properties:
+      wkn:
+        type: "string"
+      amount:
+        type: "integer"
+        format: "int32"
+      stockName:
+        type: "string"
+      countryId:
+        type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
+  PortfolioValue:
+    type: "object"
+    properties:
+      marketValue:
+        type: "number"
+        format: "float"
+      timestamp:
+        type: "string"
+        format: "date-time"
   User:
     type: "object"
     properties:
