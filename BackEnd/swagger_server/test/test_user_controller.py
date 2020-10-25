@@ -6,6 +6,7 @@ from flask import json
 from six import BytesIO
 
 from swagger_server.models.auth_key import AuthKey  # noqa: E501
+from swagger_server.models.login_user import LoginUser  # noqa: E501
 from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.test import BaseTestCase
@@ -19,11 +20,11 @@ class TestUserController(BaseTestCase):
 
         Create user
         """
-        body = User()
+        User = User()
         response = self.client.open(
             '/api/user',
             method='POST',
-            data=json.dumps(body),
+            data=json.dumps(User),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -33,11 +34,11 @@ class TestUserController(BaseTestCase):
 
         Create/set settings for logged in user
         """
-        body = Settings()
+        Settings = Settings()
         response = self.client.open(
             '/api/user/settings',
             method='POST',
-            data=json.dumps(body),
+            data=json.dumps(Settings),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -69,11 +70,11 @@ class TestUserController(BaseTestCase):
 
         Logs user into the system and returns auth key
         """
-        user = User()
+        LoginUser = LoginUser()
         response = self.client.open(
             '/api/user/login',
             method='POST',
-            data=json.dumps(user),
+            data=json.dumps(LoginUser),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
