@@ -31,10 +31,5 @@ class DatabaseConn:
                 print(row)
         valid = bcrypt.checkpw(password.encode('utf8'), hashAndSalt)
         return valid
-    def check_api_key(self, apikey:str, required_scopes=None):
-     if apikey == "lol123":
-        return {'sub': 'admin'}
 
-    # optional: raise exception for custom error response
-        return None
 db= DatabaseConn()
