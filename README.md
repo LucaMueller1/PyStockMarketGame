@@ -16,3 +16,7 @@ To run the server, please execute the following from the BackEnd-root directory:
 pip3 install -r requirements.txt
 python3 -m swagger_server
 ```
+
+## Test FrontEnd:
+
+To test the frontend, have all requirements from FrontEnd/requirements.txt installed. Then first run the python file you want to test like follows: ```python3 depot_page.py``` and then run ```streamlit run depot_page.py```. This will run the streamlit server.
