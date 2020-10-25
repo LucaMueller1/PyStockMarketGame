@@ -7,6 +7,8 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
 
+from swagger_server.services.db_service import DatabaseConn;
+
 
 def create_user(user_param):  # noqa: E501
     """Create user
@@ -74,7 +76,13 @@ def login_user(user_prepare_login_param):  # noqa: E501
     """
     if connexion.request.is_json:
         user_prepare_login_param = UserPrepareLogin.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        print(user_prepare_login_param.email)
+        print(user_prepare_login_param.password)
+        conn = DatabaseConn()
+        user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
+        auth_key = conn.generate_auth_hash(user.id)
+
+    return auth_key
 
 
 def logout_user():  # noqa: E501
