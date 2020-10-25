@@ -4,7 +4,7 @@ info:
   description: "Absolute legendary PyBroker BackEnd API"
   version: "1.0.0"
   title: "PyBroker"
-host: "pma.tutorialfactory.org"
+host: "localhost:8080"
 basePath: "/api"
 tags:
 - name: "portfolio"
@@ -34,6 +34,8 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioPosition"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
   /portfolio/value:
     get:
@@ -52,6 +54,8 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioValue"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
   /portfolio/transaction:
     post:
@@ -74,6 +78,8 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Transaction"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
   /stock:
     get:
@@ -92,6 +98,8 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/StockInfo"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
   /stock/{wkn}/history:
     get:
@@ -122,6 +130,8 @@ paths:
               $ref: "#/definitions/StockValue"
         "404":
           description: "data for stock and period not found"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
   /stock/{wkn}/financials:
     get:
@@ -145,6 +155,8 @@ paths:
             $ref: "#/definitions/StockFinancials"
         "404":
           description: "data for stock and period not found"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
   /user:
     post:
@@ -204,6 +216,8 @@ paths:
       responses:
         default:
           description: "successful operation"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/{userid}:
     delete:
@@ -226,6 +240,8 @@ paths:
           description: "Invalid username supplied"
         "404":
           description: "User not found"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/settings:
     get:
@@ -244,6 +260,8 @@ paths:
             $ref: "#/definitions/Settings"
         "404":
           description: "No settings for the logged in user"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
     post:
       tags:
@@ -263,6 +281,8 @@ paths:
       responses:
         default:
           description: "successful operation"
+      security:
+      - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
 securityDefinitions:
   api_key:
