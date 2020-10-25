@@ -289,6 +289,7 @@ securityDefinitions:
     type: "apiKey"
     name: "api_key"
     in: "header"
+    x-apikeyInfoFunc: "swagger_server.services.auth_service.api_key_auth"
 definitions:
   Transaction:
     type: "object"
