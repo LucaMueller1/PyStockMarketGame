@@ -43,4 +43,4 @@ def get_stocks():  # noqa: E501
 
     :rtype: List[StockInfo]
     """
-    return 'Hello World from ByBroker! Do some magic!'
+    return 'do some magic!'
