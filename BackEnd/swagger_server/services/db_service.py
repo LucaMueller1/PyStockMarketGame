@@ -7,7 +7,6 @@ from swagger_server.models.user import User
 import sqlalchemy as sqla
 import bcrypt
 import random
-from datetime import datetime
 
 
 class DatabaseConn:
@@ -24,7 +23,7 @@ class DatabaseConn:
 
         print(auth_password.decode('utf8'))
 
-    def check_password(self, email: str, password: str):
+    def check_password(self, email: str, password: str) -> User:
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
