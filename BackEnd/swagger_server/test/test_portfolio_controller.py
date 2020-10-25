@@ -20,11 +20,11 @@ class TestPortfolioController(BaseTestCase):
 
         Create a new stock transaction
         """
-        TransactionPrepare = TransactionPrepare()
+        transaction_prepare_param = TransactionPrepare()
         response = self.client.open(
             '/api/portfolio/transaction',
             method='POST',
-            data=json.dumps(TransactionPrepare),
+            data=json.dumps(transaction_prepare_param),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

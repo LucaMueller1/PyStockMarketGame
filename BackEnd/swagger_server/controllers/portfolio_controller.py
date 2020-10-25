@@ -8,18 +8,18 @@ from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa
 from swagger_server import util
 
 
-def create_transaction(TransactionPrepare):  # noqa: E501
+def create_transaction(transaction_prepare_param):  # noqa: E501
     """Create a new stock transaction
 
     Creates and executes a transaction for the logged in user # noqa: E501
 
-    :param TransactionPrepare: The transaction to create.
-    :type TransactionPrepare: dict | bytes
+    :param transaction_prepare_param: The transaction to create.
+    :type transaction_prepare_param: dict | bytes
 
     :rtype: Transaction
     """
     if connexion.request.is_json:
-        TransactionPrepare = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
+        transaction_prepare_param = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 

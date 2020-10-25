@@ -65,7 +65,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "TransactionPrepare"
+        name: "transaction_prepare_param"
         description: "The transaction to create."
         required: true
         schema:
@@ -159,7 +159,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "User"
+        name: "user_param"
         description: "Created user object"
         required: true
         schema:
@@ -180,11 +180,11 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "LoginUser"
+        name: "user_prepare_login_param"
         description: "Created user object"
         required: true
         schema:
-          $ref: "#/definitions/LoginUser"
+          $ref: "#/definitions/UserPrepareLogin"
       responses:
         '200':
           description: The response
@@ -206,7 +206,7 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/{userid}:
+  /user/{user_id}:
     delete:
       tags:
       - "user"
@@ -218,7 +218,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "userid"
+      - name: "user_id"
         in: "path"
         description: "The name that needs to be deleted"
         required: true
@@ -242,7 +242,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "Settings"
+        name: "settings_param"
         description: "Created settings object"
         required: true
         schema:
@@ -390,7 +390,7 @@ definitions:
       moneyAvailable:
         type: "number"
         format: "float"
-  LoginUser:
+  UserPrepareLogin:
     type: "object"
     properties:
       email:

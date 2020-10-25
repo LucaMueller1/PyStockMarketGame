@@ -6,9 +6,9 @@ from flask import json
 from six import BytesIO
 
 from swagger_server.models.auth_key import AuthKey  # noqa: E501
-from swagger_server.models.login_user import LoginUser  # noqa: E501
 from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
+from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server.test import BaseTestCase
 
 
@@ -20,11 +20,11 @@ class TestUserController(BaseTestCase):
 
         Create user
         """
-        User = User()
+        user_param = User()
         response = self.client.open(
             '/api/user',
             method='POST',
-            data=json.dumps(User),
+            data=json.dumps(user_param),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -34,11 +34,11 @@ class TestUserController(BaseTestCase):
 
         Create/set settings for logged in user
         """
-        Settings = Settings()
+        settings_param = Settings()
         response = self.client.open(
             '/api/user/settings',
             method='POST',
-            data=json.dumps(Settings),
+            data=json.dumps(settings_param),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -49,7 +49,7 @@ class TestUserController(BaseTestCase):
         Delete user
         """
         response = self.client.open(
-            '/api/user/{userid}'.format(userid=789),
+            '/api/user/{user_id}'.format(user_id=789),
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -70,11 +70,11 @@ class TestUserController(BaseTestCase):
 
         Logs user into the system and returns auth key
         """
-        LoginUser = LoginUser()
+        user_prepare_login_param = UserPrepareLogin()
         response = self.client.open(
             '/api/user/login',
             method='POST',
-            data=json.dumps(LoginUser),
+            data=json.dumps(user_prepare_login_param),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
