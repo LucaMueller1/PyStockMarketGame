@@ -1,10 +1,19 @@
 import login_page
 import depot_page
-import boerse_page
+#import boerse_page
 
 import streamlit as st
 
 import SessionState
+
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 session_state = SessionState.get(page='login', auth_key='')
 
