@@ -1,5 +1,6 @@
-connexion == 2.6.0
+connexion == 2.7.0
 python_dateutil == 2.6.0
 setuptools >= 21.0.0
 sqlalchemy >= 1.3.20
-bcrypt == 3.2.0
+bcrypt >= 3.2.0
+mysqlclient == 2.0.1
