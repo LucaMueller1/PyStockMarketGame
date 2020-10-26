@@ -39,5 +39,3 @@ def run(session_state):
         # VERKAUFEN --------------------------------------
         if mode_switch == "Verkaufen":
             st.write("nothing here yet")
-
-run("boerse")
