@@ -86,10 +86,10 @@ def run(session_state):
         st.write("Wähle deine Aktie aus, die du verkaufen möchtest.")
 
         # Get the stock from user, which he / she wants to sell
-        wkn_verkaufen_user_eingabe = st.selectbox("WKN:", ["", "ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "CON.DE", "1COV.DE", "DAI.DE", "DHER.DE", "DKB.DE", "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE", "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE"])
+        wkn_verkaufen_user_eingabe = st.selectbox("WKN:", ["ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "CON.DE", "1COV.DE", "DAI.DE", "DHER.DE", "DKB.DE", "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE", "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE"])
 
         #Connect to Databse later!!!
-        quantity_of_stock_im_Depo = 6
+        quantity_of_stock_im_Depo = 1200
 
         # By standard all stocks are sold, UNLESS user ticks this box:
         if st.checkbox("Alle Aktien verkaufen", value=True):
@@ -134,3 +134,5 @@ def run(session_state):
         # VERKAUFEN --------------------------------------
         if mode_switch == "Verkaufen":
             st.write("nothing here yet")
+
+run("boerse")
