@@ -28,7 +28,7 @@ class DatabaseConn:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
                 hashAndSalt = row[4]
-                userid = row[0]
+                userid = row['userID']
                 firstName = row[1]
                 lastName = row[2]
                 email = row [3]
@@ -81,7 +81,7 @@ class DatabaseConn:
         return result
 
 
-    def get_all_stocks(self, description: StockDescription):
+    def get_all_stocks(self):
         """
         :desc: gets all WKNs in Database
         :author: Jannik Sinz
@@ -91,4 +91,26 @@ class DatabaseConn:
         user = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM pybroker.tradable_values"))
+            for row in rs:
+                userid = row[0]
+                auth_key = row[1]
+                expiry = row[2]
+                auth_key = AuthKey(userid,auth_key,expiry)
+
         return rs
+    def get_all_stocks_with_info_missing(self):
+        """
+        :desc: gets all WKNs in Database
+        :author: Jannik Sinz
+        :return: Resultset
+        :test:
+        """
+        stockarray = {}
+        key = 0
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
+            for row in rs:
+                stockarray[key] = StockDescription(row['symbol'],row['name'],row['country'],row['logo_url'],row['long_description'], row['industry'], row['dividend'], row['history_loaded'], row['info_loaded'])
+                ++key
+
+        return stockarray
