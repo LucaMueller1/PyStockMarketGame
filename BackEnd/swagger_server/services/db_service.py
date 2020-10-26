@@ -1,5 +1,3 @@
-#from BackEnd.swagger_server.models.auth_key import AuthKey
-#from BackEnd.swagger_server.models.user import User
 from swagger_server.models.auth_key import AuthKey
 from swagger_server.models.user import User
 
@@ -7,7 +5,8 @@ from swagger_server.models.user import User
 import sqlalchemy as sqla
 import bcrypt
 import random
-
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class DatabaseConn:
 
@@ -24,6 +23,7 @@ class DatabaseConn:
         print(auth_password.decode('utf8'))
 
     def check_password(self, email: str, password: str) -> User:
+        user = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
@@ -45,9 +45,10 @@ class DatabaseConn:
 
     def generate_auth_hash(self, userid: int):
         auth_key = random.getrandbits(256)
+        expiry = self.util_format_datetime_for_expiry(2)
         with self.engine.connect() as con:
-            con.execute(sqla.text("""INSERT INTO `user_authkey` (`userID`, `auth_key`, `expiry`) VALUES (:userid, :authkey, date_add(now(),interval 2 week));"""), ( { "userid": userid, "authkey": auth_key }))
-        return AuthKey(userid,auth_key,None)
+            con.execute(sqla.text("""INSERT INTO `user_authkey` (`userID`, `auth_key`, `expiry`) VALUES (:userid, :authkey, :expiry);"""), ( { "userid": userid, "authkey": auth_key , "expiry": expiry}))
+        return AuthKey(userid,auth_key,expiry)
 
     def check_auth_hash(self, auth_key: str) ->int:
         userid = 0
@@ -57,6 +58,8 @@ class DatabaseConn:
                 userid = row[0]
 
         return userid
-
-
-#db= DatabaseConn()
+    def util_format_datetime_for_expiry(self, weeks: int) -> str:
+        now = datetime.now()
+        result = now + relativedelta(weeks=weeks)
+        result = result.strftime('%Y-%m-%d %H:%M:%S')
+        return result
