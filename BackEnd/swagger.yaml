@@ -92,8 +92,8 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/StockInfo"
-  /stock/{wkn}/history:
+              $ref: "#/definitions/StockSearchResult"
+  /stock/{symbol}/history:
     get:
       tags:
       - "stock"
@@ -105,9 +105,9 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "wkn"
+      - name: "symbol"
         in: "path"
-        description: "WKN of searched stock"
+        description: "Symbol of searched stock"
         required: true
         type: "string"
       - name: "period"
@@ -124,28 +124,28 @@ paths:
               $ref: "#/definitions/StockValue"
         "404":
           description: "data for stock and period not found"
-  /stock/{wkn}/financials:
+  /stock/{symbol}/description:
     get:
       tags:
       - "stock"
       summary: "Get financials of given stock"
       description: ""
-      operationId: "get_stock_financials"
+      operationId: "get_stock_description"
       security:
       - api_key: []
       produces:
       - "application/json"
       parameters:
-      - name: "wkn"
+      - name: "symbol"
         in: "path"
-        description: "WKN of searched stock"
+        description: "Symbol of searched stock"
         required: true
         type: "string"
       responses:
         "200":
           description: "successful operation"
           schema:
-            $ref: "#/definitions/StockFinancials"
+            $ref: "#/definitions/StockDescription"
         "404":
           description: "data for stock and period not found"
   /user:
@@ -295,7 +295,7 @@ definitions:
       userId:
         type: "integer"
         format: "int64"
-      wkn:
+      symbol:
         type: "string"
       stockValueId:
         type: "integer"
@@ -312,7 +312,7 @@ definitions:
   TransactionPrepare:
     type: "object"
     properties:
-      wkn:
+      symbol:
         type: "string"
       amount:
         type: "integer"
@@ -320,25 +320,20 @@ definitions:
       transactionType:
         type: "string"
         enum: [buy, sell]
-  StockInfo:
+  StockSearchResult:
     type: "object"
     properties:
-      wkn:
+      symbol:
         type: "string"
       stockName:
         type: "string"
-      countryId:
-        type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
   StockValue:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
-      wkn:
+      symbol:
         type: "string"
       stock_price:
         type: "number"
@@ -346,29 +341,19 @@ definitions:
       timestamp:
         type: "string"
         format: "date-time"
-  StockFinancials:
-    type: "object"
-    properties:
-      wkn:
-        type: "string"
-      longDescription:
-        type: "string"
-      country:
-        type: "string"
-      industry:
-        type: "string"
-      dividend:
-        type: "string"
   PortfolioPosition:
     type: "object"
     properties:
-      wkn:
+      symbol:
+        type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
+      stockName:
         type: "string"
       amount:
         type: "integer"
         format: "int32"
-      stockName:
-        type: "string"
       stock_price:
         type: "number"
         format: "float"
@@ -379,9 +364,6 @@ definitions:
         type: "string"
       industry:
         type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
   PortfolioValue:
     type: "object"
     properties:
@@ -445,6 +427,28 @@ definitions:
         type: "string"
       message:
         type: "string"
+  StockDescription:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+      stockName:
+        type: "string"
+      countryId:
+        type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
+      longDescription:
+        type: "string"
+      industry:
+        type: "string"
+      dividend:
+        type: "string"
+      infoLoaded:
+        type: "boolean"
+      historyLoaded:
+        type: "boolean"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
