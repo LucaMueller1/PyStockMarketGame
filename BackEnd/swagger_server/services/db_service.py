@@ -88,20 +88,40 @@ class DatabaseConn:
         :return: Resultset
         :test:
         """
-        user = None
+        stockarray = {}
+        key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM pybroker.tradable_values"))
+            rs = con.execute(sqla.text("""SELECT * FROM `tradable_values`"""))
             for row in rs:
-                userid = row[0]
-                auth_key = row[1]
-                expiry = row[2]
-                auth_key = AuthKey(userid,auth_key,expiry)
+                stockarray[key] = StockDescription(row['symbol'],row['name'],row['country'],row['logo_url'],row['long_description'], row['industry'], row['dividend'], row['history_loaded'], row['info_loaded'])
+                ++key
+
+        return stockarray
 
         return rs
+
+    def update_stock(self,stock_description :StockDescription ):
+        """
+        :desc: gets all WKNs in Database
+        :author: Daniel Ebert
+        :return: Resultset
+        :test:
+        """
+        stockarray = {}
+        key = 0
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
+            for row in rs:
+                stockarray[key] = StockDescription(row['symbol'], row['name'], row['country'], row['logo_url'],
+                                                   row['long_description'], row['industry'], row['dividend'],
+                                                   row['history_loaded'], row['info_loaded'])
+                ++key
+
+        return stockarray
     def get_all_stocks_with_info_missing(self):
         """
         :desc: gets all WKNs in Database
-        :author: Jannik Sinz
+        :author: Daniel Ebert
         :return: Resultset
         :test:
         """
@@ -114,3 +134,4 @@ class DatabaseConn:
                 ++key
 
         return stockarray
+
