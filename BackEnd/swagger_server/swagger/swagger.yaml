@@ -97,11 +97,11 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/StockInfo"
+              $ref: "#/definitions/StockSearchResult"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
-  /stock/{wkn}/history:
+  /stock/{symbol}/history:
     get:
       tags:
       - "stock"
@@ -111,9 +111,9 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "wkn"
+      - name: "symbol"
         in: "path"
-        description: "WKN of searched stock"
+        description: "Symbol of searched stock"
         required: true
         type: "string"
       - name: "period"
@@ -133,32 +133,48 @@ paths:
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
-  /stock/{wkn}/financials:
+  /stock/{symbol}/description:
     get:
       tags:
       - "stock"
       summary: "Get financials of given stock"
       description: ""
-      operationId: "get_stock_financials"
+      operationId: "get_stock_description"
       produces:
       - "application/json"
       parameters:
-      - name: "wkn"
+      - name: "symbol"
         in: "path"
-        description: "WKN of searched stock"
+        description: "Symbol of searched stock"
         required: true
         type: "string"
       responses:
         "200":
           description: "successful operation"
           schema:
-            $ref: "#/definitions/StockFinancials"
+            $ref: "#/definitions/StockDescription"
         "404":
           description: "data for stock and period not found"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
   /user:
+    get:
+      tags:
+      - "user"
+      summary: "Get user from api_key"
+      description: "This can only be done by the logged in user and will return a\
+        \ user object"
+      operationId: "get_user"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "The response"
+          schema:
+            $ref: "#/definitions/User"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
     post:
       tags:
       - "user"
@@ -300,7 +316,7 @@ definitions:
       userId:
         type: "integer"
         format: "int64"
-      wkn:
+      symbol:
         type: "string"
       stockValueId:
         type: "integer"
@@ -318,16 +334,16 @@ definitions:
         format: "float"
     example:
       transactionType: "buy"
+      symbol: "symbol"
       amount: 5
       transactionFee: 5.637377
       stockValueId: 1
       id: 0
-      wkn: "wkn"
       userId: 6
   TransactionPrepare:
     type: "object"
     properties:
-      wkn:
+      symbol:
         type: "string"
       amount:
         type: "integer"
@@ -337,69 +353,40 @@ definitions:
         enum:
         - "buy"
         - "sell"
-  StockInfo:
+  StockSearchResult:
     type: "object"
     properties:
-      wkn:
+      symbol:
         type: "string"
       stockName:
         type: "string"
-      countryId:
-        type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
     example:
+      symbol: "symbol"
       stockName: "stockName"
-      wkn: "wkn"
-      countryId: "countryId"
-      logoUrl: "http://example.com/aeiou"
   StockValue:
     type: "object"
     properties:
       id:
         type: "integer"
         format: "int64"
-      wkn:
+      symbol:
         type: "string"
-      marketValue:
+      stock_price:
         type: "number"
         format: "float"
       timestamp:
         type: "string"
         format: "date-time"
     example:
-      marketValue: 6.0274563
+      symbol: "symbol"
+      stock_price: 6.0274563
       id: 0
-      wkn: "wkn"
       timestamp: "2000-01-23T04:56:07.000+00:00"
-  StockFinancials:
+  StockDescription:
     type: "object"
     properties:
-      wkn:
+      symbol:
         type: "string"
-      longDescription:
-        type: "string"
-      country:
-        type: "string"
-      industry:
-        type: "string"
-      dividend:
-        type: "string"
-    example:
-      longDescription: "longDescription"
-      country: "country"
-      dividend: "dividend"
-      industry: "industry"
-      wkn: "wkn"
-  PortfolioPosition:
-    type: "object"
-    properties:
-      wkn:
-        type: "string"
-      amount:
-        type: "integer"
-        format: "int32"
       stockName:
         type: "string"
       countryId:
@@ -407,12 +394,58 @@ definitions:
       logoUrl:
         type: "string"
         format: "uri"
+      longDescription:
+        type: "string"
+      industry:
+        type: "string"
+      dividend:
+        type: "string"
+      infoLoaded:
+        type: "boolean"
+      historyLoaded:
+        type: "boolean"
     example:
-      amount: 0
+      longDescription: "longDescription"
+      historyLoaded: true
+      symbol: "symbol"
       stockName: "stockName"
-      wkn: "wkn"
+      dividend: "dividend"
+      industry: "industry"
       countryId: "countryId"
       logoUrl: "http://example.com/aeiou"
+      infoLoaded: true
+  PortfolioPosition:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
+      stockName:
+        type: "string"
+      amount:
+        type: "integer"
+        format: "int32"
+      stock_price:
+        type: "number"
+        format: "float"
+      stock_buyin_price:
+        type: "number"
+        format: "float"
+      countryId:
+        type: "string"
+      industry:
+        type: "string"
+    example:
+      symbol: "symbol"
+      amount: 0
+      stockName: "stockName"
+      stock_buyin_price: 1.4658129
+      stock_price: 6.0274563
+      industry: "industry"
+      logoUrl: "http://example.com/aeiou"
+      countryId: "countryId"
   PortfolioValue:
     type: "object"
     properties:
@@ -445,6 +478,14 @@ definitions:
       moneyAvailable:
         type: "number"
         format: "float"
+    example:
+      firstName: "firstName"
+      lastName: "lastName"
+      moneyAvailable: 1.4658129
+      password: "password"
+      id: 0
+      startingCapital: 6.0274563
+      email: "email"
   UserPrepareLogin:
     type: "object"
     properties:

@@ -341,6 +341,28 @@ definitions:
       timestamp:
         type: "string"
         format: "date-time"
+  StockDescription:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+      stockName:
+        type: "string"
+      countryId:
+        type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
+      longDescription:
+        type: "string"
+      industry:
+        type: "string"
+      dividend:
+        type: "string"
+      infoLoaded:
+        type: "boolean"
+      historyLoaded:
+        type: "boolean"
   PortfolioPosition:
     type: "object"
     properties:
@@ -427,28 +449,6 @@ definitions:
         type: "string"
       message:
         type: "string"
-  StockDescription:
-    type: "object"
-    properties:
-      symbol:
-        type: "string"
-      stockName:
-        type: "string"
-      countryId:
-        type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
-      longDescription:
-        type: "string"
-      industry:
-        type: "string"
-      dividend:
-        type: "string"
-      infoLoaded:
-        type: "boolean"
-      historyLoaded:
-        type: "boolean"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

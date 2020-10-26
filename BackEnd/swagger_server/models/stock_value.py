@@ -15,35 +15,35 @@ class StockValue(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id: int=None, wkn: str=None, market_value: float=None, timestamp: datetime=None):  # noqa: E501
+    def __init__(self, id: int=None, symbol: str=None, stock_price: float=None, timestamp: datetime=None):  # noqa: E501
         """StockValue - a model defined in Swagger
 
         :param id: The id of this StockValue.  # noqa: E501
         :type id: int
-        :param wkn: The wkn of this StockValue.  # noqa: E501
-        :type wkn: str
-        :param market_value: The market_value of this StockValue.  # noqa: E501
-        :type market_value: float
+        :param symbol: The symbol of this StockValue.  # noqa: E501
+        :type symbol: str
+        :param stock_price: The stock_price of this StockValue.  # noqa: E501
+        :type stock_price: float
         :param timestamp: The timestamp of this StockValue.  # noqa: E501
         :type timestamp: datetime
         """
         self.swagger_types = {
             'id': int,
-            'wkn': str,
-            'market_value': float,
+            'symbol': str,
+            'stock_price': float,
             'timestamp': datetime
         }
 
         self.attribute_map = {
             'id': 'id',
-            'wkn': 'wkn',
-            'market_value': 'marketValue',
+            'symbol': 'symbol',
+            'stock_price': 'stock_price',
             'timestamp': 'timestamp'
         }
 
         self._id = id
-        self._wkn = wkn
-        self._market_value = market_value
+        self._symbol = symbol
+        self._stock_price = stock_price
         self._timestamp = timestamp
 
     @classmethod
@@ -79,46 +79,46 @@ class StockValue(Model):
         self._id = id
 
     @property
-    def wkn(self) -> str:
-        """Gets the wkn of this StockValue.
+    def symbol(self) -> str:
+        """Gets the symbol of this StockValue.
 
 
-        :return: The wkn of this StockValue.
+        :return: The symbol of this StockValue.
         :rtype: str
         """
-        return self._wkn
+        return self._symbol
 
-    @wkn.setter
-    def wkn(self, wkn: str):
-        """Sets the wkn of this StockValue.
+    @symbol.setter
+    def symbol(self, symbol: str):
+        """Sets the symbol of this StockValue.
 
 
-        :param wkn: The wkn of this StockValue.
-        :type wkn: str
+        :param symbol: The symbol of this StockValue.
+        :type symbol: str
         """
 
-        self._wkn = wkn
+        self._symbol = symbol
 
     @property
-    def market_value(self) -> float:
-        """Gets the market_value of this StockValue.
+    def stock_price(self) -> float:
+        """Gets the stock_price of this StockValue.
 
 
-        :return: The market_value of this StockValue.
+        :return: The stock_price of this StockValue.
         :rtype: float
         """
-        return self._market_value
+        return self._stock_price
 
-    @market_value.setter
-    def market_value(self, market_value: float):
-        """Sets the market_value of this StockValue.
+    @stock_price.setter
+    def stock_price(self, stock_price: float):
+        """Sets the stock_price of this StockValue.
 
 
-        :param market_value: The market_value of this StockValue.
-        :type market_value: float
+        :param stock_price: The stock_price of this StockValue.
+        :type stock_price: float
         """
 
-        self._market_value = market_value
+        self._stock_price = stock_price
 
     @property
     def timestamp(self) -> datetime:

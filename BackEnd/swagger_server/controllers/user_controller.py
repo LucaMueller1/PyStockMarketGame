@@ -6,7 +6,6 @@ from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
-
 from swagger_server.services.db_service import DatabaseConn;
 
 
@@ -49,6 +48,17 @@ def delete_user(user_id):  # noqa: E501
     :type user_id: int
 
     :rtype: None
+    """
+    return 'do some magic!'
+
+
+def get_user():  # noqa: E501
+    """Get user from api_key
+
+    This can only be done by the logged in user and will return a user object # noqa: E501
+
+
+    :rtype: User
     """
     return 'do some magic!'
 

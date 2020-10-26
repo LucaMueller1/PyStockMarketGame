@@ -24,14 +24,14 @@ def get_tradable_values():
             ++i
             pd[i]
 
-def get_stock_history(stock: str):
-    stock = yf.Ticker(stock)
+def get_stock_history_from_yfinance(symbol: str):
+    stock = yf.Ticker(symbol)
     print(stock.info)
     print(stock.history("2d"))
     print("-------------")
 
     for day in stock.history(0):
-        print(day)
+        insert_stock_data()
 
 
 def __init__(self):
