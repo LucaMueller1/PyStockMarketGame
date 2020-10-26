@@ -149,6 +149,19 @@ paths:
         "404":
           description: "data for stock and period not found"
   /user:
+    get:
+      tags:
+      - "user"
+      summary: "Get user from api_key"
+      description: "This can only be done by the logged in user and will return a user object"
+      operationId: "get_user"
+      produces:
+      - "application/json"
+      responses:
+        '200':
+          description: The response
+          schema:
+            $ref: '#/definitions/User'
     post:
       tags:
       - "user"
@@ -327,7 +340,7 @@ definitions:
         format: "int64"
       wkn:
         type: "string"
-      marketValue:
+      stock_price:
         type: "number"
         format: "float"
       timestamp:
@@ -356,7 +369,15 @@ definitions:
         format: "int32"
       stockName:
         type: "string"
+      stock_price:
+        type: "number"
+        format: "float"
+      stock_buyin_price:
+        type: "number"
+        format: "float"
       countryId:
+        type: "string"
+      industry:
         type: "string"
       logoUrl:
         type: "string"
