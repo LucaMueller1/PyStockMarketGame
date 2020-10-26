@@ -1,6 +1,7 @@
 from swagger_server.models.auth_key import AuthKey
 from swagger_server.models.user import User
 from swagger_server.models.stock_description import StockDescription;
+import pandas as pd
 
 
 import sqlalchemy as sqla
@@ -53,20 +54,20 @@ class DatabaseConn:
         return AuthKey(userid,auth_key,expiry)
 
     def check_auth_hash(self, auth_key: str) ->AuthKey:
-        auth_key_returned = None
+        auth_key = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now()"),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` <= 'now()' "),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
                 auth_key = row[1]
                 expiry = row[2]
-                auth_key_returned = AuthKey(userid,auth_key,expiry)
+                auth_key = AuthKey(userid,auth_key,expiry)
 
-        return auth_key_returned
+        return auth_key
     def get_user_by_user_id(self, auth_key: str) ->User:
         user = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now() "),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` <= 'now()' "),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
                 auth_key = row[1]
