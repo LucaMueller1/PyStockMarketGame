@@ -81,12 +81,14 @@ class DatabaseConn:
         return result
 
 
-    def get_all_stocks(self):
+    def get_all_stocks(self, description: StockDescription):
         """
         :desc: gets all WKNs in Database
+        :author: Jannik Sinz
         :return: Resultset
+        :test:
         """
         user = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT wkn FROM pybroker.tradable_values"))
+            rs = con.execute(sqla.text("SELECT * FROM pybroker.tradable_values"))
         return rs
