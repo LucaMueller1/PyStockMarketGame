@@ -15,29 +15,29 @@ class TransactionPrepare(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, wkn: str=None, amount: int=None, transaction_type: str=None):  # noqa: E501
+    def __init__(self, symbol: str=None, amount: int=None, transaction_type: str=None):  # noqa: E501
         """TransactionPrepare - a model defined in Swagger
 
-        :param wkn: The wkn of this TransactionPrepare.  # noqa: E501
-        :type wkn: str
+        :param symbol: The symbol of this TransactionPrepare.  # noqa: E501
+        :type symbol: str
         :param amount: The amount of this TransactionPrepare.  # noqa: E501
         :type amount: int
         :param transaction_type: The transaction_type of this TransactionPrepare.  # noqa: E501
         :type transaction_type: str
         """
         self.swagger_types = {
-            'wkn': str,
+            'symbol': str,
             'amount': int,
             'transaction_type': str
         }
 
         self.attribute_map = {
-            'wkn': 'wkn',
+            'symbol': 'symbol',
             'amount': 'amount',
             'transaction_type': 'transactionType'
         }
 
-        self._wkn = wkn
+        self._symbol = symbol
         self._amount = amount
         self._transaction_type = transaction_type
 
@@ -53,25 +53,25 @@ class TransactionPrepare(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def wkn(self) -> str:
-        """Gets the wkn of this TransactionPrepare.
+    def symbol(self) -> str:
+        """Gets the symbol of this TransactionPrepare.
 
 
-        :return: The wkn of this TransactionPrepare.
+        :return: The symbol of this TransactionPrepare.
         :rtype: str
         """
-        return self._wkn
+        return self._symbol
 
-    @wkn.setter
-    def wkn(self, wkn: str):
-        """Sets the wkn of this TransactionPrepare.
+    @symbol.setter
+    def symbol(self, symbol: str):
+        """Sets the symbol of this TransactionPrepare.
 
 
-        :param wkn: The wkn of this TransactionPrepare.
-        :type wkn: str
+        :param symbol: The symbol of this TransactionPrepare.
+        :type symbol: str
         """
 
-        self._wkn = wkn
+        self._symbol = symbol
 
     @property
     def amount(self) -> int:

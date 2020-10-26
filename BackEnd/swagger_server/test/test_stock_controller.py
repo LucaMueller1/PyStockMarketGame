@@ -5,8 +5,8 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from swagger_server.models.stock_financials import StockFinancials  # noqa: E501
-from swagger_server.models.stock_info import StockInfo  # noqa: E501
+from swagger_server.models.stock_description import StockDescription  # noqa: E501
+from swagger_server.models.stock_search_result import StockSearchResult  # noqa: E501
 from swagger_server.models.stock_value import StockValue  # noqa: E501
 from swagger_server.test import BaseTestCase
 
@@ -14,13 +14,13 @@ from swagger_server.test import BaseTestCase
 class TestStockController(BaseTestCase):
     """StockController integration test stubs"""
 
-    def test_get_stock_financials(self):
-        """Test case for get_stock_financials
+    def test_get_stock_description(self):
+        """Test case for get_stock_description
 
         Get financials of given stock
         """
         response = self.client.open(
-            '/api/stock/{wkn}/financials'.format(wkn='wkn_example'),
+            '/api/stock/{symbol}/description'.format(symbol='symbol_example'),
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -32,7 +32,7 @@ class TestStockController(BaseTestCase):
         """
         query_string = [('period', 'period_example')]
         response = self.client.open(
-            '/api/stock/{wkn}/history'.format(wkn='wkn_example'),
+            '/api/stock/{symbol}/history'.format(symbol='symbol_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,

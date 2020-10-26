@@ -15,15 +15,15 @@ class Transaction(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id: int=None, user_id: int=None, wkn: str=None, stock_value_id: int=None, amount: int=None, transaction_type: str=None, transaction_fee: float=None):  # noqa: E501
+    def __init__(self, id: int=None, user_id: int=None, symbol: str=None, stock_value_id: int=None, amount: int=None, transaction_type: str=None, transaction_fee: float=None):  # noqa: E501
         """Transaction - a model defined in Swagger
 
         :param id: The id of this Transaction.  # noqa: E501
         :type id: int
         :param user_id: The user_id of this Transaction.  # noqa: E501
         :type user_id: int
-        :param wkn: The wkn of this Transaction.  # noqa: E501
-        :type wkn: str
+        :param symbol: The symbol of this Transaction.  # noqa: E501
+        :type symbol: str
         :param stock_value_id: The stock_value_id of this Transaction.  # noqa: E501
         :type stock_value_id: int
         :param amount: The amount of this Transaction.  # noqa: E501
@@ -36,7 +36,7 @@ class Transaction(Model):
         self.swagger_types = {
             'id': int,
             'user_id': int,
-            'wkn': str,
+            'symbol': str,
             'stock_value_id': int,
             'amount': int,
             'transaction_type': str,
@@ -46,7 +46,7 @@ class Transaction(Model):
         self.attribute_map = {
             'id': 'id',
             'user_id': 'userId',
-            'wkn': 'wkn',
+            'symbol': 'symbol',
             'stock_value_id': 'stockValueId',
             'amount': 'amount',
             'transaction_type': 'transactionType',
@@ -55,7 +55,7 @@ class Transaction(Model):
 
         self._id = id
         self._user_id = user_id
-        self._wkn = wkn
+        self._symbol = symbol
         self._stock_value_id = stock_value_id
         self._amount = amount
         self._transaction_type = transaction_type
@@ -115,25 +115,25 @@ class Transaction(Model):
         self._user_id = user_id
 
     @property
-    def wkn(self) -> str:
-        """Gets the wkn of this Transaction.
+    def symbol(self) -> str:
+        """Gets the symbol of this Transaction.
 
 
-        :return: The wkn of this Transaction.
+        :return: The symbol of this Transaction.
         :rtype: str
         """
-        return self._wkn
+        return self._symbol
 
-    @wkn.setter
-    def wkn(self, wkn: str):
-        """Sets the wkn of this Transaction.
+    @symbol.setter
+    def symbol(self, symbol: str):
+        """Sets the symbol of this Transaction.
 
 
-        :param wkn: The wkn of this Transaction.
-        :type wkn: str
+        :param symbol: The symbol of this Transaction.
+        :type symbol: str
         """
 
-        self._wkn = wkn
+        self._symbol = symbol
 
     @property
     def stock_value_id(self) -> int:

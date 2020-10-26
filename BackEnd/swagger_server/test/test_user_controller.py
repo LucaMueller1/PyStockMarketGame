@@ -54,6 +54,17 @@ class TestUserController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_get_user(self):
+        """Test case for get_user
+
+        Get user from api_key
+        """
+        response = self.client.open(
+            '/api/user',
+            method='GET')
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
     def test_get_user_settings(self):
         """Test case for get_user_settings
 
