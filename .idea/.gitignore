@@ -6,3 +6,12 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+/inspectionProfiles/
+
+## general Files
+misc.xml
+modules.xml
+.gitignore
+PyStockMarketGame.iml
+vcs.xml
+workspace.xml

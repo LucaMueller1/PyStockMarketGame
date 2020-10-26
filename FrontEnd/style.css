@@ -1,0 +1,26 @@
+.highlight {
+  width: 349px;
+"
+}
+.circle_and_center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  border-radius: 50%;
+}
+
+.padding{
+  padding-left: 5%;
+}
+
+.bold {
+  padding-left: 1rem;
+  font-weight: 700;
+}
+.greyish {
+  background-color: ghostwhite;
+}
+.red {
+  background-color: lightblue;
+}
