@@ -22,7 +22,9 @@ paths:
       - "portfolio"
       summary: "Get all current positions"
       description: "Returns all the current stock positions of the logged in user"
-      operationId: "getPortfolio"
+      operationId: "get_portfolio"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       responses:
@@ -38,7 +40,9 @@ paths:
       - "portfolio"
       summary: "Get the performance of the portfolio"
       description: "Returns the logged in users portfolio performance"
-      operationId: "getPortfolioValue"
+      operationId: "get_portfolio_value"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       responses:
@@ -54,26 +58,18 @@ paths:
       - "portfolio"
       summary: "Create a new stock transaction"
       description: "Creates and executes a transaction for the logged in user"
-      operationId: "createTransaction"
+      operationId: "create_transaction"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "transaction_prepare_param"
         description: "The transaction to create."
         required: true
         schema:
-          type: "object"
-          properties:
-            wkn:
-              type: "string"
-            amount:
-              type: "integer"
-              format: "int32"
-            transactionType:
-              type: "string"
-              format: "enum"
-              enum: [buy,sell]
+          $ref: "#/definitions/TransactionPrepare"
       responses:
         "200":
           description: "successful operation"
@@ -85,7 +81,9 @@ paths:
       - "stock"
       summary: "Get all stocks in database"
       description: "Returns all available stocks from the database"
-      operationId: "getStocks"
+      operationId: "get_stocks"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       responses:
@@ -101,7 +99,9 @@ paths:
       - "stock"
       summary: "Get historical data of given stock"
       description: "Returns all available stocks from the database"
-      operationId: "getStockHistory"
+      operationId: "get_stock_history"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       parameters:
@@ -130,7 +130,9 @@ paths:
       - "stock"
       summary: "Get financials of given stock"
       description: ""
-      operationId: "getStockFinancials"
+      operationId: "get_stock_financials"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       parameters:
@@ -152,12 +154,12 @@ paths:
       - "user"
       summary: "Create user"
       description: "This can only be done by the logged in user."
-      operationId: "createUser"
+      operationId: "create_user"
       produces:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "user_param"
         description: "Created user object"
         required: true
         schema:
@@ -171,26 +173,18 @@ paths:
       - "user"
       summary: "Logs user into the system and returns auth key"
       description: ""
-      operationId: "loginUser"
+      operationId: "login_user"
       consumes:
       - "application/json"
       produces:
       - "application/json"
       parameters:
       - in: "body"
-        name: "user"
-        description: "The user to create."
+        name: "user_prepare_login_param"
+        description: "Created user object"
         required: true
         schema:
-          type: "object"
-          required:
-          - userName
-          - password
-          properties:
-            email:
-              type: "string"
-            password:
-              type: "string"
+          $ref: "#/definitions/UserPrepareLogin"
       responses:
         '200':
           description: The response
@@ -202,7 +196,9 @@ paths:
       - "user"
       summary: "Logs out current logged in user session"
       description: ""
-      operationId: "logoutUser"
+      operationId: "logout_user"
+      security:
+      - api_key: []
       produces:
       - "application/xml"
       - "application/json"
@@ -210,17 +206,19 @@ paths:
       responses:
         default:
           description: "successful operation"
-  /user/{userid}:
+  /user/{user_id}:
     delete:
       tags:
       - "user"
       summary: "Delete user"
       description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
+      operationId: "delete_user"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       parameters:
-      - name: "userid"
+      - name: "user_id"
         in: "path"
         description: "The name that needs to be deleted"
         required: true
@@ -237,12 +235,14 @@ paths:
       - "user"
       summary: "Create/set settings for logged in user"
       description: "Create/set the broker settings for the logged in user"
-      operationId: "createUserSettings"
+      operationId: "create_user_settings"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "settings_param"
         description: "Created settings object"
         required: true
         schema:
@@ -255,7 +255,9 @@ paths:
       - "user"
       summary: "Get the settings of the logged in user"
       description: "Returns the settings of the logged in user"
-      operationId: "getUserSettings"
+      operationId: "get_user_settings"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       responses:
@@ -294,6 +296,17 @@ definitions:
       transactionFee:
         type: "number"
         format: "float"
+  TransactionPrepare:
+    type: "object"
+    properties:
+      wkn:
+        type: "string"
+      amount:
+        type: "integer"
+        format: "int32"
+      transactionType:
+        type: "string"
+        enum: [buy, sell]
   StockInfo:
     type: "object"
     properties:
@@ -377,6 +390,13 @@ definitions:
       moneyAvailable:
         type: "number"
         format: "float"
+  UserPrepareLogin:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
   Settings:
     type: "object"
     properties:

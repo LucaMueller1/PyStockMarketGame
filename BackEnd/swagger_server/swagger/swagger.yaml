@@ -68,11 +68,11 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "transaction_prepare_param"
         description: "The transaction to create."
         required: true
         schema:
-          $ref: "#/definitions/body"
+          $ref: "#/definitions/TransactionPrepare"
       responses:
         "200":
           description: "successful operation"
@@ -169,7 +169,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "user_param"
         description: "Created user object"
         required: true
         schema:
@@ -191,11 +191,11 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "user"
-        description: "The user to create."
+        name: "user_prepare_login_param"
+        description: "Created user object"
         required: true
         schema:
-          $ref: "#/definitions/user"
+          $ref: "#/definitions/UserPrepareLogin"
       responses:
         "200":
           description: "The response"
@@ -219,7 +219,7 @@ paths:
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
-  /user/{userid}:
+  /user/{user_id}:
     delete:
       tags:
       - "user"
@@ -229,7 +229,7 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "userid"
+      - name: "user_id"
         in: "path"
         description: "The name that needs to be deleted"
         required: true
@@ -273,7 +273,7 @@ paths:
       - "application/json"
       parameters:
       - in: "body"
-        name: "body"
+        name: "settings_param"
         description: "Created settings object"
         required: true
         schema:
@@ -324,6 +324,19 @@ definitions:
       id: 0
       wkn: "wkn"
       userId: 6
+  TransactionPrepare:
+    type: "object"
+    properties:
+      wkn:
+        type: "string"
+      amount:
+        type: "integer"
+        format: "int32"
+      transactionType:
+        type: "string"
+        enum:
+        - "buy"
+        - "sell"
   StockInfo:
     type: "object"
     properties:
@@ -432,13 +445,15 @@ definitions:
       moneyAvailable:
         type: "number"
         format: "float"
+  UserPrepareLogin:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
     example:
-      firstName: "firstName"
-      lastName: "lastName"
-      moneyAvailable: 1.4658129
       password: "password"
-      id: 0
-      startingCapital: 6.0274563
       email: "email"
   Settings:
     type: "object"
@@ -472,29 +487,6 @@ definitions:
       type:
         type: "string"
       message:
-        type: "string"
-  body:
-    type: "object"
-    properties:
-      wkn:
-        type: "string"
-      amount:
-        type: "integer"
-        format: "int32"
-      transactionType:
-        type: "string"
-        format: "enum"
-        enum:
-        - "buy"
-        - "sell"
-  user:
-    type: "object"
-    required:
-    - "password"
-    properties:
-      email:
-        type: "string"
-      password:
         type: "string"
 externalDocs:
   description: "Find out more about Swagger"

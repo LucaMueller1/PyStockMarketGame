@@ -4,46 +4,49 @@ import six
 from swagger_server.models.auth_key import AuthKey  # noqa: E501
 from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
+from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
 
+from swagger_server.services.db_service import DatabaseConn;
 
-def create_user(body):  # noqa: E501
+
+def create_user(user_param):  # noqa: E501
     """Create user
 
     This can only be done by the logged in user. # noqa: E501
 
-    :param body: Created user object
-    :type body: dict | bytes
+    :param user_param: Created user object
+    :type user_param: dict | bytes
 
     :rtype: None
     """
     if connexion.request.is_json:
-        body = User.from_dict(connexion.request.get_json())  # noqa: E501
+        user_param = User.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
-def create_user_settings(body):  # noqa: E501
+def create_user_settings(settings_param):  # noqa: E501
     """Create/set settings for logged in user
 
     Create/set the broker settings for the logged in user # noqa: E501
 
-    :param body: Created settings object
-    :type body: dict | bytes
+    :param settings_param: Created settings object
+    :type settings_param: dict | bytes
 
     :rtype: None
     """
     if connexion.request.is_json:
-        body = Settings.from_dict(connexion.request.get_json())  # noqa: E501
+        settings_param = Settings.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
-def delete_user(userid):  # noqa: E501
+def delete_user(user_id):  # noqa: E501
     """Delete user
 
     This can only be done by the logged in user. # noqa: E501
 
-    :param userid: The name that needs to be deleted
-    :type userid: int
+    :param user_id: The name that needs to be deleted
+    :type user_id: int
 
     :rtype: None
     """
@@ -61,19 +64,25 @@ def get_user_settings():  # noqa: E501
     return 'do some magic!'
 
 
-def login_user(user):  # noqa: E501
+def login_user(user_prepare_login_param):  # noqa: E501
     """Logs user into the system and returns auth key
 
      # noqa: E501
 
-    :param user: The user to create.
-    :type user: dict | bytes
+    :param user_prepare_login_param: Created user object
+    :type user_prepare_login_param: dict | bytes
 
     :rtype: AuthKey
     """
     if connexion.request.is_json:
-        user = User.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        user_prepare_login_param = UserPrepareLogin.from_dict(connexion.request.get_json())  # noqa: E501
+        print(user_prepare_login_param.email)
+        print(user_prepare_login_param.password)
+        conn = DatabaseConn()
+        user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
+        auth_key = conn.generate_auth_hash(user.id)
+
+    return auth_key
 
 
 def logout_user():  # noqa: E501

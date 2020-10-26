@@ -5,10 +5,10 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
-from swagger_server.models.body import Body  # noqa: E501
 from swagger_server.models.portfolio_position import PortfolioPosition  # noqa: E501
 from swagger_server.models.portfolio_value import PortfolioValue  # noqa: E501
 from swagger_server.models.transaction import Transaction  # noqa: E501
+from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa: E501
 from swagger_server.test import BaseTestCase
 
 
@@ -20,11 +20,11 @@ class TestPortfolioController(BaseTestCase):
 
         Create a new stock transaction
         """
-        body = Body()
+        transaction_prepare_param = TransactionPrepare()
         response = self.client.open(
             '/api/portfolio/transaction',
             method='POST',
-            data=json.dumps(body),
+            data=json.dumps(transaction_prepare_param),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
