@@ -17,8 +17,8 @@ class DatabaseConn:
         #print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
 
 
-    def insert_user(self, username, password):
-        auth_password = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
+    def insert_user(self, user: User):
+        auth_password = bcrypt.hashpw(User.password.encode('utf8'), bcrypt.gensalt())
 
         print(auth_password.decode('utf8'))
 
@@ -39,25 +39,41 @@ class DatabaseConn:
                 print(row)
         valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
         if (valid ):
-            return User(userid,firstName,lastName,email,None,starting_capital,money_available)
-        if (not valid):
-            return None
+            user =  User(userid,firstName,lastName,email,None,starting_capital,money_available)
+        return user
 
-    def generate_auth_hash(self, userid: int):
+    def generate_auth_hash(self, userid: int) -> AuthKey:
+        if (userid is None):
+            return None
         auth_key = random.getrandbits(256)
         expiry = self.util_format_datetime_for_expiry(2)
         with self.engine.connect() as con:
             con.execute(sqla.text("""INSERT INTO `user_authkey` (`userID`, `auth_key`, `expiry`) VALUES (:userid, :authkey, :expiry);"""), ( { "userid": userid, "authkey": auth_key , "expiry": expiry}))
         return AuthKey(userid,auth_key,expiry)
 
-    def check_auth_hash(self, auth_key: str) ->int:
-        userid = 0
+    def check_auth_hash(self, auth_key: str) ->AuthKey:
+        auth_key = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` <= 'now()' "),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
+                auth_key = row[1]
+                expiry = row[2]
+                auth_key = AuthKey(userid,auth_key,expiry)
 
-        return userid
+        return auth_key
+    def get_user_by_user_id(self, auth_key: str) ->User:
+        user = None
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` <= 'now()' "),( { "authkey": auth_key }))
+            for row in rs:
+                userid = row[0]
+                auth_key = row[1]
+                expiry = row[2]
+                auth_key = AuthKey(userid,auth_key,expiry)
+
+        return user
+
     def util_format_datetime_for_expiry(self, weeks: int) -> str:
         now = datetime.now()
         result = now + relativedelta(weeks=weeks)
