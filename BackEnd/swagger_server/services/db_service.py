@@ -79,3 +79,20 @@ class DatabaseConn:
         result = now + relativedelta(weeks=weeks)
         result = result.strftime('%Y-%m-%d %H:%M:%S')
         return result
+
+    def insert_stocks(self, wkn: str):
+        """
+        :desc:
+        :param wkn:
+        :return:
+        """
+        user = None
+        with self.engine.connect() as con:
+            query = sqla.text()
+        pass
+
+    def get_all_stocks(self):
+        user = None
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("SELECT wkn FROM pybroker.tradable_values"))
+        return rs
