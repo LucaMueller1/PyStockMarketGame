@@ -7,6 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+connexion = "^2.7.0"
+python_dateutil = "^2.8.1"
+setuptools = "^50.3.2"
 
 [tool.poetry.dev-dependencies]
 

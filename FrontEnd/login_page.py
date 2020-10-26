@@ -9,10 +9,10 @@ def run(session_state):
     password_input = st.text_input("password:", type="password")
 
     if st.button("login"):
-        response = login_request()
-        st.write(response.text)
-        #session_state.page = "depot"
-        #st.experimental_rerun()
+        #response = login_request()
+        #st.write(response.text)
+        session_state.page = "depot"
+        st.experimental_rerun()
 
 def login_request():
     url = "http://localhost:8080/api/user/login"
