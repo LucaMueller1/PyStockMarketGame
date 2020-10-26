@@ -56,6 +56,8 @@ def run(session_state):
 
             # Place price information and "Kaufen" button on the left side
             with col1:
+                st.subheader("Verkaufsübersicht")
+                st.write("----------------------")
                 st.write("Aktienkaufpreis:",  aktienwert)
                 st.write("Gebühren:", "", gebuehren)
                 st.write("----------------------")
@@ -89,7 +91,7 @@ def run(session_state):
         wkn_verkaufen_user_eingabe = st.selectbox("WKN:", ["ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "CON.DE", "1COV.DE", "DAI.DE", "DHER.DE", "DKB.DE", "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE", "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE"])
 
         #Connect to Databse later!!!
-        quantity_of_stock_im_Depo = 1200
+        quantity_of_stock_im_Depo = 6
 
         # By standard all stocks are sold, UNLESS user ticks this box:
         if st.checkbox("Alle Aktien verkaufen", value=True):
@@ -111,16 +113,14 @@ def run(session_state):
                     stock_quantity = st.slider("Wähle aus, wie viele Aktien du verkaufen möchtest",1, 6)
 
                 # Textfeld & Button
-                elif input_methode == "Textfeld":
+                if input_methode == "Textfeld":
                     stock_quantity_raw = st.text_input("Oder gib die genaue Anzahl hier ein:")
+                    stock_quantity = 0
                     if st.button("Bestätigen"):
-                        stock_quantity = stock_quantity_raw.title()
-                        st.success("Success")
+                        stock_quantity = int(stock_quantity_raw.title())
 
-                else:
-                    st.error("Error")
 
-            #Anzeige der Quantitaät der ausgewaählten Aktie im Depot
+            # Anzeige der Quantitaät der ausgewaählten Aktie im Depot
             with col2:
                 st.markdown("""
                 <div class="greyish padding">
@@ -130,9 +130,29 @@ def run(session_state):
                 """
                     , unsafe_allow_html = True)
 
+        #Vorbereiten der Seitenaufteilung:
+        col1, col2 = st.beta_columns((4, 1))
 
-        # VERKAUFEN --------------------------------------
-        if mode_switch == "Verkaufen":
-            st.write("nothing here yet")
+        # Vorbereiten der Variablen (Verkaufspreis, Ordergebühren)
+
+        # Verkaufspreis hier mit STATISCH adidas --> VON DB holen die Aktie!
+        aktienverkaufswert = stock_quantity * 169.88
+
+        # verkaufsgebuehren, hier statisch --> von DB holen!
+        verkaufsgebuehren = 9.90
+
+        #Verkaufspreis mit Abzug der Gebuehren:
+        realisierender_verkaufswert = aktienverkaufswert - verkaufsgebuehren
+
+        # Auflistung Verkaufspreis mit Ordergebühren
+        with col1:
+            st.subheader("Verkaufsübersicht")
+            st.write("----------------------")
+            st.write("Aktienverkaufswert:", aktienverkaufswert)
+            st.write("Gebühren: -", verkaufsgebuehren)
+            st.write("----------------------")
+            st.subheader("Verkaufswert:")
+            st.header(realisierender_verkaufswert)
+
 
 run("boerse")
