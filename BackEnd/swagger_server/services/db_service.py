@@ -55,7 +55,7 @@ class DatabaseConn:
     def check_auth_hash(self, auth_key: str) ->AuthKey:
         auth_key = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now()"),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now()"), authkey= auth_key )
             for row in rs:
                 userid = row[0]
                 auth_key = row[1]
