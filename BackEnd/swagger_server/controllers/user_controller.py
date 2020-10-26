@@ -86,10 +86,13 @@ def login_user(user_prepare_login_param):  # noqa: E501
     """
     if connexion.request.is_json:
         user_prepare_login_param = UserPrepareLogin.from_dict(connexion.request.get_json())  # noqa: E501
+
         print(user_prepare_login_param.email)
         print(user_prepare_login_param.password)
         conn = DatabaseConn()
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
+        if user is None:
+            return 'Not Found', 404
         auth_key = conn.generate_auth_hash(user.id)
 
     return auth_key
