@@ -1,5 +1,5 @@
 import streamlit as st
-import depot_table
+from html_table_generator import PortfolioTable
 from streamlit_echarts import st_echarts
 
 data = [
@@ -32,25 +32,14 @@ def run(session_state):
 
     show_chart()
 
-    markdown_table = depot_table.DepotTable(data)
-    html = """ <table style="width:100%">
-  <tr>
-    <th>Firstname</th>
-    <th>Lastname</th>
-    <th>Age</th>
-  </tr>
-  <tr>
-    <td>Jill</td>
-    <td>Smith</td>
-    <td>50</td>
-  </tr>
-  <tr>
-    <td>Eve</td>
-    <td>Jackson</td>
-    <td>94</td>
-  </tr>
-</table> """
-    st.markdown(html, unsafe_allow_html=True)
+    html_table = PortfolioTable()
+    #html_table.add_css()
+    html_table.open()
+    html_table.add_headers()
+    html_table.add_portfolio(data)
+    html_table.close()
+
+    st.markdown(html_table.get_html(), unsafe_allow_html=True)
 
     if st.button("log out"):
         session_state.page = "login"
