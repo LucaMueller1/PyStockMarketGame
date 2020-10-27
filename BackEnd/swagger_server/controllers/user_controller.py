@@ -6,7 +6,6 @@ from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
-#from swagger_server.services.db_service import DatabaseConn
 from swagger_server.controllers import staticglobaldb
 
 def create_user(user_param):  # noqa: E501
