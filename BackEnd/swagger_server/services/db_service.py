@@ -26,7 +26,7 @@ class DatabaseConn:
         returned = True
         try:
             with self.engine.connect() as con:
-                con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
+                con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8') ,"money_available" : user.money_available, "starting_capital": user.starting_capital}))
         #print(auth_password.decode('utf8'))
         except:
             returned = False
@@ -35,6 +35,7 @@ class DatabaseConn:
 
     def check_password(self, email: str, password: str) -> User:
         user = None
+        valid = False
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
@@ -48,7 +49,8 @@ class DatabaseConn:
 
                 print(hashAndSalt)
                 print(row)
-        valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
+        if (password != None and hashAndSalt != None):
+            valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
         if (valid ):
             user =  User(userid,firstName,lastName,email,None,starting_capital,money_available)
         return user
