@@ -46,7 +46,6 @@ def get_stocks():  # noqa: E501
     """
 
     stock_list = staticglobaldb.dbconn.get_stock_search_results()
-    print(stock_list)
 
     if (stock_list is None) or (len(stock_list) < 1):
         return 'No Content', 204
