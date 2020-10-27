@@ -1,10 +1,6 @@
 class PortfolioTable():
     def __init__(self):
         self.html = ""
-        
-    def add_css(self):
-        self.html += """<style></style>
-          """
 
     def __add_row(self, row_data:dict):
 
@@ -31,7 +27,7 @@ class PortfolioTable():
                         <td style="font weight:bold">gain (%)</td>
                         </tr>
                         """
-    
+
     def add_portfolio(self, stock_data:list):
         for i in range(len(stock_data)):
             self.__add_row(stock_data[i])

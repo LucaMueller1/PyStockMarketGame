@@ -1,6 +1,7 @@
 import streamlit as st
 import SessionState
 import requests
+import requests_server
 
 
 def run(session_state):
@@ -8,21 +9,16 @@ def run(session_state):
     password_input = st.text_input("password:", type="password")
 
     if st.button("login"):
-        session_state.page = "depot"
-        st.experimental_rerun()
-        response = login_request(user_name_input, password_input)
+        #session_state.page = "depot"
+        #st.experimental_rerun()
+        response = requests_server.login(user_name_input, password_input)
+
         if "authKey" in response.json():
             session_state.auth_key = response.json()["authKey"]
+            response = requests_server.get_stock_names(session_state.auth_key).json()
+            session_state.stock_names = [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in response]
+
             session_state.page = "depot"
             st.experimental_rerun()
         else:
             st.write("username and/or password were not found.")
-
-def login_request(user_name_input: str, password_input: str) -> requests.Response:
-    url = "http://localhost:8080/api/user/login"
-    json = {'email': user_name_input,
-            'password': password_input}
-
-    return requests.post(url, json=json)
-
-

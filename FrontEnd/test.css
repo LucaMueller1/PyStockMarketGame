@@ -1,19 +1,14 @@
-body {
-    color: #fff;
-    background-color: #292929;
-}
-
 .stButton>button {
-    color: #292929;
+    color: black;
     border-radius: 50%;
     height: 3em;
     width: 3em;
 }
 
 .stTextInput>div>div>input {
-    color: #292929;
+    color: black;
 }
 
 .Widget > label{
-    color:white;
+    color:black;
 }

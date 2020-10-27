@@ -21,7 +21,7 @@ def run(session_state):
             st.experimental_rerun()
 
         if st.button("🔎 Wertpapier-Suche"):
-            session_state.page = "search"
+            session_state.page = "stock_info"
             st.experimental_rerun()
 
     st.sidebar.header("log out")
