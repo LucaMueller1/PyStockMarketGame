@@ -6,6 +6,7 @@ from swagger_server.models.stock_description import StockDescription;
 import sqlalchemy as sqla
 import bcrypt
 import random
+import string
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -48,7 +49,7 @@ class DatabaseConn:
     def generate_auth_hash(self, userid: int) -> AuthKey:
         if (userid is None):
             return None
-        auth_key = random.getrandbits(256)
+        auth_key = ''.join((random.choice(string.ascii_letters + string.digits) for i in range(128)))
         expiry = self.util_format_datetime_for_expiry(2)
         with self.engine.connect() as con:
             con.execute(sqla.text("""INSERT INTO `user_authkey` (`userID`, `auth_key`, `expiry`) VALUES (:userid, :authkey, :expiry);"""), ( { "userid": userid, "authkey": auth_key , "expiry": expiry}))
