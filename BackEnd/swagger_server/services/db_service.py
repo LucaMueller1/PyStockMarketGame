@@ -36,6 +36,7 @@ class DatabaseConn:
     def check_password(self, email: str, password: str) -> User:
         user = None
         valid = False
+        hashAndSalt = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
