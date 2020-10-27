@@ -20,6 +20,7 @@ def create_user(user_param):  # noqa: E501
     """
     if connexion.request.is_json:
         user_param = User.from_dict(connexion.request.get_json())  # noqa: E501
+        user_param.money_available = user_param.starting_capital
         insertion = staticglobaldb.dbconn.insert_user(user_param)
         if insertion:
             return 'OK', 200
@@ -70,8 +71,6 @@ def get_user():  # noqa: E501
     if api_key is None:
         return 'Unauthorized', 401
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
-
-
 
     return user
 
