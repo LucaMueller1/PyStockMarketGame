@@ -20,8 +20,10 @@ class DatabaseConn:
 
     def insert_user(self, user: User):
         auth_password = bcrypt.hashpw(User.password.encode('utf8'), bcrypt.gensalt())
+        with self.engine.connect() as con:
+            con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
 
-        print(auth_password.decode('utf8'))
+        #print(auth_password.decode('utf8'))
 
     def check_password(self, email: str, password: str) -> User:
         user = None
@@ -55,7 +57,7 @@ class DatabaseConn:
     def check_auth_hash(self, auth_key: str) ->AuthKey:
         auth_key_returned = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now()"),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now();"),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
                 auth_key = row[1]
@@ -66,7 +68,7 @@ class DatabaseConn:
     def get_user_by_auth_key(self, auth_key: str) ->User:
         user = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` JOIN users on user_authkey.userID = users.userID WHERE `auth_key` = :authkey AND `expiry` >= now() "),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` JOIN users on user_authkey.userID = users.userID WHERE `auth_key` = :authkey AND `expiry` >= now(); "),( { "authkey": auth_key }))
             for row in rs:
                 user = User(row['userID'],row['first_name'],row['last_name'],row['email'],None,row['starting_capital'], row['money_available'])
 
