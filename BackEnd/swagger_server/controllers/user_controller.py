@@ -59,7 +59,16 @@ def get_user():  # noqa: E501
 
     :rtype: User
     """
-    return 'do some magic!'
+    api_key = connexion.request.headers['api_key']
+    print(api_key)
+    if api_key is None:
+        return 'UNAUTHORIZED', 401
+    conn = staticglobaldb.dbconn
+    user = conn.get_user_by_auth_key(api_key)
+
+
+
+    return user
 
 
 def get_user_settings():  # noqa: E501
