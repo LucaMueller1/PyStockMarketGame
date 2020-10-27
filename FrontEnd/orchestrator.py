@@ -1,6 +1,7 @@
 import login_page
 import depot_page
-#import boerse_page
+import boerse_page
+import stock_screener_page
 
 import streamlit as st
 
@@ -23,3 +24,5 @@ if session_state.page == "depot":
     depot_page.run(session_state)
 if session_state.page == "boerse":
     boerse_page.run(session_state)
+if session_state.page == "search":
+    stock_screener_page.run(session_state)

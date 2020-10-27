@@ -1,13 +1,16 @@
 import streamlit as st
+import side_bar
 
 
 def run(session_state):
-    #Load CSS File for Formatting
+
+    side_bar.run(session_state)
+        #Load CSS File for Formatting
     def local_css(file_name):
         with open(file_name) as f:
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
-    local_css("style.css")
+    local_css("FrontEnd/style.css")
 
     st.header("Börse")
     st.subheader("Willkommen zur Börse. Hier kannst du Wertpapiere kaufen oder deine vorhandenen Wertpapiere verkaufen.")
@@ -153,6 +156,3 @@ def run(session_state):
             st.write("----------------------")
             st.subheader("Verkaufswert:")
             st.header(realisierender_verkaufswert)
-
-
-run("boerse")

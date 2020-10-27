@@ -1,11 +1,12 @@
 import streamlit as st
 from html_table_generator import PortfolioTable
 from streamlit_echarts import st_echarts
+import side_bar
 
 data = [
   {
     "symbol": "AAA",
-    "logoUrl": "https://logodix.com/logo/1931235.png",
+    "logoUrl": "https://images-ext-1.discordapp.net/external/clYzqjuQDH7RDXkxdcEgIAvbL2soZpZHsoGfztBj6wQ/https/logo.clearbit.com/adidas-group.com",
     "stockName": "AAA",
     "amount": 5,
     "stock_price": 3.13,
@@ -27,8 +28,8 @@ data = [
 
 def run(session_state):
 
-    st.write("Hello World!")
-    st.write(session_state.auth_key)
+    st.title("Depot")
+    st.write("Hallo Ben Dover")
 
     show_chart()
 
@@ -41,9 +42,7 @@ def run(session_state):
 
     st.markdown(html_table.get_html(), unsafe_allow_html=True)
 
-    if st.button("log out"):
-        session_state.page = "login"
-        st.experimental_rerun()
+    side_bar.run(session_state)
 
 def show_chart():
     options = {
