@@ -4,3 +4,4 @@ FrontEnd/__pycache__/
 pyproject.toml
 pyproject.toml
 .idea
+venv/
