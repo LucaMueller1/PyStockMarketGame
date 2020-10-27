@@ -49,7 +49,7 @@ class DatabaseConn:
 
                 print(hashAndSalt)
                 print(row)
-        if (password != None and hashAndSalt != None):
+        if (password is not None and hashAndSalt is not None):
             valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
         if (valid ):
             user =  User(userid,firstName,lastName,email,None,starting_capital,money_available)
