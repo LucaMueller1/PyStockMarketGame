@@ -20,7 +20,13 @@ def create_user(user_param):  # noqa: E501
     """
     if connexion.request.is_json:
         user_param = User.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        insertion = staticglobaldb.dbconn.insert_user(user_param)
+        if insertion:
+            return 'OK', 200
+        else:
+            return 'Bad Request', 400
+
+    return 'Unsupported Media Type', 415
 
 
 def create_user_settings(settings_param):  # noqa: E501
@@ -62,9 +68,8 @@ def get_user():  # noqa: E501
     api_key = connexion.request.headers['api_key']
     print(api_key)
     if api_key is None:
-        return 'UNAUTHORIZED', 401
-    conn = staticglobaldb.dbconn
-    user = conn.get_user_by_auth_key(api_key)
+        return 'Unauthorized', 401
+    user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
 
 
 
@@ -95,10 +100,9 @@ def login_user(user_prepare_login_param):  # noqa: E501
     if connexion.request.is_json:
         user_prepare_login_param = UserPrepareLogin.from_dict(connexion.request.get_json())  # noqa: E501
 
-        print(user_prepare_login_param.email)
-        print(user_prepare_login_param.password)
         conn = staticglobaldb.dbconn
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
+        print(user)
         if user is None:
             return 'Not Found', 404
         auth_key = conn.generate_auth_hash(user.id)
