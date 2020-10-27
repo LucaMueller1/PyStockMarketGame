@@ -17,3 +17,16 @@
 .remove_space_headings{
     margin-top:-5px;
 }
+
+.stBlock>div {
+  background-color:rgb(54, 54, 54);
+  padding-left: 2%;
+}
+
+.sidebar>div {
+  background-image: none;
+}
+
+body {
+  background-color: #f0f2f6;
+}
