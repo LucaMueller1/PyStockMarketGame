@@ -14,3 +14,6 @@
 .greyish {
   background-color: ghostwhite;
 }
+.remove_space_headings{
+    margin-top:-5px;
+}
