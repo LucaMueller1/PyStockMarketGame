@@ -5,6 +5,7 @@ from swagger_server.models.stock_description import StockDescription  # noqa: E5
 from swagger_server.models.stock_search_result import StockSearchResult  # noqa: E501
 from swagger_server.models.stock_value import StockValue  # noqa: E501
 from swagger_server import util
+from swagger_server.controllers import staticglobaldb
 
 
 def get_stock_description(symbol):  # noqa: E501
@@ -43,4 +44,10 @@ def get_stocks():  # noqa: E501
 
     :rtype: List[StockSearchResult]
     """
-    return 'do some magic!'
+
+    stock_list = staticglobaldb.dbconn.get_stock_search_results()
+    print(stock_list)
+
+    if (stock_list is None) or (len(stock_list) < 1):
+        return 'No Content', 204
+    return stock_list
