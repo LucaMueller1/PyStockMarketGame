@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 class DatabaseConn:
 
     def __init__(self):
-        self.engine = sqla.create_engine('mysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
+        self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
         #self.insert_user("demo@demo.de","test1234")
         #print(self.check_password( "demo@demo.de", "test123"))
         #print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
