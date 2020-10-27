@@ -16,7 +16,6 @@ class DatabaseConn:
 
     def __init__(self):
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
-        self.conn = self.engine.connect()
         #self.insert_user("demo@demo.de","test1234")
         #print(self.check_password( "demo@demo.de", "test123"))
         #print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
@@ -26,7 +25,7 @@ class DatabaseConn:
         auth_password = bcrypt.hashpw(str(User.password).encode('utf8'), bcrypt.gensalt())
         returned = True
         try:
-            with self.conn as con:
+            with self.engine.connect() as con:
                 con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
         #print(auth_password.decode('utf8'))
         except:
@@ -36,7 +35,7 @@ class DatabaseConn:
 
     def check_password(self, email: str, password: str) -> User:
         user = None
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address = email)
             for row in rs:
                 hashAndSalt = row[4]
@@ -65,7 +64,7 @@ class DatabaseConn:
 
     def check_auth_hash(self, auth_key: str) ->AuthKey:
         auth_key_returned = None
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now();"),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
@@ -76,7 +75,7 @@ class DatabaseConn:
         return auth_key_returned
     def get_user_by_auth_key(self, auth_key: str) ->User:
         user = None
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT * FROM `user_authkey` JOIN users on user_authkey.userID = users.userID WHERE `auth_key` = :authkey AND `expiry` >= now(); "),( { "authkey": auth_key }))
             for row in rs:
                 user = User(row['userID'],row['first_name'],row['last_name'],row['email'],None,row['starting_capital'], row['money_available'])
@@ -91,7 +90,7 @@ class DatabaseConn:
 
     def get_stock_search_results(self) -> list:
         returnlist = []
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT `symbol`, `name` FROM `tradable_values`   "))
             for row in rs:
                 returnlist.append(StockSearchResult(row['symbol'],row['name']))
@@ -105,7 +104,7 @@ class DatabaseConn:
         """
         stockarray = {}
         key = 0
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values`"""))
             for row in rs:
                 stockarray[key] = StockDescription(row['symbol'],row['name'],row['country'],row['logo_url'],row['long_description'], row['industry'], row['dividend'], row['history_loaded'], row['info_loaded'])
@@ -124,7 +123,7 @@ class DatabaseConn:
         """
         stockarray = {}
         key = 0
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
             for row in rs:
                 stockarray[key] = StockDescription(row['symbol'], row['name'], row['country'], row['logo_url'],
@@ -142,7 +141,7 @@ class DatabaseConn:
         """
         stockarray = {}
         key = 0
-        with self.conn as con:
+        with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
             for row in rs:
                 stockarray[key] = StockDescription(row['symbol'],row['name'],row['country'],row['logo_url'],row['long_description'], row['industry'], row['dividend'], row['history_loaded'], row['info_loaded'])
