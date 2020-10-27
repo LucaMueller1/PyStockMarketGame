@@ -1,27 +1,37 @@
 from swagger_server.models.auth_key import AuthKey
 from swagger_server.models.user import User
+from swagger_server.models.stock_search_result import StockSearchResult
+
 from swagger_server.models.stock_description import StockDescription;
 
 
 import sqlalchemy as sqla
 import bcrypt
 import random
+import string
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 class DatabaseConn:
 
     def __init__(self):
-        self.engine = sqla.create_engine('mysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
+        self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
         #self.insert_user("demo@demo.de","test1234")
         #print(self.check_password( "demo@demo.de", "test123"))
         #print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
 
 
-    def insert_user(self, user: User):
-        auth_password = bcrypt.hashpw(User.password.encode('utf8'), bcrypt.gensalt())
+    def insert_user(self, user: User) -> bool:
+        auth_password = bcrypt.hashpw(str(User.password).encode('utf8'), bcrypt.gensalt())
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
+        #print(auth_password.decode('utf8'))
+        except:
+            returned = False
 
-        print(auth_password.decode('utf8'))
+        return returned
 
     def check_password(self, email: str, password: str) -> User:
         user = None
@@ -46,7 +56,7 @@ class DatabaseConn:
     def generate_auth_hash(self, userid: int) -> AuthKey:
         if (userid is None):
             return None
-        auth_key = random.getrandbits(256)
+        auth_key = ''.join((random.choice(string.ascii_letters + string.digits) for i in range(128)))
         expiry = self.util_format_datetime_for_expiry(2)
         with self.engine.connect() as con:
             con.execute(sqla.text("""INSERT INTO `user_authkey` (`userID`, `auth_key`, `expiry`) VALUES (:userid, :authkey, :expiry);"""), ( { "userid": userid, "authkey": auth_key , "expiry": expiry}))
@@ -55,7 +65,7 @@ class DatabaseConn:
     def check_auth_hash(self, auth_key: str) ->AuthKey:
         auth_key_returned = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now()"),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` WHERE `auth_key` = :authkey AND `expiry` >= now();"),( { "authkey": auth_key }))
             for row in rs:
                 userid = row[0]
                 auth_key = row[1]
@@ -66,7 +76,7 @@ class DatabaseConn:
     def get_user_by_auth_key(self, auth_key: str) ->User:
         user = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` JOIN users on user_authkey.userID = users.userID WHERE `auth_key` = :authkey AND `expiry` >= now() "),( { "authkey": auth_key }))
+            rs = con.execute(sqla.text("SELECT * FROM `user_authkey` JOIN users on user_authkey.userID = users.userID WHERE `auth_key` = :authkey AND `expiry` >= now(); "),( { "authkey": auth_key }))
             for row in rs:
                 user = User(row['userID'],row['first_name'],row['last_name'],row['email'],None,row['starting_capital'], row['money_available'])
 
@@ -78,7 +88,13 @@ class DatabaseConn:
         result = result.strftime('%Y-%m-%d %H:%M:%S')
         return result
 
-
+    def get_stock_search_results(self) -> list:
+        returnlist = []
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("SELECT `symbol`, `name` FROM `tradable_values`   "))
+            for row in rs:
+                returnlist.append(StockSearchResult(row['symbol'],row['name']))
+        return returnlist
     def get_all_stocks(self):
         """
         :desc: gets all WKNs in Database
