@@ -19,12 +19,17 @@ class DatabaseConn:
         #print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
 
 
-    def insert_user(self, user: User):
+    def insert_user(self, user: User) -> bool:
         auth_password = bcrypt.hashpw(User.password.encode('utf8'), bcrypt.gensalt())
-        with self.engine.connect() as con:
-            con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
-
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text("""INSERT INTO `users` (`userID`, `first_name`, `last_name`, `email`, `auth_password`, `money_available`, `starting_capital`) VALUES (NULL, :first_name, :last_name, :email, :password, :money_available, :starting_capital);"""), ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email, "password": auth_password.decode('utf8'),"money_available" : user.money_available, "starting_capital": user.starting_capital}))
         #print(auth_password.decode('utf8'))
+        except:
+            returned = False
+
+        return returned
 
     def check_password(self, email: str, password: str) -> User:
         user = None
