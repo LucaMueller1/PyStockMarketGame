@@ -8,23 +8,23 @@ def run(session_state):
 
     local_css("FrontEnd/style.css")
 
-    st.sidebar.header("navigation")
+    st.sidebar.title("navigation")
 
     with st.sidebar.beta_container():
 
-        if st.button("📈 Portfolio"):
+        if st.button("📈 portfolio"):
             session_state.page = "depot"
             st.experimental_rerun()
 
-        if st.button("💸 Börse"):
+        if st.button("💸 buy / sell"):
             session_state.page = "boerse"
             st.experimental_rerun()
 
-        if st.button("🔎 Wertpapier-Suche"):
+        if st.button("🔎 stock search"):
             session_state.page = "stock_info"
             st.experimental_rerun()
 
-    st.sidebar.header("log out")
+    st.sidebar.title("log out")
 
     if st.sidebar.button("bye 👋"):
         session_state.page = "login"

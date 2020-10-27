@@ -10,6 +10,8 @@ import streamlit as st
 
 import SessionState
 
+st.beta_set_page_config(page_title="PyBroker")
+
 hide_streamlit_style = """
 <style>
 #MainMenu {visibility: hidden;}
