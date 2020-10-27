@@ -51,7 +51,7 @@ def run(session_state):
 
 
             # Add Gebuehren to aktienwert
-            endpreis = float(aktienwert) + float(gebuehren)
+            realisierender_kaufwert = str(aktienwert + gebuehren) + "€"
 
 
             # Place price information and "Kaufen" button on the left side
@@ -62,7 +62,7 @@ def run(session_state):
                 st.write("Gebühren:", "", gebuehren)
                 st.write("----------------------")
                 st.subheader("Kaufpreis:")
-                st.header(endpreis)
+                st.title(realisierender_kaufwert)
                 if st.button("Kaufen"):
                     st.write("Du kannst deine gekauften Aktien nun im Depot beobachten.")
                     # This is where the actual buy happens
@@ -74,9 +74,9 @@ def run(session_state):
                     <div class="greyish padding">
                     <h2>Aktieninformationen</h2>
                     <p>Aktienname: <b>Adidas</b></p>
-                    <p>Aktienwert: <b>""" + str(aktienwert) + """<b></p>
+                    <p>Aktienwert: <b>""" + "190" + """<b></p>
                     <p>Dividendenrendite: <b>""" + dividendenrendite + """<b></p>
-                    <img class = "circle_and_center" src = "https://logo.clearbit.com/adidas-group.com">
+                    <img class = "circle_and_center" src = "https://logo.clearbit.com/apple.com">
                     </div>
                     """
                     , unsafe_allow_html=True)
@@ -114,8 +114,8 @@ def run(session_state):
 
                 # Textfeld & Button
                 if input_methode == "Textfeld":
-                    stock_quantity_raw = st.text_input("Oder gib die genaue Anzahl hier ein:")
-                    stock_quantity = 0
+                    stock_quantity_raw = st.text_input("Oder gib die genaue Anzahl hier ein:", value = 1)
+                    stock_quantity = 1
                     if st.button("Bestätigen"):
                         stock_quantity = int(stock_quantity_raw.title())
 
@@ -131,7 +131,7 @@ def run(session_state):
                     , unsafe_allow_html = True)
 
         #Vorbereiten der Seitenaufteilung:
-        col1, col2 = st.beta_columns((4, 1))
+        col1, col2 = st.beta_columns(2)
 
         # Vorbereiten der Variablen (Verkaufspreis, Ordergebühren)
 
@@ -142,7 +142,12 @@ def run(session_state):
         verkaufsgebuehren = 9.90
 
         #Verkaufspreis mit Abzug der Gebuehren:
-        realisierender_verkaufswert = aktienverkaufswert - verkaufsgebuehren
+        realisierender_verkaufswert = str(aktienverkaufswert - verkaufsgebuehren)+"€"
+
+        #Dividendenrendite Standardmässig 0 setzen
+        dividendenrendite2_raw = 0.06
+        dividendenrendite2 = str(dividendenrendite2_raw*100)+"%"
+
 
         # Auflistung Verkaufspreis mit Ordergebühren
         with col1:
@@ -152,7 +157,21 @@ def run(session_state):
             st.write("Gebühren: -", verkaufsgebuehren)
             st.write("----------------------")
             st.subheader("Verkaufswert:")
-            st.header(realisierender_verkaufswert)
+            st.title(realisierender_verkaufswert)
+
+        # Aktieninformationen neben der Verkaufsauflistung anzeigen
+        with col2:
+            st.markdown("""
+                                <div class="greyish padding">
+                                <h2>Aktieninformationen</h2>
+                                <p>Aktienname: <b>Adidas</b></p>
+                                <p>Aktienwert: <b>""" + "190" + """<b></p>
+                                <p>Dividendenrendite: <b>""" + dividendenrendite2 + """<b></p>
+                                <img class = "circle_and_center" src = "https://logo.clearbit.com/adidas-group.com">
+                                </div>
+                                """
+                        , unsafe_allow_html=True)
+
 
 
 run("boerse")
