@@ -22,7 +22,7 @@ class DatabaseConn:
 
 
     def insert_user(self, user: User) -> bool:
-        auth_password = bcrypt.hashpw(str(User.password).encode('utf8'), bcrypt.gensalt())
+        auth_password = bcrypt.hashpw(str(user.password).encode('utf8'), bcrypt.gensalt())
         returned = True
         try:
             with self.engine.connect() as con:
