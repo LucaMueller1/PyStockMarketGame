@@ -34,6 +34,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioPosition"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /portfolio/value:
     get:
       tags:
@@ -52,6 +56,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioValue"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /portfolio/transaction:
     post:
       tags:
@@ -75,6 +83,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Transaction"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /stock:
     get:
       tags:
@@ -93,6 +105,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/StockSearchResult"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /stock/{symbol}/history:
     get:
       tags:
@@ -122,8 +138,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/StockValue"
-        "404":
-          description: "data for stock and period not found"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /stock/{symbol}/description:
     get:
       tags:
@@ -146,8 +164,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/StockDescription"
-        "404":
-          description: "data for stock and period not found"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /user:
     get:
       tags:
@@ -159,9 +179,13 @@ paths:
       - "application/json"
       responses:
         '200':
-          description: The response
+          description: "successful operation"
           schema:
             $ref: '#/definitions/User'
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
     post:
       tags:
       - "user"
@@ -178,8 +202,12 @@ paths:
         schema:
           $ref: "#/definitions/User"
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /user/login:
     post:
       tags:
@@ -200,9 +228,13 @@ paths:
           $ref: "#/definitions/UserPrepareLogin"
       responses:
         '200':
-          description: The response
+          description: "successful operation"
           schema:
             $ref: '#/definitions/AuthKey'
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /user/logout:
     get:
       tags:
@@ -213,12 +245,15 @@ paths:
       security:
       - api_key: []
       produces:
-      - "application/xml"
       - "application/json"
       parameters: []
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /user/{user_id}:
     delete:
       tags:
@@ -238,10 +273,12 @@ paths:
         type: "integer"
         format: "int64"
       responses:
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
+        "200":
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
   /user/settings:
     post:
       tags:
@@ -261,8 +298,12 @@ paths:
         schema:
           $ref: "#/definitions/Settings"
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
     get:
       tags:
       - "user"
@@ -278,8 +319,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Settings"
-        "404":
-          description: "No settings for the logged in user"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
 securityDefinitions:
   api_key:
     type: "apiKey"
@@ -439,15 +482,17 @@ definitions:
       expiry:
         type: "string"
         format: "date-time"
-  ApiResponse:
+  ApiError:
     type: "object"
     properties:
-      code:
+      detail:
+        type: "string"
+      status:
         type: "integer"
         format: "int32"
-      type:
+      title:
         type: "string"
-      message:
+      type:
         type: "string"
 externalDocs:
   description: "Find out more about Swagger"
