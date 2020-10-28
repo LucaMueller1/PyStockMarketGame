@@ -29,7 +29,7 @@ data = [
 
 def run(session_state):
 
-    st.title("Depot")
+    st.title("Portfolio")
     st.write("Hallo Ben Dover")
 
     chart_generator.show_chart()
