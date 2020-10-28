@@ -5,6 +5,7 @@ from datetime import date, datetime  # noqa: F401
 
 from typing import List, Dict  # noqa: F401
 
+from swagger_server.models.stock_value import StockValue
 from swagger_server.models.base_model_ import Model
 from swagger_server import util
 
@@ -15,17 +16,13 @@ class Transaction(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, id: int=None, user_id: int=None, symbol: str=None, stock_value_id: int=None, amount: int=None, transaction_type: str=None, transaction_fee: float=None):  # noqa: E501
+    def __init__(self, id: int=None, stock_value: StockValue=None, amount: int=None, transaction_type: str=None, transaction_fee: float=None):  # noqa: E501
         """Transaction - a model defined in Swagger
 
         :param id: The id of this Transaction.  # noqa: E501
         :type id: int
-        :param user_id: The user_id of this Transaction.  # noqa: E501
-        :type user_id: int
-        :param symbol: The symbol of this Transaction.  # noqa: E501
-        :type symbol: str
-        :param stock_value_id: The stock_value_id of this Transaction.  # noqa: E501
-        :type stock_value_id: int
+        :param stock_value: The stock_value of this Transaction.  # noqa: E501
+        :type stock_value: StockValue
         :param amount: The amount of this Transaction.  # noqa: E501
         :type amount: int
         :param transaction_type: The transaction_type of this Transaction.  # noqa: E501
@@ -35,9 +32,7 @@ class Transaction(Model):
         """
         self.swagger_types = {
             'id': int,
-            'user_id': int,
-            'symbol': str,
-            'stock_value_id': int,
+            'stock_value': StockValue,
             'amount': int,
             'transaction_type': str,
             'transaction_fee': float
@@ -45,18 +40,14 @@ class Transaction(Model):
 
         self.attribute_map = {
             'id': 'id',
-            'user_id': 'userId',
-            'symbol': 'symbol',
-            'stock_value_id': 'stockValueId',
+            'stock_value': 'stockValue',
             'amount': 'amount',
             'transaction_type': 'transactionType',
             'transaction_fee': 'transactionFee'
         }
 
         self._id = id
-        self._user_id = user_id
-        self._symbol = symbol
-        self._stock_value_id = stock_value_id
+        self._stock_value = stock_value
         self._amount = amount
         self._transaction_type = transaction_type
         self._transaction_fee = transaction_fee
@@ -94,67 +85,25 @@ class Transaction(Model):
         self._id = id
 
     @property
-    def user_id(self) -> int:
-        """Gets the user_id of this Transaction.
+    def stock_value(self) -> StockValue:
+        """Gets the stock_value of this Transaction.
 
 
-        :return: The user_id of this Transaction.
-        :rtype: int
+        :return: The stock_value of this Transaction.
+        :rtype: StockValue
         """
-        return self._user_id
+        return self._stock_value
 
-    @user_id.setter
-    def user_id(self, user_id: int):
-        """Sets the user_id of this Transaction.
-
-
-        :param user_id: The user_id of this Transaction.
-        :type user_id: int
-        """
-
-        self._user_id = user_id
-
-    @property
-    def symbol(self) -> str:
-        """Gets the symbol of this Transaction.
+    @stock_value.setter
+    def stock_value(self, stock_value: StockValue):
+        """Sets the stock_value of this Transaction.
 
 
-        :return: The symbol of this Transaction.
-        :rtype: str
-        """
-        return self._symbol
-
-    @symbol.setter
-    def symbol(self, symbol: str):
-        """Sets the symbol of this Transaction.
-
-
-        :param symbol: The symbol of this Transaction.
-        :type symbol: str
+        :param stock_value: The stock_value of this Transaction.
+        :type stock_value: StockValue
         """
 
-        self._symbol = symbol
-
-    @property
-    def stock_value_id(self) -> int:
-        """Gets the stock_value_id of this Transaction.
-
-
-        :return: The stock_value_id of this Transaction.
-        :rtype: int
-        """
-        return self._stock_value_id
-
-    @stock_value_id.setter
-    def stock_value_id(self, stock_value_id: int):
-        """Sets the stock_value_id of this Transaction.
-
-
-        :param stock_value_id: The stock_value_id of this Transaction.
-        :type stock_value_id: int
-        """
-
-        self._stock_value_id = stock_value_id
+        self._stock_value = stock_value
 
     @property
     def amount(self) -> int:

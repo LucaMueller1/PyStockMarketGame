@@ -3,6 +3,7 @@ import pages.login.login_page as login_page
 import pages.login.registration_page as registration_page
 import pages.portfolio.depot_page as depot_page
 import pages.broker.boerse_page as boerse_page
+import pages.broker.boerse_page_sell as boerse_page_sell
 import pages.stock_screener.stock_screener_page as stock_screener_page
 import pages.stock_screener.stock_analysis_page as stock_analysis_page
 
@@ -39,3 +40,6 @@ if session_state.page == "stock_info" and session_state.stock_id is not None:
     stock_analysis_page.run(session_state)
 if session_state.page == "stock_info" and session_state.stock_id is None:
     stock_screener_page.run(session_state)
+# Broker page is divided into boerse and sell page, which is why it is listed as a separate session_state page below
+if session_state.page == "sell":
+    boerse_page_sell.run(session_state)

@@ -138,6 +138,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/StockValue"
+        "404":
+          description: "History for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
         default:
           description: "unexpected error"
           schema:
@@ -164,6 +168,40 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/StockDescription"
+        "404":
+          description: "Description for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
+  /stock/{symbol}/sustainability:
+    get:
+      tags:
+      - "stock"
+      summary: "Get information about the sustainability of given stock"
+      description: "Returns an object that describes the sustainability companies"
+      operationId: "get_stock_sustainability"
+      security:
+      - api_key: []
+      produces:
+      - "application/json"
+      parameters:
+      - name: "symbol"
+        in: "path"
+        description: "Symbol of searched stock"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StockSustainability"
+        "404":
+          description: "Sustainability-information for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
         default:
           description: "unexpected error"
           schema:
@@ -175,10 +213,12 @@ paths:
       summary: "Get user from api_key"
       description: "This can only be done by the logged in user and will return a user object"
       operationId: "get_user"
+      security:
+      - api_key: []
       produces:
       - "application/json"
       responses:
-        '200':
+        "200":
           description: "successful operation"
           schema:
             $ref: '#/definitions/User'
@@ -231,6 +271,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: '#/definitions/AuthKey'
+        "404":
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/ApiError"
         default:
           description: "unexpected error"
           schema:
@@ -335,14 +379,8 @@ definitions:
       id:
         type: "integer"
         format: "int64"
-      userId:
-        type: "integer"
-        format: "int64"
-      symbol:
-        type: "string"
-      stockValueId:
-        type: "integer"
-        format: "int64"
+      stockValue:
+        $ref: "#/definitions/StockValue"
       amount:
         type: "integer"
         format: "int32"
@@ -391,7 +429,7 @@ definitions:
         type: "string"
       stockName:
         type: "string"
-      countryId:
+      country:
         type: "string"
       logoUrl:
         type: "string"
@@ -402,33 +440,40 @@ definitions:
         type: "string"
       dividend:
         type: "string"
-      infoLoaded:
-        type: "boolean"
-      historyLoaded:
-        type: "boolean"
+      marketCap:
+        type: "integer"
+        format: "int64"
+      fiftyTwoWeekLow:
+        type: "number"
+        format: "float"
+      fiftyTwoWeekHigh:
+        type: "number"
+        format: "float"
+      fullTimeEmployees:
+        type: "integer"
+        format: "int32"
+  StockSustainability:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+    additionalProperties:
+      type: "string"
   PortfolioPosition:
     type: "object"
     properties:
       symbol:
         type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
       stockName:
         type: "string"
       amount:
         type: "integer"
         format: "int32"
-      stock_price:
-        type: "number"
-        format: "float"
+      stockValue:
+        $ref: "#/definitions/StockValue"
       stock_buyin_price:
         type: "number"
         format: "float"
-      countryId:
-        type: "string"
-      industry:
-        type: "string"
   PortfolioValue:
     type: "object"
     properties:
@@ -494,6 +539,3 @@ definitions:
         type: "string"
       type:
         type: "string"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"

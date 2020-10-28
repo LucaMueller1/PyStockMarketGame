@@ -1,12 +1,14 @@
 import connexion
 import six
 
+from swagger_server.models.api_error import ApiError  # noqa: E501
 from swagger_server.models.auth_key import AuthKey  # noqa: E501
 from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
+
 
 def create_user(user_param):  # noqa: E501
     """Create user
@@ -103,7 +105,7 @@ def login_user(user_prepare_login_param):  # noqa: E501
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
         print(user)
         if user is None:
-            return 'Not Found', 404
+            return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login")
         auth_key = conn.generate_auth_hash(user.id)
 
     return auth_key
