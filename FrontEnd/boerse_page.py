@@ -1,5 +1,6 @@
 import streamlit as st
 import side_bar
+import requests_server as rs
 
 
 def run(session_state):
@@ -11,6 +12,7 @@ def run(session_state):
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
     local_css("FrontEnd/style.css")
+    rs.get_stock_names(session_state.auth_key)
 
     st.header("Börse")
     st.subheader("Willkommen zur Börse. Hier kannst du Wertpapiere kaufen oder deine vorhandenen Wertpapiere verkaufen.")
