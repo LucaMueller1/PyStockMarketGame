@@ -35,8 +35,8 @@ data = [
 
 def run(session_state):
 
-    st.title("Portfolio")
-    st.write("Hallo Ben Dover")
+    st.title("portfolio")
+    st.header("Hallo " + session_state.first_name + "!")
 
     chart_generator.show_chart()
 

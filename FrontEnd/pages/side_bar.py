@@ -17,11 +17,11 @@ def run(session_state):
             session_state.page = "depot"
             st.experimental_rerun()
 
-        if st.button("💸 buy / sell"):
+        if st.button("💸 broker"):
             session_state.page = "boerse"
             st.experimental_rerun()
 
-        if st.button("🔎 stock search"):
+        if st.button("🔎 stock screener"):
             session_state.page = "stock_info"
             st.experimental_rerun()
 

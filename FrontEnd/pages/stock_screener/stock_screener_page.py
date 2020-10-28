@@ -17,7 +17,7 @@ def run(session_state):
 
     #local_css("FrontEnd/test.css")
 
-    st.title("Stock Screener")
+    st.title("stock screener")
 
     selected = st.selectbox("search by name or ticker:", [""] + session_state.stock_names)
 

@@ -1,5 +1,6 @@
 # PAGE IMPORTS
 import pages.login.login_page as login_page
+import pages.login.registration_page as registration_page
 import pages.portfolio.depot_page as depot_page
 import pages.broker.boerse_page as boerse_page
 import pages.stock_screener.stock_screener_page as stock_screener_page
@@ -24,10 +25,12 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-session_state = SessionState.get(page='login', auth_key='', stock_id=None, stock_names=None)
+session_state = SessionState.get(page='login', auth_key='', stock_id=None, stock_names=None, first_name=None)
 
 if session_state.page == "login":
     login_page.run(session_state)
+if session_state.page == "registration":
+    registration_page.run(session_state)
 if session_state.page == "depot":
     depot_page.run(session_state)
 if session_state.page == "boerse":

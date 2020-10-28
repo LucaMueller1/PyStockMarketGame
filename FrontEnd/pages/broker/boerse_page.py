@@ -15,7 +15,7 @@ def run(session_state):
 
     local_css("FrontEnd/css/style.css")
 
-    st.header("Börse")
+    st.title("broker")
     st.subheader("Willkommen zur Börse. Hier kannst du Wertpapiere kaufen oder deine vorhandenen Wertpapiere verkaufen.")
 
     # switch between BUY and SELL

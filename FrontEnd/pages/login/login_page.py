@@ -4,8 +4,6 @@ import utilities.requests_server as requests_server
 
 # MODULES IMPORTS
 import streamlit as st
-import requests
-
 
 
 def run(session_state):
@@ -13,39 +11,29 @@ def run(session_state):
     4000100 run login page
     """
 
-    login_radio = st.radio("login / register", ["login", "register"])
+    if st.button("↪️ signup"):
+        session_state.page = "registration"
+        st.experimental_rerun()
 
     st.write("-----------")
 
-    if login_radio == "login":
-        user_name_input = st.text_input("user name:")
-        password_input = st.text_input("password:", type="password")
+    user_name_input = st.text_input("e-mail:")
+    password_input = st.text_input("password:", type="password")
 
-        if st.button("login"):
-            #session_state.page = "depot"
-            #st.experimental_rerun()
-            response = requests_server.login(user_name_input, password_input)
+    if st.button("log in"):
+        #session_state.page = "depot"
+        #st.experimental_rerun()
+        response = requests_server.login(user_name_input, password_input)
 
-            if "authKey" in response.json():
-                session_state.auth_key = response.json()["authKey"]
-                response = requests_server.get_stock_names(session_state.auth_key).json()
-                session_state.stock_names = [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in response]
+        if "authKey" in response.json():
+            session_state.auth_key = response.json()["authKey"]
+            session_state.first_name = requests_server.get_first_name(session_state.auth_key)
+            response = requests_server.get_stock_names(session_state.auth_key).json()
+            session_state.stock_names = [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in response]
 
-                session_state.page = "depot"
-                st.experimental_rerun()
-            else:
-                st.write("username and/or password were not found.")
+            session_state.page = "depot"
+            st.experimental_rerun()
+        else:
+            st.warning("you entered invalid credentials")
 
-    if login_radio == "register":
-        first_name = st.text_input("input first name:")
-        name = st.text_input("input name:")
-        mail = st.text_input("input e-mail:")
-        password = st.text_input("input password:", type="password")
-        st.write("-----------")
-        starting_capital = st.number_input("how much USD$ do you want to start with? (start capital)", value=0)
-        sure_bool = st.checkbox("yes, I'm sure that I want to create an account!")
-        if st.button("register account"):
-            if sure_bool:
-                requests_server.register(first_name=first_name, name=name, mail=mail, password=password, start_capital=starting_capital)
-                login_radio = "login"
-                st.experimental_rerun()
+    st.write("-----------")

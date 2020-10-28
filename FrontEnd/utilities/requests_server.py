@@ -18,6 +18,9 @@ def register(first_name: str, name: str, mail: str, password: str, start_capital
 
         return requests.post(BASE_URL + "user", json=json)
 
+def get_first_name(auth_key: str) -> str:
+        return requests.get(BASE_URL + "user", headers={"api_key":auth_key}).json()["firstName"]
+
 def get_stock_names(auth_key: str) -> requests.Response:
         return requests.get(BASE_URL + "stock", headers={"api_key":auth_key})
 
