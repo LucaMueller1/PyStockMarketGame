@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from flask import json
 from six import BytesIO
 
+from swagger_server.models.api_error import ApiError  # noqa: E501
 from swagger_server.models.portfolio_position import PortfolioPosition  # noqa: E501
 from swagger_server.models.portfolio_value import PortfolioValue  # noqa: E501
 from swagger_server.models.transaction import Transaction  # noqa: E501

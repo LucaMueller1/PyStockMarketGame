@@ -34,6 +34,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioPosition"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
@@ -54,6 +58,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/PortfolioValue"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
@@ -78,6 +86,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Transaction"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.portfolio_controller"
@@ -98,6 +110,10 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/StockSearchResult"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
@@ -129,7 +145,13 @@ paths:
             items:
               $ref: "#/definitions/StockValue"
         "404":
-          description: "data for stock and period not found"
+          description: "History for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
@@ -154,7 +176,44 @@ paths:
           schema:
             $ref: "#/definitions/StockDescription"
         "404":
-          description: "data for stock and period not found"
+          description: "Description for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
+      security:
+      - api_key: []
+      x-swagger-router-controller: "swagger_server.controllers.stock_controller"
+  /stock/{symbol}/sustainability:
+    get:
+      tags:
+      - "stock"
+      summary: "Get information about the sustainability of given stock"
+      description: "Returns an object that describes the sustainability companies"
+      operationId: "get_stock_sustainability"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "symbol"
+        in: "path"
+        description: "Symbol of searched stock"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StockSustainability"
+        "404":
+          description: "Sustainability-information for given stock not found"
+          schema:
+            $ref: "#/definitions/ApiError"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.stock_controller"
@@ -171,9 +230,13 @@ paths:
       parameters: []
       responses:
         "200":
-          description: "The response"
+          description: "successful operation"
           schema:
             $ref: "#/definitions/User"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
@@ -193,8 +256,12 @@ paths:
         schema:
           $ref: "#/definitions/User"
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/login:
     post:
@@ -216,9 +283,17 @@ paths:
           $ref: "#/definitions/UserPrepareLogin"
       responses:
         "200":
-          description: "The response"
+          description: "successful operation"
           schema:
             $ref: "#/definitions/AuthKey"
+        "404":
+          description: "User not found"
+          schema:
+            $ref: "#/definitions/ApiError"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/logout:
     get:
@@ -228,12 +303,15 @@ paths:
       description: ""
       operationId: "logout_user"
       produces:
-      - "application/xml"
       - "application/json"
       parameters: []
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
@@ -254,10 +332,12 @@ paths:
         type: "integer"
         format: "int64"
       responses:
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
+        "200":
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
@@ -276,8 +356,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Settings"
-        "404":
-          description: "No settings for the logged in user"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
@@ -297,8 +379,12 @@ paths:
         schema:
           $ref: "#/definitions/Settings"
       responses:
-        default:
+        "200":
           description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
       security:
       - api_key: []
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
@@ -315,14 +401,8 @@ definitions:
       id:
         type: "integer"
         format: "int64"
-      userId:
-        type: "integer"
-        format: "int64"
-      symbol:
-        type: "string"
-      stockValueId:
-        type: "integer"
-        format: "int64"
+      stockValue:
+        $ref: "#/definitions/StockValue"
       amount:
         type: "integer"
         format: "int32"
@@ -335,13 +415,15 @@ definitions:
         type: "number"
         format: "float"
     example:
+      stockValue:
+        symbol: "symbol"
+        stock_price: 1.4658129
+        id: 6
+        timestamp: "2000-01-23T04:56:07.000+00:00"
       transactionType: "buy"
-      symbol: "symbol"
-      amount: 5
-      transactionFee: 5.637377
-      stockValueId: 1
+      amount: 6
+      transactionFee: 1.4658129
       id: 0
-      userId: 6
   TransactionPrepare:
     type: "object"
     properties:
@@ -381,8 +463,8 @@ definitions:
         format: "date-time"
     example:
       symbol: "symbol"
-      stock_price: 6.0274563
-      id: 0
+      stock_price: 1.4658129
+      id: 6
       timestamp: "2000-01-23T04:56:07.000+00:00"
   StockDescription:
     type: "object"
@@ -391,7 +473,7 @@ definitions:
         type: "string"
       stockName:
         type: "string"
-      countryId:
+      country:
         type: "string"
       logoUrl:
         type: "string"
@@ -402,52 +484,64 @@ definitions:
         type: "string"
       dividend:
         type: "string"
-      infoLoaded:
-        type: "boolean"
-      historyLoaded:
-        type: "boolean"
+      marketCap:
+        type: "integer"
+        format: "int64"
+      fiftyTwoWeekLow:
+        type: "number"
+        format: "float"
+      fiftyTwoWeekHigh:
+        type: "number"
+        format: "float"
+      fullTimeEmployees:
+        type: "integer"
+        format: "int32"
     example:
       longDescription: "longDescription"
-      historyLoaded: true
       symbol: "symbol"
+      country: "country"
+      marketCap: 0
+      fullTimeEmployees: 5
       stockName: "stockName"
       dividend: "dividend"
       industry: "industry"
-      countryId: "countryId"
+      fiftyTwoWeekHigh: 1.4658129
       logoUrl: "http://example.com/aeiou"
-      infoLoaded: true
+      fiftyTwoWeekLow: 6.0274563
+  StockSustainability:
+    type: "object"
+    properties:
+      symbol:
+        type: "string"
+    example:
+      symbol: "symbol"
+    additionalProperties:
+      type: "string"
   PortfolioPosition:
     type: "object"
     properties:
       symbol:
         type: "string"
-      logoUrl:
-        type: "string"
-        format: "uri"
       stockName:
         type: "string"
       amount:
         type: "integer"
         format: "int32"
-      stock_price:
-        type: "number"
-        format: "float"
+      stockValue:
+        $ref: "#/definitions/StockValue"
       stock_buyin_price:
         type: "number"
         format: "float"
-      countryId:
-        type: "string"
-      industry:
-        type: "string"
     example:
+      stockValue:
+        symbol: "symbol"
+        stock_price: 1.4658129
+        id: 6
+        timestamp: "2000-01-23T04:56:07.000+00:00"
       symbol: "symbol"
       amount: 0
       stockName: "stockName"
-      stock_buyin_price: 1.4658129
-      stock_price: 6.0274563
-      industry: "industry"
-      logoUrl: "http://example.com/aeiou"
-      countryId: "countryId"
+      stock_buyin_price: 5.962134
   PortfolioValue:
     type: "object"
     properties:
@@ -521,16 +615,15 @@ definitions:
       authKey: "authKey"
       expiry: "2000-01-23T04:56:07.000+00:00"
       userId: 0
-  ApiResponse:
+  ApiError:
     type: "object"
     properties:
-      code:
+      detail:
+        type: "string"
+      status:
         type: "integer"
         format: "int32"
+      title:
+        type: "string"
       type:
         type: "string"
-      message:
-        type: "string"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
