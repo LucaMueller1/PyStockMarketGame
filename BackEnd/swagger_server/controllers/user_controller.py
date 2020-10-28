@@ -105,7 +105,7 @@ def login_user(user_prepare_login_param):  # noqa: E501
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
         print(user)
         if user is None:
-            return 'Not Found', 404
+            return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login")
         auth_key = conn.generate_auth_hash(user.id)
 
     return auth_key

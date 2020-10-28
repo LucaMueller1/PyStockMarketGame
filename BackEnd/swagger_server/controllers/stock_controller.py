@@ -20,7 +20,7 @@ def get_stock_description(symbol):  # noqa: E501
 
     :rtype: StockDescription
     """
-    return 'do some magic!'
+    return ApiError(detail="Description for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/description"))
 
 
 def get_stock_history(symbol, period):  # noqa: E501
@@ -35,7 +35,7 @@ def get_stock_history(symbol, period):  # noqa: E501
 
     :rtype: List[StockValue]
     """
-    return 'do some magic!'
+    return ApiError(detail="History for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/history"))
 
 
 def get_stock_sustainability(symbol):  # noqa: E501
@@ -48,7 +48,7 @@ def get_stock_sustainability(symbol):  # noqa: E501
 
     :rtype: StockSustainability
     """
-    return 'do some magic!'
+    return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/sustainability"))
 
 
 def get_stocks():  # noqa: E501
