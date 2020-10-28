@@ -1,3 +1,4 @@
+# MODULE IMPORTS
 import streamlit as st
 
 def local_css(file_name):
@@ -6,7 +7,7 @@ def local_css(file_name):
 
 def run(session_state):
 
-    local_css("FrontEnd/style.css")
+    local_css("FrontEnd/css/style.css")
 
     st.sidebar.title("navigation")
 

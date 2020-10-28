@@ -1,7 +1,11 @@
+# UTILITIES IMPORTS
+import utilities.SessionState as SessionState
+import utilities.requests_server as requests_server
+
+# MODULES IMPORTS
 import streamlit as st
-import SessionState
 import requests
-import requests_server
+
 
 
 def run(session_state):

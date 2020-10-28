@@ -1,7 +1,11 @@
-import streamlit as st
-import side_bar
+# PAGE IMPORTS
+import pages.side_bar as side_bar
 
-import chart_generator
+# UTILITIES IMPORTS
+import utilities.chart_generator as chart_generator
+
+# MODULES IMPORTS
+import streamlit as st
 
 
 def run(session_state):

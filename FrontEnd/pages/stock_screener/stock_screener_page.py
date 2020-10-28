@@ -1,7 +1,12 @@
+# PAGE IMPORTS
+import pages.side_bar as side_bar
+
+# UTILITIES IMPORTS
+import utilities.chart_generator as chart_generator
+import utilities.requests_server as requests_server
+
+# MODULES IMPORTS
 import streamlit as st
-import side_bar
-import stock_analysis_page
-import requests_server
 import re
 
 def local_css(file_name):
@@ -20,5 +25,5 @@ def run(session_state):
         session_state.page = "stock_info"
         session_state.stock_id = re.sub(pattern=".*: ", string=selected, repl="")
         st.experimental_rerun()
-    
+
     side_bar.run(session_state)

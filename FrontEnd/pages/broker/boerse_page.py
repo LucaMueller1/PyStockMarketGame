@@ -1,5 +1,8 @@
+# PAGE IMPORTS
+import pages.side_bar as side_bar
+
+# MODULES IMPORTS
 import streamlit as st
-import side_bar
 
 
 def run(session_state):
@@ -10,7 +13,7 @@ def run(session_state):
         with open(file_name) as f:
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
-    local_css("FrontEnd/style.css")
+    local_css("FrontEnd/css/style.css")
 
     st.header("Börse")
     st.subheader("Willkommen zur Börse. Hier kannst du Wertpapiere kaufen oder deine vorhandenen Wertpapiere verkaufen.")

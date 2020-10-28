@@ -1,9 +1,15 @@
-import streamlit as st
-from html_table_generator import PortfolioTable
-import side_bar
-import chart_generator
-import requests_server
+# PAGE IMPORTS
+import pages.side_bar as side_bar
 
+# UTILITIES IMPORTS
+from utilities.html_table_generator import PortfolioTable as PortfolioTable
+import utilities.chart_generator as chart_generator
+import utilities.requests_server as requests_server
+
+# MODULES IMPORTS
+import streamlit as st
+
+# DUMMY DATA
 data = [
   {
     "symbol": "AAA",

@@ -1,14 +1,17 @@
-import login_page
-import depot_page
-import boerse_page
-import stock_screener_page
-import stock_analysis_page
+# PAGE IMPORTS
+import pages.login.login_page as login_page
+import pages.portfolio.depot_page as depot_page
+import pages.broker.boerse_page as boerse_page
+import pages.stock_screener.stock_screener_page as stock_screener_page
+import pages.stock_screener.stock_analysis_page as stock_analysis_page
 
-import requests_server
+# UTILITIES IMPORTS
+import utilities.requests_server as requests_server
+import utilities.SessionState as SessionState
 
+# MODULES IMPORTS
 import streamlit as st
 
-import SessionState
 
 st.beta_set_page_config(page_title="PyBroker")
 
