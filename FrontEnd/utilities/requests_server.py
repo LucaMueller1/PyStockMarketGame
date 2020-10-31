@@ -24,3 +24,11 @@ def get_first_name(auth_key: str) -> str:
 def get_stock_names(auth_key: str) -> requests.Response:
         return requests.get(BASE_URL + "stock", headers={"api_key":auth_key})
 
+def post_transaction(auth_key: str, symbol: str, amount : int, transactionType : str):
+        json = {'symbol': symbol,
+                "amount": amount,
+                "transactionType": transactionType }
+
+        return requests.post(BASE_URL + "portfolio/transaction", headers={"api_key":auth_key}, json = json)
+
+

@@ -11,3 +11,5 @@ def run(session_state):
 
     # Slider for setting the transaction fee (step size = 0.5)
     transaction_fee = st.slider("Gebühren:", 1.0, 30.0, step = 0.5)
+
+
