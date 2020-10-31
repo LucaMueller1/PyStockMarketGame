@@ -20,16 +20,16 @@ def create_user(user_param):  # noqa: E501
 
     :rtype: None
     """
+    insertion = False
     if connexion.request.is_json:
         user_param = User.from_dict(connexion.request.get_json())  # noqa: E501
         user_param.money_available = user_param.starting_capital
         insertion = staticglobaldb.dbconn.insert_user(user_param)
-        if insertion:
-            return 'OK', 200
-        else:
-            return 'Bad Request', 400
 
-    return 'Unsupported Media Type', 415
+    if insertion:
+        return 'OK', 200
+    else:
+        return ApiError(detail="Failed to create user", status=400, title="Bad Request", type="/user")
 
 
 def create_user_settings(settings_param):  # noqa: E501
@@ -71,7 +71,7 @@ def get_user():  # noqa: E501
     api_key = connexion.request.headers['api_key']
     print(api_key)
     if api_key is None:
-        return 'Unauthorized', 401
+        return ApiError(detail="No user authorized for given api_key", status=401, title="Unauthorized", type="/user")
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
 
     return user

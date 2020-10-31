@@ -532,10 +532,14 @@ definitions:
     properties:
       detail:
         type: "string"
+        example: "Object not found"
       status:
         type: "integer"
         format: "int32"
+        example: 404
       title:
         type: "string"
+        example: "Not Found"
       type:
         type: "string"
+        example: "/path/operation"

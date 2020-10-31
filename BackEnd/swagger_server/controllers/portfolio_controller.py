@@ -7,6 +7,7 @@ from swagger_server.models.portfolio_value import PortfolioValue  # noqa: E501
 from swagger_server.models.transaction import Transaction  # noqa: E501
 from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa: E501
 from swagger_server import util
+from swagger_server.controllers import staticglobaldb
 
 
 def create_transaction(transaction_prepare_param):  # noqa: E501
@@ -21,7 +22,11 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     """
     if connexion.request.is_json:
         transaction_prepare_param = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        api_key = connexion.request.headers['api_key']
+        user = staticglobaldb.get_user_by_auth_key(api_key)  # will never return None because user is authorized
+        transaction = staticglobaldb.insert_transaction(transaction_prepare_param, user)
+        return transaction
+    return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
 
 
 def get_portfolio():  # noqa: E501
