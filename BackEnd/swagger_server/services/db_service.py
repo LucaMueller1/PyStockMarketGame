@@ -3,6 +3,7 @@ from swagger_server.models.user import User
 from swagger_server.models.stock_search_result import StockSearchResult
 from swagger_server.models.transaction import Transaction
 from swagger_server.models.transaction_prepare import TransactionPrepare
+from swagger_server.models.stock_value import StockValue
 
 
 from swagger_server.models.stock_description import StockDescription;
@@ -152,7 +153,7 @@ class DatabaseConn:
                              ({"symbol": transaction.symbol, "userid" : user.id, "amount" : transaction.amount, "buysell" : transaction.transaction_type, "transaction_fee" : 10}))
             rs = con.execute(sqla.text("""SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id WHERE `user_id` = :userid ORDER BY `transaction_id` DESC LIMIT 1  """), ({ "userid" : user.id }))
             for row in rs:
-                returned = Transaction(id=row['transaction_id'], stock_value=row['market_value'], amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
+                returned = Transaction(id=row['transaction_id'], stock_value= StockValue(id=row['course_id'],symbol=row['symbol'],stock_price=row['market_value'], timestamp=row['timestamp']), amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
 
 
         return returned
