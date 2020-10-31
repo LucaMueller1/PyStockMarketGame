@@ -148,10 +148,11 @@ class DatabaseConn:
     def insert_transaction(self, transaction: TransactionPrepare, user: User) -> Transaction:
         returned= None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, :transaction_fee); """),
+            con.execute(sqla.text("""INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, :transaction_fee); """),
                              ({"symbol": transaction.symbol, "userid" : user.id, "amount" : transaction.amount, "buysell" : transaction.transaction_type, "transaction_fee" : 10}))
-           # for row in rs:
-               # returned = StockDescription(symbol=row['symbol'], stock_name=row['name'], logo_url=row['logo_url'])
+            rs = con.execute(sqla.text("""SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id WHERE `user_id` = :userid ORDER BY `transaction_id` DESC LIMIT 1  """), ({ "userid" : user.id }))
+            for row in rs:
+                returned = Transaction(id=row['transaction_id'], stock_value=row['market_value'], amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
 
 
         return returned
