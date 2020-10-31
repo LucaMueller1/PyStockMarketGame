@@ -6,7 +6,7 @@ import streamlit as st
 def run(session_state):
 
     side_bar.run(session_state)
-    #Load CSS File for Formatting
+    # Load CSS File for Formatting
     def local_css(file_name):
         with open(file_name) as f:
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)

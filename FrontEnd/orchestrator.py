@@ -6,6 +6,7 @@ import pages.broker.boerse_page as boerse_page
 import pages.broker.boerse_page_sell as boerse_page_sell
 import pages.stock_screener.stock_screener_page as stock_screener_page
 import pages.stock_screener.stock_analysis_page as stock_analysis_page
+import pages.about_settings.about_page as about_page
 
 # UTILITIES IMPORTS
 import utilities.requests_server as requests_server
@@ -43,3 +44,5 @@ if session_state.page == "stock_info" and session_state.stock_id is None:
 # Broker page is divided into boerse and sell page, which is why it is listed as a separate session_state page below
 if session_state.page == "sell":
     boerse_page_sell.run(session_state)
+if session_state.page == "about":
+    about_page.run(session_state)
