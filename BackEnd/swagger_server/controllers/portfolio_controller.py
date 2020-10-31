@@ -23,8 +23,8 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     if connexion.request.is_json:
         transaction_prepare_param = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
         api_key = connexion.request.headers['api_key']
-        user = staticglobaldb.get_user_by_auth_key(api_key)  # will never return None because user is authorized
-        transaction = staticglobaldb.insert_transaction(transaction_prepare_param, user)
+        user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user is authorized
+        transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
         return transaction
     return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
 
