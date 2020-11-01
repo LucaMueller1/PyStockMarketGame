@@ -1,12 +1,16 @@
 # PAGE IMPORTS
 import pages.side_bar as side_bar
 import streamlit as st
+from time import sleep
+
+# Utilities IMPORTS
+import utilities.requests_server as requests_server
 
 
 def run(session_state):
 
     side_bar.run(session_state)
-    #Load CSS File for Formatting
+    # Load CSS File for Formatting
     def local_css(file_name):
         with open(file_name) as f:
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
@@ -20,6 +24,7 @@ def run(session_state):
     mode_switch = st.radio("Bitte wähle aus, ob du Werpapiere kaufen oder verkaufen möchtest", ("Kaufen", "Verkaufen"))
 
     if mode_switch == "Kaufen":
+        mode = "buy"
         test_array = []
         if session_state.stock_id:
             test_array.append(session_state.stock_id)
@@ -28,61 +33,79 @@ def run(session_state):
         # Get the WKN from the User
         st.write("Gib hier eine Wertpapier Kennnummer (WKN) ein, sowie die Anzahl der zu kaufenden Aktien")
         wkn_user_eingabe = st.selectbox("WKN:", test_array + session_state.stock_names)
+        # Split dat shit
+        if wkn_user_eingabe != "":
+            wkn_user_eingabe_uebergabe = wkn_user_eingabe.split(": ")[1]
 
-        if wkn_user_eingabe == " ":
-            st.error("Please choose a WKN")
-        # Get the quantity from user
-        wkn_anzahl_user = st.text_input("Anzahl:")
+            if wkn_user_eingabe == " ":
+                st.error("Please choose a WKN")
+            # Get the quantity from user
+            wkn_anzahl_user = st.number_input("Anzahl:", step = 1.0)
 
-        # If button is clicked --> Entry submitted
-        if st.button("Eingabe bestätigen"):
-            wkn_anzahl_user_eingabe = wkn_user_eingabe.title()
-            st.success("Success")
+            # If button is clicked --> Entry submitted
 
-            # We are only defining the layout here in order to split the page into two parts.
-            # The lefthand part will be filled with the total amount and the "Kaufen" button
-            # Righthand part will be filled with Aktieninfos (Aktienname, Aktienwert, Dividendenrendite, Symbol)
-            col1, col2 = st.beta_columns(2)
+            if st.button("Eingabe bestaetigen"):
+                session_state.buy_redirect = True
 
-            # Aktienwert is calculated by 190 (later changed to chosen Stock from wkn_user_eingabe) times the amount chosen by user
-            aktienwert = 190 * int(wkn_anzahl_user)
+            if session_state.buy_redirect:
+                wkn_anzahl_user_eingabe = int(wkn_anzahl_user)
+                st.success("Success")
 
-            # Gebuehren is static for now, but will later be fetched from database
-            gebuehren = 9.90
+                # We are only defining the layout here in order to split the page into two parts.
+                # The lefthand part will be filled with the total amount and the "Kaufen" button
+                # Righthand part will be filled with Aktieninfos (Aktienname, Aktienwert, Dividendenrendite, Symbol)
+                col1, col2 = st.beta_columns(2)
 
-            # Dividendenrendite is static for now, but will later be fetched from database
-            dividendenrendite_raw = 0.06
-            dividendenrendite = str(dividendenrendite_raw * 100) + "%"
+                # Aktienwert is calculated by 190 (later changed to chosen Stock from wkn_user_eingabe) times the amount chosen by user
+                aktienwert = 190 * int(wkn_anzahl_user)
 
-            # Add Gebuehren to aktienwert
-            realisierender_kaufwert = str(aktienwert + gebuehren) + "€"
+                # Gebuehren is static for now, but will later be fetched from database
+                gebuehren = 9.90
 
-            # Place price information and "Kaufen" button on the left side
-            with col1:
-                st.subheader("Verkaufsübersicht")
-                st.write("----------------------")
-                st.write("Aktienkaufpreis:", aktienwert)
-                st.write("Gebühren:", "", gebuehren)
-                st.write("----------------------")
-                st.subheader("Kaufpreis:")
-                st.title(realisierender_kaufwert)
-                if st.button("Kaufen"):
-                    st.write("Du kannst deine gekauften Aktien nun im Depot beobachten.")
-                    # This is where the actual buy happens
-                    # Once connected to BE: Get Price of chosen stock & fee --> Calculate end price
+                # Dividendenrendite is static for now, but will later be fetched from database
+                dividendenrendite_raw = 0.06
+                dividendenrendite = str(dividendenrendite_raw * 100) + "%"
 
-            # Place Stock information on the right side
-            with col2:
-                st.markdown("""
-                                <div class="greyish padding">
-                                <h2>Aktieninformationen</h2>
-                                <p>Aktienname: <b>Adidas</b></p>
-                                <p>Aktienwert: <b>""" + "190" + """<b></p>
-                                <p>Dividendenrendite: <b>""" + dividendenrendite + """<b></p>
-                                <img class = "circle_and_center" src = "https://logo.clearbit.com/apple.com">
-                                </div>
-                                """
-                            , unsafe_allow_html=True)
+                # Add Gebuehren to aktienwert
+                realisierender_kaufwert = str(aktienwert + gebuehren) + "€"
+
+                # Place price information and "Kaufen" button on the left side
+                with col1:
+                    st.subheader("Verkaufsübersicht")
+                    st.write("----------------------")
+                    st.write("Aktienkaufpreis:", aktienwert)
+                    st.write("Gebühren:", "", gebuehren)
+                    st.write("----------------------")
+                    st.subheader("Kaufpreis:")
+                    st.title(realisierender_kaufwert)
+
+                    if st.button("Buy"):
+                        # send post request to DB
+                        response = requests_server.post_transaction(session_state.auth_key, wkn_user_eingabe_uebergabe,
+                                                                        wkn_anzahl_user_eingabe, transactionType="buy")
+
+                        st.write("Du kannst deine gekauften Aktien nun im Depot beobachten.")
+                        sleep(2)
+
+                        session_state.buy_redirect = False
+                        st.experimental_rerun()
+
+                        # This is where the actual buy happens
+                        # Once connected to BE: Get Price of chosen stock & fee --> Calculate end price
+
+
+                # Place Stock information on the right side
+                with col2:
+                    st.markdown("""
+                                    <div class="greyish padding">
+                                    <h2>Aktieninformationen</h2>
+                                    <p>Aktienname: <b>Adidas</b></p>
+                                    <p>Aktienwert: <b>""" + "190" + """<b></p>
+                                    <p>Dividendenrendite: <b>""" + dividendenrendite + """<b></p>
+                                    <img class = "circle_and_center" src = "https://logo.clearbit.com/apple.com">
+                                    </div>
+                                    """
+                                , unsafe_allow_html=True)
 
 
     elif mode_switch == "Verkaufen":

@@ -25,6 +25,10 @@ def run(session_state):
             session_state.page = "stock_info"
             st.experimental_rerun()
 
+        if st.button("⚙ settings️"):
+            session_state.page = "about"
+            st.experimental_rerun()
+
     st.sidebar.title("log out")
 
     if st.sidebar.button("bye 👋"):
