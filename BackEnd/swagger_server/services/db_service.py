@@ -157,6 +157,19 @@ class DatabaseConn:
 
 
         return returned
+
+    def get_transactions_and_stock_by_user(self, user: User) -> dict:
+        returned = []
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id JOIN tradable_values ON transactions.symbol = tradable_values.symbol WHERE `user_id` = :userid """), ({ "userid" : user.id }))
+            for row in rs:
+                transaction = Transaction(id=row['transaction_id'], stock_value= StockValue(id=row['course_id'],symbol=row['symbol'],stock_price=row['market_value'], timestamp=row['timestamp']), amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
+                stocksearchresult = StockSearchResult(symbol=row['symbol'],stock_name=row['name'])
+                returned.append((transaction,stocksearchresult))
+
+        return returned
+
+
     def update_stock(self, stock_description: StockDescription):
         """
         :desc: gets all WKNs in Database

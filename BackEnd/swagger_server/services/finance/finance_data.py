@@ -2,10 +2,14 @@ import yfinance as yf
 import pandas as pd
 import xlrd
 import sqlalchemy as sqla
-"""
+from swagger_server.models.user import User
+from swagger_server.models.stock_search_result import StockSearchResult
+from swagger_server.controllers import staticglobaldb
 
 """
 
+"""
+print(staticglobaldb.dbconn.get_transactions_and_stock_by_user(User(id=3)))
 stocks = (
 "ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "CON.DE", "1COV.DE", "DAI.DE", "DHER.DE", "DKB.DE",
 "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE",
@@ -35,7 +39,4 @@ def get_stock_history_from_yfinance(symbol: str):
 
 
 def __init__(self):
-    self.engine = sqla.create_engine('mysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker', echo=True)
-
-
-get_tradable_values()
+    return
