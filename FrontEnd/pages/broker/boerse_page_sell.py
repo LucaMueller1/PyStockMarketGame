@@ -96,6 +96,11 @@ def run(session_state):
             st.subheader("Verkaufswert:")
             st.title(realisierender_verkaufswert)
 
+            #Sell button
+            if st.button("Verkaufen"):
+                st.subheader("Verkauft")
+
+
         # Aktieninformationen neben der Verkaufsauflistung anzeigen
         with col2:
             st.markdown("""
