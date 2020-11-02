@@ -115,25 +115,18 @@ class DatabaseConn:
                 returnlist.append(StockSearchResult(row['symbol'], row['name']))
         return returnlist
 
-    def get_all_stocks(self):
-        """
-        :desc: gets all WKNs in Database
-        :author: Jannik Sinz
-        :return: Resultset
-        :test:
-        """
-        stockarray = {}
-        key = 0
+    def get_all_stocks(self) -> list:
+        stockarray = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values`"""))
             for row in rs:
-                stockarray[key] = StockDescription(symbol=row['symbol'], stock_name=row['name'],
-                                                   logo_url=row['logo_url'])
-                ++key
+                stockarray.append(StockDescription(symbol=row['symbol'], stock_name=row['name'],
+                                                   logo_url=row['logo_url']))
 
         return stockarray
 
         return rs
+
 
     def get_stock_by_symbol(self, symbol: str) -> StockDescription:
         returned = None
@@ -171,39 +164,17 @@ class DatabaseConn:
 
 
     def update_stock(self, stock_description: StockDescription):
-        """
-        :desc: gets all WKNs in Database
-        :author: Daniel Ebert
-        :return: Resultset
-        :test:
-        """
-        stockarray = {}
+
+        returned = False
         key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
-            for row in rs:
-                stockarray[key] = StockDescription(row['symbol'], row['name'], row['country'], row['logo_url'],
-                                                   row['long_description'], row['industry'], row['dividend'],
-                                                   row['history_loaded'], row['info_loaded'])
-                ++key
-
-        return stockarray
-
-    def get_all_stocks_with_info_missing(self):
-        """
-        :desc: gets all WKNs in Database
-        :author: Daniel Ebert
-        :return: Resultset
-        :test:
-        """
-        stockarray = {}
+            rs = con.execute(sqla.text("""UPDATE `tradable_values` SET `symbol` = :symbol, `name` = :name, `logo_url` = :logourl WHERE `tradable_values`.`symbol` = :symbol; """),({"symbol" : stock_description.symbol, "logourl" : stock_description.logo_url, "name" : stock_description.stock_name}) )
+            returned = True
+        return returned
+    def insert_course(self, stock_value: StockValue):
+        returned = False
         key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `info_loaded` = 0"""))
-            for row in rs:
-                stockarray[key] = StockDescription(row['symbol'], row['name'], row['country'], row['logo_url'],
-                                                   row['long_description'], row['industry'], row['dividend'],
-                                                   row['history_loaded'], row['info_loaded'])
-                ++key
-
-        return stockarray
+            rs = con.execute(sqla.text("""INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),({"symbol" : stock_value.symbol, "marketprice" : stock_value.stock_price, "timestamp" : stock_value.timestamp}))
+            returned = True
+        return returned
