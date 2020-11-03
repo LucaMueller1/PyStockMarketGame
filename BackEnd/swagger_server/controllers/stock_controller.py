@@ -44,11 +44,10 @@ def get_stock_history(symbol, period):  # noqa: E501
     :test 1mom returns ApiError, 7d returns list of stock_values
     """
     if not re.match("^\\d+(d$)|^\\d+(mo$)|^\\d+(y$)|^ytd$|^max$", period):
-        return ApiError(detail="Given period not matching pattern", status=418, title="I'm a teapot",
+        return ApiError(detail="Given period not matching pattern", status=404, title="Not Found",
                         type=("/stock/" + symbol + "/history"))
-    finance_data.get_stock_history_from_yfinance(symbol, period)
 
-    stock_value_list = list()
+    stock_value_list = finance_data.get_stock_history_from_yfinance(symbol, period)
 
     if stock_value_list is None:
         return ApiError(detail="History for given stock not found", status=404, title="Not Found",

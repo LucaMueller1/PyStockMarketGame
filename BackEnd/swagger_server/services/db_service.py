@@ -175,12 +175,10 @@ class DatabaseConn:
         return returned
 
     def update_settings_by_user(self, user: User, settings: Settings): # Static for Transaction Fee, caution!!
-        returned = False
+        returned = True
         transaction_fee = settings.transaction_fee
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""UPDATE `user_settings` SET `value` = :newval WHERE (`user_settings`.`userid` = :userid) AND (`user_settings`.`user_setting` = :settingidentifier)   """), ({ "userid" : user.id , "newval": transaction_fee, "settingidentifier" : "transaction_fee"}))
-            for row in rs:
-                returned = True
 
 
         return returned
