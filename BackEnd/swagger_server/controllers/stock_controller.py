@@ -8,6 +8,7 @@ from swagger_server.models.stock_sustainability import StockSustainability  # no
 from swagger_server.models.stock_value import StockValue  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
+from swagger_server.services.finance import finance_data
 
 
 def get_stock_description(symbol):  # noqa: E501
@@ -20,7 +21,12 @@ def get_stock_description(symbol):  # noqa: E501
 
     :rtype: StockDescription
     """
-    return ApiError(detail="Description for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/description"))
+    description = finance_data.get_stock_info_from_yfinance(symbol)
+    if description is None:
+        return ApiError(detail="Description for given stock not found", status=404, title="Not Found",
+                        type=("/stock/" + symbol + "/description"))
+
+    return description
 
 
 def get_stock_history(symbol, period):  # noqa: E501
@@ -35,7 +41,8 @@ def get_stock_history(symbol, period):  # noqa: E501
 
     :rtype: List[StockValue]
     """
-    return ApiError(detail="History for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/history"))
+    return ApiError(detail="History for given stock not found", status=404, title="Not Found",
+                    type=("/stock/" + symbol + "/history"))
 
 
 def get_stock_sustainability(symbol):  # noqa: E501
@@ -48,7 +55,8 @@ def get_stock_sustainability(symbol):  # noqa: E501
 
     :rtype: StockSustainability
     """
-    return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found", type=("/stock/"+symbol+"/sustainability"))
+    return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found",
+                    type=("/stock/" + symbol + "/sustainability"))
 
 
 def get_stocks():  # noqa: E501
