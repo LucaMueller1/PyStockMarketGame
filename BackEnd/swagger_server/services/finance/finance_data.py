@@ -39,13 +39,12 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
 
     :param symbol: the ticker of the Stock
     :param period: The period of which the data is requested from the API
-                    (1d, 2w, 3m, ...)
+                (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
+                re.sub(regex, string, replace)
+
     """
     stock = yf.Ticker(symbol)
-    info = stock.info()
-    print(info)
     history = stock.history(period)
-    print("-------------")
 
     day = 0
     for day in history:
@@ -53,6 +52,7 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
         DatabaseConn.insert_course(value)
         ++day
     pass
+
 
 def get_stock_info_from_yfinance(symbol: str):
     """
@@ -68,8 +68,8 @@ def get_stock_info_from_yfinance(symbol: str):
     bool = conn.update_stock(description)
     return description
 
+# get_stock_history_from_yfinance("IBM", "5d")
 
-get_stock_info_from_yfinance("IBM")
 
 def __init__(self):
     return
