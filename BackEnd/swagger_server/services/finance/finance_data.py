@@ -1,13 +1,6 @@
 import yfinance as yf
-import pandas as pd
-import xlrd
-import sqlalchemy as sqla
-import datetime
 
 from swagger_server.models import StockValue, StockDescription
-from swagger_server.models.user import User
-from swagger_server.models.stock_search_result import StockSearchResult
-from swagger_server.controllers import staticglobaldb
 from swagger_server.services.db_service import DatabaseConn
 
 """
@@ -36,17 +29,18 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
     conn = DatabaseConn()
 
     for index, row in df.iterrows():
-        open = row['Open']
-        if open is None:
+        open_value = row['Open']
+        if open_value is None:
             continue
         # close = row['Close']
         # high = row['High']
         # low = row['Low']
         date = index
-        value = StockValue(None, symbol, int(open), str(date))
+        value = StockValue(None, symbol, int(open_value), str(date))
         conn.insert_course(value)
 
 
+@TypeError
 def get_stock_history_to_frontend(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
@@ -59,20 +53,19 @@ def get_stock_history_to_frontend(symbol: str, period: str):
 
     """
     df = yf.Ticker(symbol).history(period)
-    conn = DatabaseConn()
     returned = []
     for index, row in df.iterrows():
-        open = row['Open']
-        if open is None:
+        open_value = row['Open']
+        if open_value is None:
             continue
         date = index
-        returned.append(StockValue(None, symbol, int(open), str(date)))
+        returned.append(StockValue(None, symbol, int(open_value), str(date)))
     return returned
 
 
-
 def get_stock_data_from_db(symbol: str, period: str):
-
+    print(symbol)
+    print(period)
     pass
 
 
@@ -82,8 +75,7 @@ def get_stock_info_from_yfinance(symbol: str):
     :param symbol:
     :return:
     """
-    stock = yf.Ticker(symbol)
-    info = stock.info
+    info = yf.Ticker(symbol).info
     for i in info:
         if info[i] is None:
             info[i] = "N/A"
