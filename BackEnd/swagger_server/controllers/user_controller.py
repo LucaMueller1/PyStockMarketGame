@@ -42,9 +42,12 @@ def create_user_settings(settings_param):  # noqa: E501
 
     :rtype: None
     """
+    api_key = connexion.request.headers['api_key']
     if connexion.request.is_json:
         settings_param = Settings.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
+        staticglobaldb.dbconn.update_settings_by_user(user, settings_param)
+        return 'OK', 200
 
 
 def delete_user(user_id):  # noqa: E501
@@ -85,7 +88,10 @@ def get_user_settings():  # noqa: E501
 
     :rtype: Settings
     """
-    return 'do some magic!'
+    api_key = connexion.request.headers['api_key']
+    user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
+    settings = staticglobaldb.dbconn.get_settings_by_user(user)
+    return settings
 
 
 def login_user(user_prepare_login_param):  # noqa: E501
