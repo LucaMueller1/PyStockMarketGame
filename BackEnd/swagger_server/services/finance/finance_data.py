@@ -33,13 +33,17 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
 
     """
     df = yf.Ticker(symbol).history(period)
-    print(df)
-    time = 0
-    for index, row in df.iterrows():
-        print(row.iloc)
-        open = row['Open']
+    conn = DatabaseConn()
 
-        value = StockValue(None, symbol, open, None)
+    for index, row in df.iterrows():
+        open = row['Open']
+        date = index
+        value = StockValue(None, symbol, open, date)
+        print(value.timestamp)
+        conn.insert_course(value)
+
+
+
 
 
 def get_stock_data_from_db(symbol: str, period: str):
@@ -68,4 +72,4 @@ def get_stock_info_from_yfinance(symbol: str):
     return description
 
 
-# get_stock_history_from_yfinance("IBM", "5d")
+get_stock_history_from_yfinance("IBM", "1d")

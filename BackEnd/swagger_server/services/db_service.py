@@ -192,10 +192,12 @@ class DatabaseConn:
             rs = con.execute(sqla.text("""UPDATE `tradable_values` SET `symbol` = :symbol, `name` = :name, `logo_url` = :logourl WHERE `tradable_values`.`symbol` = :symbol; """),({"symbol" : stock_description.symbol, "logourl" : stock_description.logo_url, "name" : stock_description.stock_name}) )
             returned = True
         return returned
+
+
     def insert_course(self, stock_value: StockValue):
         returned = False
         key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),({"symbol" : stock_value.symbol, "marketprice" : stock_value.stock_price, "timestamp" : stock_value.timestamp}))
+            rs = con.execute(sqla.text("""INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),({"symbol" : stock_value.symbol, "marketprice" : stock_value.stock_price, "datetime" : stock_value.timestamp}))
             returned = True
         return returned
