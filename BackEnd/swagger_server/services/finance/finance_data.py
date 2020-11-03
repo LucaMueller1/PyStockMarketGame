@@ -3,7 +3,7 @@ import pandas as pd
 import xlrd
 import sqlalchemy as sqla
 
-from models import StockValue, StockDescription
+from swagger_server.models import StockValue, StockDescription
 from swagger_server.models.user import User
 from swagger_server.models.stock_search_result import StockSearchResult
 from swagger_server.controllers import staticglobaldb
