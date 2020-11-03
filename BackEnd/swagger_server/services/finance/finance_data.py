@@ -39,20 +39,24 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
 
     :param symbol: the ticker of the Stock
     :param period: The period of which the data is requested from the API
-                    (1d, 2w, 3m, ...)
-    """
-    stock = yf.Ticker(symbol)
-    info = stock.info()
-    print(info)
-    history = stock.history(period)
-    print("-------------")
+                (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
+                re.sub(regex, string, replace)
 
-    day = 0
-    for day in history:
-        value = StockValue()
-        DatabaseConn.insert_course(value)
-        ++day
+    """
+    df = yf.Ticker(symbol).history(period)
+    print(df)
+    time = 0
+    for index, row in df.iterrows():
+        print(row.index)
+        open = row['Open']
+
+        value = StockValue(None, symbol, open, None)
+
+
+def get_stock_data_from_db(symbol: str, period: str):
+
     pass
+
 
 def get_stock_info_from_yfinance(symbol: str):
     """
@@ -62,14 +66,18 @@ def get_stock_info_from_yfinance(symbol: str):
     """
     stock = yf.Ticker(symbol)
     info = stock.info
+    for i in info:
+        if info[i] is None:
+            info[i] = "N/A"
+
     description = StockDescription(symbol, info['shortName'], info['country'], info['logo_url'], info['longBusinessSummary'], info['industry'], info['trailingAnnualDividendYield'], info['marketCap'], info['fiftyTwoWeekLow'], info['fiftyTwoWeekHigh'], info['fullTimeEmployees'])
+
     print(description)
     conn = DatabaseConn()
-    bool = conn.update_stock(description)
+    success = conn.update_stock(description)
+    print("Status: ", success)
     return description
 
 
-get_stock_info_from_yfinance("IBM")
-
-def __init__(self):
-    return
+get_stock_history_from_yfinance("IBM", "5d")
+get_stock_info_from_yfinance("DLTR")
