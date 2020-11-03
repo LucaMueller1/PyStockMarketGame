@@ -49,7 +49,8 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
     day = 0
     for day in history:
         value = StockValue()
-        DatabaseConn.insert_course(value)
+        conn = DatabaseConn()
+        conn.insert_course(value)
         ++day
     pass
 
