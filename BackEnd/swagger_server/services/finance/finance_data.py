@@ -37,12 +37,37 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
 
     for index, row in df.iterrows():
         open = row['Open']
+        if open is None:
+            continue
+        # close = row['Close']
+        # high = row['High']
+        # low = row['Low']
         date = index
-        value = StockValue(None, symbol, open, date)
-        print(value.timestamp)
+        value = StockValue(None, symbol, int(open), str(date))
         conn.insert_course(value)
 
 
+def get_stock_history_to_frontend(symbol: str, period: str):
+    """This function takes the symbol and period of a stock and sends the
+        data as a StockValue model to the function DatabaseConn.insert_course()
+
+
+    :param symbol: the ticker of the Stock
+    :param period: The period of which the data is requested from the API
+                (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
+                re.sub(regex, string, replace)
+
+    """
+    df = yf.Ticker(symbol).history(period)
+    conn = DatabaseConn()
+    returned = []
+    for index, row in df.iterrows():
+        open = row['Open']
+        if open is None:
+            continue
+        date = index
+        returned.append(StockValue(None, symbol, int(open), str(date)))
+    return returned
 
 
 
