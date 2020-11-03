@@ -68,7 +68,7 @@ def get_stock_info_from_yfinance(symbol: str):
     bool = conn.update_stock(description)
     return description
 
-# get_stock_history_from_yfinance("IBM", "5d")
+get_stock_history_from_yfinance("IBM", "5d")
 
 
 def __init__(self):
