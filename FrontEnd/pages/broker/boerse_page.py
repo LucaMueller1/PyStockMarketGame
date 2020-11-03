@@ -18,32 +18,32 @@ def run(session_state):
     local_css("FrontEnd/css/style.css")
 
     st.title("broker")
-    st.subheader("Willkommen zur Börse. Hier kannst du Wertpapiere kaufen oder deine vorhandenen Wertpapiere verkaufen.")
+    st.subheader("Welcome to your personalised broker. Here you can buy and sell your stocks.")
 
     # switch between BUY and SELL
-    mode_switch = st.radio("Bitte wähle aus, ob du Werpapiere kaufen oder verkaufen möchtest", ("Kaufen", "Verkaufen"))
+    mode_switch = st.radio("Please choose whether you want to buy or sell stocks", ("Buy", "Sell"))
 
-    if mode_switch == "Kaufen":
+    if mode_switch == "Buy":
         mode = "buy"
         test_array = []
         if session_state.stock_id:
             test_array.append(session_state.stock_id)
         else:
             test_array.append(" ")
-        # Get the WKN from the User
-        st.write("Gib hier eine Wertpapier Kennnummer (WKN) ein, sowie die Anzahl der zu kaufenden Aktien")
-        ticker_code_entry = st.selectbox("WKN:", test_array + session_state.stock_names)
+        # Get the ticker_code from the User
+        st.write("Please enter your desired stock ticker and the quantity of your purchase:")
+        ticker_code_entry = st.selectbox("Stock ticker:", test_array + session_state.stock_names)
 
         if ticker_code_entry != " ":
-            # Splittin the stock ticker from the stock name
+            # Splitting the ticker_code from the stock name
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[1]
 
             # Get the quantity from user
-            ticker_quantity_entry = st.number_input("Anzahl:", step = 1.0)
+            ticker_quantity_entry = st.number_input("Quantity: ", step = 1.0)
             ticker_quantity_entry = int(ticker_quantity_entry)
 
-            # If button is clicked --> Entry submitted (quantity & stock ticker)
-            if st.button("Eingabe bestaetigen"):
+            # If button is clicked --> Entry submitted (quantity & ticker_code)
+            if st.button("Apply"):
                 session_state.buy_redirect = True
 
             if session_state.buy_redirect:
@@ -52,35 +52,35 @@ def run(session_state):
                 # Righthand part will be filled with Aktieninfos (Aktienname, Aktienwert, Dividendenrendite, Symbol)
                 col1, col2 = st.beta_columns(2)
 
-                # Aktienwert is calculated by 190 (later changed to chosen Stock from ticker_code_entry) times the amount chosen by user
+                # specific_stock_value is calculated by 190 (later changed to chosen Stock from ticker_code_entry) times the amount chosen by user
                 specific_stock_value = 190 * int(ticker_quantity_entry)
 
-                # Gebuehren is static for now, but will later be fetched from database
+                # purchase_fees is static for now, but will later be fetched from database
                 purchase_fees = 9.90
 
-                # Dividendenrendite is static for now, but will later be fetched from database
+                # dividen_yield is static for now, but will later be fetched from database
                 dividend_yield_raw = 0.06
                 dividend_yield = str(dividend_yield_raw * 100) + "%"
 
-                # Add Gebuehren to specific_stock_value
-                purchase_value = str(specific_stock_value + purchase_fees) + "€"
+                # Add purchase_fees to specific_stock_value
+                total_purchase_value = str(specific_stock_value + purchase_fees) + "€"
 
                 # Place price information and "Kaufen" button on the left side
                 with col1:
-                    st.subheader("Verkaufsübersicht")
+                    st.subheader("Buy - Overview")
                     st.write("----------------------")
-                    st.write("Aktienkaufpreis:", specific_stock_value)
-                    st.write("Gebühren:", "", purchase_fees)
+                    st.write("Stock price:", specific_stock_value)
+                    st.write("Purchase fees:", purchase_fees)
                     st.write("----------------------")
-                    st.subheader("Kaufpreis:")
-                    st.title(purchase_value)
+                    st.subheader("Total purchase price:")
+                    st.title(total_purchase_value)
 
                     if st.button("Buy"):
                         # send post request to DB
                         response = requests_server.post_transaction(session_state.auth_key, ticker_code_entry_for_post_request,
                                                                         ticker_quantity_entry, transactionType="buy")
 
-                        st.write("Du kannst deine gekauften Aktien nun im Depot beobachten.")
+                        st.write("You can view your purchased stocks in your depot.")
                         sleep(2)
 
                         session_state.buy_redirect = False
@@ -89,21 +89,21 @@ def run(session_state):
                         # This is where the actual buy happens
                         # Once connected to BE: Get Price of chosen stock & fee --> Calculate end price
 
-                # Place Stock information on the right side
+                # Place stock information on the right side
                 with col2:
                     st.markdown("""
                                     <div class="greyish padding">
-                                    <h2>Aktieninformationen</h2>
-                                    <p>Aktienname: <b>Adidas</b></p>
-                                    <p>Aktienwert: <b>""" + "190" + """<b></p>
-                                    <p>Dividendenrendite: <b>""" + dividend_yield + """<b></p>
+                                    <h2>Stock information</h2>
+                                    <p>Stock name: <b>Adidas</b></p>
+                                    <p>Stock value: <b>""" + "190" + """<b></p>
+                                    <p>Dividendyield: <b>""" + dividend_yield + """<b></p>
                                     <img class = "circle_and_center" src = "https://logo.clearbit.com/apple.com">
                                     </div>
                                     """
                                 , unsafe_allow_html=True)
 
 
-    elif mode_switch == "Verkaufen":
+    elif mode_switch == "Sell":
         session_state.page = "sell"
         st.experimental_rerun()
 
