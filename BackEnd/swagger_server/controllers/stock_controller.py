@@ -1,5 +1,6 @@
 import connexion
 import six
+import re
 
 from swagger_server.models.api_error import ApiError  # noqa: E501
 from swagger_server.models.stock_description import StockDescription  # noqa: E501
@@ -40,9 +41,19 @@ def get_stock_history(symbol, period):  # noqa: E501
     :type period: str
 
     :rtype: List[StockValue]
+    :test 1mom returns ApiError, 7d returns list of stock_values
     """
-    return ApiError(detail="History for given stock not found", status=404, title="Not Found",
+    if not re.match("^\\d+(d$)|^\\d+(mo$)|^\\d+(y$)|^ytd$|^max$", period):
+        return ApiError(detail="Given period not matching pattern", status=404, title="Not Found",
+                        type=("/stock/" + symbol + "/history"))
+
+    stock_value_list = finance_data.get_stock_history_from_yfinance(symbol, period)
+
+    if stock_value_list is None:
+        return ApiError(detail="History for given stock not found", status=404, title="Not Found",
                     type=("/stock/" + symbol + "/history"))
+
+    return stock_value_list
 
 
 def get_stock_sustainability(symbol):  # noqa: E501
