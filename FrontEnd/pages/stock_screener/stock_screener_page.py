@@ -26,4 +26,5 @@ def run(session_state):
         session_state.stock_id = re.sub(pattern=".*: ", string=selected, repl="")
         st.experimental_rerun()
 
+
     side_bar.run(session_state)

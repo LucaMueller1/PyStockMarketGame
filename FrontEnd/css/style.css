@@ -28,3 +28,11 @@ body {
   background-color: #fbfbfd;
   color: black;
 }
+
+.streamlit-expanderContent
+{
+  background-color: #ececec;
+  color: black;
+  padding-left: 5%;
+  padding-right: 5%;
+}

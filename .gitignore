@@ -6,3 +6,5 @@ pyproject.toml
 .idea
 venv/
 pyproject.toml
+*.pyc
+*.toml
