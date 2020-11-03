@@ -43,15 +43,18 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
                 re.sub(regex, string, replace)
 
     """
-    stock = yf.Ticker(symbol)
-    history = stock.history(period)
+    df = yf.Ticker(symbol).history(period)
+    print(df)
+    time = 0
+    for index, row in df.iterrows():
+        print(row.index)
+        open = row['Open']
 
-    day = 0
-    for day in history:
-        value = StockValue()
-        conn = DatabaseConn()
-        conn.insert_course(value)
-        ++day
+        value = StockValue(None, symbol, open, None)
+
+
+def get_stock_data_from_db(symbol: str, period: str):
+
     pass
 
 
@@ -63,14 +66,18 @@ def get_stock_info_from_yfinance(symbol: str):
     """
     stock = yf.Ticker(symbol)
     info = stock.info
+    for i in info:
+        if info[i] is None:
+            info[i] = "N/A"
+
     description = StockDescription(symbol, info['shortName'], info['country'], info['logo_url'], info['longBusinessSummary'], info['industry'], info['trailingAnnualDividendYield'], info['marketCap'], info['fiftyTwoWeekLow'], info['fiftyTwoWeekHigh'], info['fullTimeEmployees'])
+
     print(description)
     conn = DatabaseConn()
-    bool = conn.update_stock(description)
+    success = conn.update_stock(description)
+    print("Status: ", success)
     return description
 
-# get_stock_history_from_yfinance("IBM", "5d")
 
-
-def __init__(self):
-    return
+get_stock_history_from_yfinance("IBM", "5d")
+get_stock_info_from_yfinance("DLTR")
