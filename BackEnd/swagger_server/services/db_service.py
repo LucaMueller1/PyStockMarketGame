@@ -4,6 +4,7 @@ from swagger_server.models.stock_search_result import StockSearchResult
 from swagger_server.models.transaction import Transaction
 from swagger_server.models.transaction_prepare import TransactionPrepare
 from swagger_server.models.stock_value import StockValue
+from swagger_server.models.settings import Settings
 
 
 from swagger_server.models.stock_description import StockDescription;
@@ -159,6 +160,28 @@ class DatabaseConn:
                 transaction = Transaction(id=row['transaction_id'], stock_value= StockValue(id=row['course_id'],symbol=row['symbol'],stock_price=row['market_value'], timestamp=row['timestamp']), amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
                 stocksearchresult = StockSearchResult(symbol=row['symbol'],stock_name=row['name'])
                 returned.append((transaction,stocksearchresult))
+
+        return returned
+
+    def get_settings_by_user(self, user: User)-> Settings:
+        transaction_fee = 10 # Default Value
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT * FROM `user_settings` WHERE `userid` = :userid """), ({ "userid" : user.id }))
+            for row in rs:
+                if row['user_setting'] == 'transaction_fee' : transaction_fee = row['value']
+        returned = Settings(transaction_fee=transaction_fee)
+
+
+        return returned
+
+    def update_settings_by_user(self, user: User, settings: Settings): # Static for Transaction Fee, caution!!
+        returned = False
+        transaction_fee = settings.transaction_fee
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""UPDATE `user_settings` SET `value` = :newval WHERE (`user_settings`.`userid` = :userid) AND (`user_settings`.`user_setting` = :settingidentifier)   """), ({ "userid" : user.id , "newval": transaction_fee, "settingidentifier" : "transaction_fee"}))
+            for row in rs:
+                returned = True
+
 
         return returned
 
