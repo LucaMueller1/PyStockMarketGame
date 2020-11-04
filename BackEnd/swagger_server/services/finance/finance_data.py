@@ -103,6 +103,8 @@ def get_stock_info_from_yfinance(symbol: str):
     :return:
     """
     indexes = ["shortName", "country", "logo_url", "longBusinessSummary", "industry", "trailingAnnualDividendYield", "marketCap", "fiftyTwoWeekLow", "fiftyTwoWeekHigh", "fullTimeEmployees"]
+    # indexes = StockDescription().__dict__.keys()
+
     info = yf.Ticker(symbol).info
     for value in info:
         if info[value] is None:
@@ -125,4 +127,4 @@ def get_stock_info_from_yfinance(symbol: str):
 # insert_stock_history_from_yfinance_to_db("IBM", "1d")
 # print(get_stock_info_from_yfinance("SBUX"))
 # print(yf.Ticker("SBUX").info)
-# print(get_stock_info_from_yfinance("SBUX"))
+print(get_stock_info_from_yfinance("SBUX"))
