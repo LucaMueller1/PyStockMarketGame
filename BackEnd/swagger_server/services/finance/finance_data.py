@@ -14,7 +14,7 @@ from swagger_server.services.db_service import DatabaseConn
 # "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE")
 
 
-def get_stock_history_from_yfinance(symbol: str, period: str):
+def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
 
@@ -28,16 +28,15 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
     df = yf.Ticker(symbol).history(period)
     conn = DatabaseConn()
 
+    value = None
     for index, row in df.iterrows():
         open_value = row['Open']
         if open_value is None:
             continue
-        # close = row['Close']
-        # high = row['High']
-        # low = row['Low']
         date = index
         value = StockValue(None, symbol, float(open_value), str(date))
         conn.insert_course(value)
+    return value
 
 
 def get_stock_history_to_frontend(symbol: str, period: str):
@@ -57,6 +56,9 @@ def get_stock_history_to_frontend(symbol: str, period: str):
         open_value = row['Open']
         if open_value is None:
             continue
+        # close = row['Close']
+        # high = row['High']
+        # low = row['Low']
         date = index
         returned.append(StockValue(None, symbol, float(open_value), str(date)))
     return returned
@@ -88,4 +90,4 @@ def get_stock_info_from_yfinance(symbol: str):
     return description
 
 
-get_stock_history_from_yfinance("IBM", "1d")
+#insert_stock_history_from_yfinance_to_db("IBM", "1d")
