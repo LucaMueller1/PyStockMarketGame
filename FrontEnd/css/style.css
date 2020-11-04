@@ -4,7 +4,7 @@
   margin-left: auto;
   margin-right: auto;
   width: 50%;
-  border-radius: 50%;
+
 }
 
 .padding{
@@ -35,4 +35,9 @@ body {
   color: black;
   padding-left: 5%;
   padding-right: 5%;
+}
+
+.streamlit-expanderHeader 
+{
+  font-size: 20pt;
 }
