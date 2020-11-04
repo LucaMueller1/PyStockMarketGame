@@ -28,7 +28,6 @@ def post_transaction(auth_key: str, symbol: str, amount : int, transactionType :
         json = {'symbol': symbol,
                 "amount": amount,
                 "transactionType": transactionType }
-
         return requests.post(BASE_URL + "portfolio/transaction", headers={"api_key":auth_key}, json = json)
 
 def get_stock_description(auth_key: str, symbol: str):
