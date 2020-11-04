@@ -6,8 +6,7 @@ from swagger_server.models.transaction_prepare import TransactionPrepare
 from swagger_server.models.stock_value import StockValue
 from swagger_server.models.settings import Settings
 
-
-from swagger_server.models.stock_description import StockDescription;
+from swagger_server.models.stock_description import StockDescription
 
 import sqlalchemy as sqla
 import bcrypt
@@ -36,7 +35,34 @@ class DatabaseConn:
                     ({"first_name": user.first_name, "last_name": user.last_name, "email": user.email,
                       "password": auth_password.decode('utf8'), "money_available": user.money_available,
                       "starting_capital": user.starting_capital}))
+                con.execute(sqla.text(
+                    """INSERT INTO `user_settings` (`id`, `userid`, `user_setting`, `value`) VALUES (NULL, (SELECT last_insert_id()), :setting_name, :setting_val);"""),
+                    ({"setting_name": "transaction_fee", "setting_val": "10"}))
         # print(auth_password.decode('utf8'))
+        except:
+            returned = False
+
+        return returned
+
+    def delete_auth_key(self, authkey: str) -> bool:
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text(
+                    """DELETE FROM `user_authkey` WHERE `user_authkey`.`auth_key` = :authkey ;"""),
+                    ({"authkey": authkey}))
+        except:
+            returned = False
+
+        return returned
+
+    def delete_user(self, user: User) -> bool:
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text(
+                    """"DELETE FROM `users` WHERE `users`.`userID` = :userid"""),
+                    ({"userid": user.id}))
         except:
             returned = False
 
@@ -47,7 +73,7 @@ class DatabaseConn:
         valid = False
         hashAndSalt = None
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("SELECT * FROM `users` WHERE `email` = :mail_address"), mail_address=email)
+            rs = con.execute(sqla.text("""SELECT * FROM `users` WHERE `email` = :mail_address"""), mail_address=email)
             for row in rs:
                 hashAndSalt = row[4]
                 userid = row['userID']
@@ -59,14 +85,14 @@ class DatabaseConn:
 
                 print(hashAndSalt)
                 print(row)
-        if (password is not None and hashAndSalt is not None):
+        if password is not None and hashAndSalt is not None:
             valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
-        if (valid):
+        if valid:
             user = User(userid, firstName, lastName, email, None, starting_capital, money_available)
         return user
 
     def generate_auth_hash(self, userid: int) -> AuthKey:
-        if (userid is None):
+        if userid is None:
             return None
         auth_key = ''.join((random.choice(string.ascii_letters + string.digits) for i in range(128)))
         expiry = self.util_format_datetime_for_expiry(2)
@@ -120,6 +146,7 @@ class DatabaseConn:
         stockarray = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values`"""))
+            con.inser
             for row in rs:
                 stockarray.append(StockDescription(symbol=row['symbol'], stock_name=row['name'],
                                                    logo_url=row['logo_url']))
@@ -127,7 +154,6 @@ class DatabaseConn:
         return stockarray
 
         return rs
-
 
     def get_stock_by_symbol(self, symbol: str) -> StockDescription:
         returned = None
@@ -141,45 +167,60 @@ class DatabaseConn:
         return returned
 
     def insert_transaction(self, transaction: TransactionPrepare, user: User) -> Transaction:
-        returned= None
+        returned = None
         with self.engine.connect() as con:
-            con.execute(sqla.text("""INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, :transaction_fee); """),
-                             ({"symbol": transaction.symbol, "userid" : user.id, "amount" : transaction.amount, "buysell" : transaction.transaction_type, "transaction_fee" : 10}))
-            rs = con.execute(sqla.text("""SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id WHERE `user_id` = :userid ORDER BY `transaction_id` DESC LIMIT 1  """), ({ "userid" : user.id }))
+            con.execute(sqla.text(
+                """INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, :transaction_fee); """),
+                ({"symbol": transaction.symbol, "userid": user.id, "amount": transaction.amount,
+                  "buysell": transaction.transaction_type, "transaction_fee": 10}))
+            rs = con.execute(sqla.text(
+                """SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id WHERE `user_id` = :userid ORDER BY `transaction_id` DESC LIMIT 1  """),
+                ({"userid": user.id}))
             for row in rs:
-                returned = Transaction(id=row['transaction_id'], stock_value= StockValue(id=row['course_id'],symbol=row['symbol'],stock_price=row['market_value'], timestamp=row['timestamp']), amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
-
+                returned = Transaction(id=row['transaction_id'],
+                                       stock_value=StockValue(id=row['course_id'], symbol=row['symbol'],
+                                                              stock_price=row['market_value'],
+                                                              timestamp=row['timestamp']), amount=row['amount'],
+                                       transaction_type=row['transaction_type'], transaction_fee=row['transaction_fee'])
 
         return returned
 
     def get_transactions_and_stock_by_user(self, user: User) -> dict:
         returned = []
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id JOIN tradable_values ON transactions.symbol = tradable_values.symbol WHERE `user_id` = :userid """), ({ "userid" : user.id }))
+            rs = con.execute(sqla.text(
+                """SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id JOIN tradable_values ON transactions.symbol = tradable_values.symbol WHERE `user_id` = :userid """),
+                ({"userid": user.id}))
             for row in rs:
-                transaction = Transaction(id=row['transaction_id'], stock_value= StockValue(id=row['course_id'],symbol=row['symbol'],stock_price=row['market_value'], timestamp=row['timestamp']), amount = row['amount'], transaction_type= row['transaction_type'],transaction_fee= row['transaction_fee'])
-                stocksearchresult = StockSearchResult(symbol=row['symbol'],stock_name=row['name'])
-                returned.append((transaction,stocksearchresult))
+                transaction = Transaction(id=row['transaction_id'],
+                                          stock_value=StockValue(id=row['course_id'], symbol=row['symbol'],
+                                                                 stock_price=row['market_value'],
+                                                                 timestamp=row['timestamp']), amount=row['amount'],
+                                          transaction_type=row['transaction_type'],
+                                          transaction_fee=row['transaction_fee'])
+                stocksearchresult = StockSearchResult(symbol=row['symbol'], stock_name=row['name'])
+                returned.append((transaction, stocksearchresult))
 
         return returned
 
-    def get_settings_by_user(self, user: User)-> Settings:
-        transaction_fee = 10 # Default Value
+    def get_settings_by_user(self, user: User) -> Settings:
+        transaction_fee = 10  # Default Value
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""SELECT * FROM `user_settings` WHERE `userid` = :userid """), ({ "userid" : user.id }))
+            rs = con.execute(sqla.text("""SELECT * FROM `user_settings` WHERE `userid` = :userid """),
+                             ({"userid": user.id}))
             for row in rs:
-                if row['user_setting'] == 'transaction_fee' : transaction_fee = row['value']
+                if row['user_setting'] == 'transaction_fee': transaction_fee = row['value']
         returned = Settings(transaction_fee=transaction_fee)
 
-
         return returned
 
-    def update_settings_by_user(self, user: User, settings: Settings): # Static for Transaction Fee, caution!!
+    def update_settings_by_user(self, user: User, settings: Settings):  # Static for Transaction Fee, caution!!
         returned = True
         transaction_fee = settings.transaction_fee
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""UPDATE `user_settings` SET `value` = :newval WHERE (`user_settings`.`userid` = :userid) AND (`user_settings`.`user_setting` = :settingidentifier)   """), ({ "userid" : user.id , "newval": transaction_fee, "settingidentifier" : "transaction_fee"}))
-
+            rs = con.execute(sqla.text(
+                """UPDATE `user_settings` SET `value` = :newval WHERE (`user_settings`.`userid` = :userid) AND (`user_settings`.`user_setting` = :settingidentifier)   """),
+                ({"userid": user.id, "newval": transaction_fee, "settingidentifier": "transaction_fee"}))
 
         return returned
 
@@ -189,15 +230,20 @@ class DatabaseConn:
         returned = False
         key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""UPDATE `tradable_values` SET `symbol` = :symbol, `name` = :name, `logo_url` = :logourl WHERE `tradable_values`.`symbol` = :symbol; """),({"symbol" : stock_description.symbol, "logourl" : stock_description.logo_url, "name" : stock_description.stock_name}) )
+            rs = con.execute(sqla.text(
+                """UPDATE `tradable_values` SET `symbol` = :symbol, `name` = :name, `logo_url` = :logourl WHERE `tradable_values`.`symbol` = :symbol; """),
+                ({"symbol": stock_description.symbol, "logourl": stock_description.logo_url,
+                  "name": stock_description.stock_name}))
             returned = True
         return returned
-
 
     def insert_course(self, stock_value: StockValue):
         returned = False
         key = 0
         with self.engine.connect() as con:
-            rs = con.execute(sqla.text("""INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),({"symbol" : stock_value.symbol, "marketprice" : stock_value.stock_price, "datetime" : stock_value.timestamp}))
+            rs = con.execute(sqla.text(
+                """INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),
+                ({"symbol": stock_value.symbol, "marketprice": stock_value.stock_price,
+                  "datetime": stock_value.timestamp}))
             returned = True
         return returned
