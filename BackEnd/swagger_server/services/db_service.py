@@ -44,6 +44,30 @@ class DatabaseConn:
 
         return returned
 
+    def delete_auth_key(self, authkey: AuthKey) -> bool:
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text(
+                    """"DELETE FROM `user_authkey` WHERE `user_authkey`.`auth_key` = :authkey"""),
+                    ({"authkey": authkey.auth_key}))
+        except:
+            returned = False
+
+        return returned
+
+    def delete_user(self, user: User) -> bool:
+        returned = True
+        try:
+            with self.engine.connect() as con:
+                con.execute(sqla.text(
+                    """"DELETE FROM `users` WHERE `users`.`userID` = :userid"""),
+                    ({"userid": user.id}))
+        except:
+            returned = False
+
+        return returned
+
     def check_password(self, email: str, password: str) -> User:
         user = None
         valid = False
@@ -199,6 +223,7 @@ class DatabaseConn:
                 ({"userid": user.id, "newval": transaction_fee, "settingidentifier": "transaction_fee"}))
 
         return returned
+
 
     def update_stock(self, stock_description: StockDescription):
 
