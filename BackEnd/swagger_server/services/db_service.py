@@ -36,7 +36,7 @@ class DatabaseConn:
                       "password": auth_password.decode('utf8'), "money_available": user.money_available,
                       "starting_capital": user.starting_capital}))
                 con.execute(sqla.text(
-                    """INSERT INTO `user_settings` (`id`, `userid`, `user_setting`, `value`) VALUES (NULL, SELECT last_insert_id(), :setting_name, :setting_val);"""),
+                    """INSERT INTO `user_settings` (`id`, `userid`, `user_setting`, `value`) VALUES (NULL, (SELECT last_insert_id()), :setting_name, :setting_val);"""),
                     ({"setting_name": "transaction_fee", "setting_val": "10"}))
         # print(auth_password.decode('utf8'))
         except:
