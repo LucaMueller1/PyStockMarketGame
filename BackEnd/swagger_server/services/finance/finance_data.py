@@ -36,7 +36,7 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
         # high = row['High']
         # low = row['Low']
         date = index
-        value = StockValue(None, symbol, int(open_value), str(date))
+        value = StockValue(None, symbol, float(open_value), str(date))
         conn.insert_course(value)
 
 
@@ -58,7 +58,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
         if open_value is None:
             continue
         date = index
-        returned.append(StockValue(None, symbol, int(open_value), str(date)))
+        returned.append(StockValue(None, symbol, float(open_value), str(date)))
     return returned
 
 
