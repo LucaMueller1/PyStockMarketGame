@@ -47,20 +47,16 @@ def run(session_state):
                 session_state.buy_redirect = True
 
             if session_state.buy_redirect:
-                # We are only defining the layout here in order to split the page into two parts.
-                # The lefthand part will be filled with the total amount and the "Kaufen" button
-                # Righthand part will be filled with Aktieninfos (Aktienname, Aktienwert, Dividendenrendite, Symbol)
                 col1, col2 = st.beta_columns(2)
 
+                stock_description = requests_server.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
+                stock_value = 190
+
                 # specific_stock_value is calculated by 190 (later changed to chosen Stock from ticker_code_entry) times the amount chosen by user
-                specific_stock_value = 190 * int(ticker_quantity_entry)
+                specific_stock_value = stock_value * int(ticker_quantity_entry)
 
                 # purchase_fees is static for now, but will later be fetched from database
                 purchase_fees = 9.90
-
-                # dividen_yield is static for now, but will later be fetched from database
-                dividend_yield_raw = 0.06
-                dividend_yield = str(dividend_yield_raw * 100) + "%"
 
                 # Add purchase_fees to specific_stock_value
                 total_purchase_value = str(specific_stock_value + purchase_fees) + "€"
@@ -80,7 +76,7 @@ def run(session_state):
                         response = requests_server.post_transaction(session_state.auth_key, ticker_code_entry_for_post_request,
                                                                         ticker_quantity_entry, transactionType="buy")
 
-                        st.write("You can view your purchased stocks in your depot.")
+                        st.write("You can view your purchased stocks in your securities account.")
                         sleep(2)
 
                         session_state.buy_redirect = False
@@ -91,13 +87,21 @@ def run(session_state):
 
                 # Place stock information on the right side
                 with col2:
+                    # Information to be inserted in markdown
+                    stock_name = str(stock_description["stockName"])
+                    dividend_yield_raw = stock_description["dividend"]
+
+
+                    dividend_yield = str(int(dividend_yield_raw) * 100)
+                    image_source = stock_description["logoUrl"]
+
                     st.markdown("""
                                     <div class="greyish padding">
                                     <h2>Stock information</h2>
-                                    <p>Stock name: <b>Adidas</b></p>
+                                    <p>Stock name: <b>""" + stock_name + """ </b></p>
                                     <p>Stock value: <b>""" + "190" + """<b></p>
-                                    <p>Dividendyield: <b>""" + dividend_yield + """<b></p>
-                                    <img class = "circle_and_center" src = "https://logo.clearbit.com/apple.com">
+                                    <p>Dividendyield (%): <b>""" + dividend_yield + """<b></p>
+                                    <img class = "circle_and_center" src = """ + image_source + """>
                                     </div>
                                     """
                                 , unsafe_allow_html=True)
