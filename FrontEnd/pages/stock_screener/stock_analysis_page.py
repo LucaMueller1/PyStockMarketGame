@@ -24,7 +24,7 @@ def run(session_state):
     st.title(description["stockName"])
     st.markdown(f"""<img src="{description["logoUrl"]}" style="border-radius: 50%">""", unsafe_allow_html=True)
 
-    chart_generator.show_chart()
+    chart_generator.show_chart(session_state.graph_data)
 
     general_information = st.beta_expander("general information", expanded=True)
     general_information.write(f"""**Symbol:** {description["symbol"]}""")

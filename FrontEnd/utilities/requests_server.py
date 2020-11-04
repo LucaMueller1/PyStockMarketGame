@@ -41,5 +41,4 @@ def get_stock_description(auth_key: str, symbol: str):
 
 
 def get_stockprice_history(auth_key: str, symbol: str, period: str):
-    return requests.get(BASE_URL + f"stock/{symbol}/history?period={period}", headers={"api_key": auth_key}).json()
-
+    return requests.get(BASE_URL + f"/stock/{symbol}/history?period={period}", headers={"api_key": auth_key}).json()
