@@ -38,7 +38,7 @@ def run(session_state):
     st.title("portfolio")
     st.header("Hallo " + session_state.first_name + "!")
 
-    chart_generator.show_chart()
+    #chart_generator.show_chart()
 
     html_table = PortfolioTable()
     html_table.open()
