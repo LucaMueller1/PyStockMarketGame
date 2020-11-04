@@ -1,5 +1,8 @@
 import utilities.requests_server as requests_server
 # BUY
+
+# LUCA RUF MICH MAL AN
+
 def check_for_entry_string(entry):
     if entry != "N/A":
         return entry
