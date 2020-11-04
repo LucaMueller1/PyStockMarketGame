@@ -90,4 +90,4 @@ def get_stock_info_from_yfinance(symbol: str):
     return description
 
 
-get_stock_history_from_yfinance("IBM", "1d")
+#insert_stock_history_from_yfinance_to_db("IBM", "1d")
