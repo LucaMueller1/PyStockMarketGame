@@ -66,14 +66,14 @@ def get_stock_history_to_frontend(symbol: str, period: str):
     if symbol == "DDAIF":
         df = yf.Ticker(symbol).history(period)
         returned = []
-        multiplier = 1.4
+        multiplier = 1
         for index, row in df.iterrows():
             open_value = row['Open']*multiplier
             if open_value is None:
                 continue
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
-            multiplier/1.01
+            multiplier/1.1
         return returned
 
     df = yf.Ticker(symbol).history(period)

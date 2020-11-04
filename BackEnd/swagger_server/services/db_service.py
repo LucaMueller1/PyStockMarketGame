@@ -182,7 +182,6 @@ class DatabaseConn:
 
         return returned
 
-
     def update_stock(self, stock_description: StockDescription):
 
         returned = False
@@ -191,7 +190,6 @@ class DatabaseConn:
             rs = con.execute(sqla.text("""UPDATE `tradable_values` SET `symbol` = :symbol, `name` = :name, `logo_url` = :logourl WHERE `tradable_values`.`symbol` = :symbol; """),({"symbol" : stock_description.symbol, "logourl" : stock_description.logo_url, "name" : stock_description.stock_name}) )
             returned = True
         return returned
-
 
     def insert_course(self, stock_value: StockValue):
         returned = False
