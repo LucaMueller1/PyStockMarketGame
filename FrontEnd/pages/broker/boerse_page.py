@@ -8,8 +8,8 @@ import utilities.requests_server as requests_server
 
 
 def run(session_state):
-
     side_bar.run(session_state)
+
     # Load CSS File for Formatting
     def local_css(file_name):
         with open(file_name) as f:
@@ -25,14 +25,15 @@ def run(session_state):
 
     if mode_switch == "Buy":
         mode = "buy"
-        test_array = []
-        if session_state.stock_id:
-            test_array.append(session_state.stock_id)
+
+        if session_state.stock_desc:
+            #index = next(session_state.stock_names.index(name) for name in session_state.stock_names if session_state.stock_desc["symbol"] in name) + 1
+            index = [i for i, s in enumerate(session_state.stock_names) if session_state.stock_desc["symbol"] in s][0] + 1
         else:
-            test_array.append(" ")
+            index = 0
         # Get the ticker_code from the User
         st.write("Please enter your desired stock ticker and the quantity of your purchase:")
-        ticker_code_entry = st.selectbox("Stock ticker:", test_array + session_state.stock_names)
+        ticker_code_entry = st.selectbox("Stock ticker:", [" "] + session_state.stock_names, index)
 
         if ticker_code_entry != " ":
             # Splitting the ticker_code from the stock name
@@ -49,10 +50,15 @@ def run(session_state):
             if session_state.buy_redirect:
                 col1, col2 = st.beta_columns(2)
 
-                stock_description = requests_server.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
-                stock_value = 190
+                stock_description = requests_server.get_stock_description(session_state.auth_key,
+                                                                          ticker_code_entry_for_post_request)
+                stock_value = requests_server.get_stockprice_history(session_state.auth_key, ticker_code_entry_for_post_request, "1d")
+                print(stock_value)
+                stock_value = stock_value["stock_price"]
+                print(stock_value)
 
-                # specific_stock_value is calculated by 190 (later changed to chosen Stock from ticker_code_entry) times the amount chosen by user
+
+                # specific stock value
                 specific_stock_value = stock_value * int(ticker_quantity_entry)
 
                 # purchase_fees is static for now, but will later be fetched from database
@@ -73,8 +79,9 @@ def run(session_state):
 
                     if st.button("Buy"):
                         # send post request to DB
-                        response = requests_server.post_transaction(session_state.auth_key, ticker_code_entry_for_post_request,
-                                                                        ticker_quantity_entry, transactionType="buy")
+                        response = requests_server.post_transaction(session_state.auth_key,
+                                                                    ticker_code_entry_for_post_request,
+                                                                    ticker_quantity_entry, transactionType="buy")
 
                         st.write("You can view your purchased stocks in your securities account.")
                         sleep(2)
@@ -90,9 +97,10 @@ def run(session_state):
                     # Information to be inserted in markdown
                     stock_name = str(stock_description["stockName"])
                     dividend_yield_raw = stock_description["dividend"]
-
-
-                    dividend_yield = str(int(dividend_yield_raw) * 100)
+                    if dividend_yield_raw != "N/A":
+                        dividend_yield = str(int(dividend_yield_raw) * 100)
+                    else:
+                        dividend_yield = "N/A"
                     image_source = stock_description["logoUrl"]
 
                     st.markdown("""
@@ -103,11 +111,9 @@ def run(session_state):
                                     <p>Dividendyield (%): <b>""" + dividend_yield + """<b></p>
                                     <img class = "circle_and_center" src = """ + image_source + """>
                                     </div>
-                                    """
-                                , unsafe_allow_html=True)
+                                    """, unsafe_allow_html=True)
 
 
     elif mode_switch == "Sell":
         session_state.page = "sell"
         st.experimental_rerun()
-
