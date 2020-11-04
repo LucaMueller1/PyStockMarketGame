@@ -47,7 +47,7 @@ def get_stock_history(symbol, period):  # noqa: E501
         return ApiError(detail="Given period not matching pattern", status=404, title="Not Found",
                         type=("/stock/" + symbol + "/history"))
 
-    stock_value_list = finance_data.get_stock_history_from_yfinance(symbol, period)
+    stock_value_list = finance_data.get_stock_history_to_frontend(symbol, period)
 
     if stock_value_list is None:
         return ApiError(detail="History for given stock not found", status=404, title="Not Found",
