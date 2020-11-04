@@ -60,7 +60,10 @@ def delete_user(user_id):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    api_key = connexion.request.headers['api_key']
+    user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
+    staticglobaldb.dbconn.delete_user(user)
+    return 'OK', 200
 
 
 def get_user():  # noqa: E501
@@ -109,7 +112,6 @@ def login_user(user_prepare_login_param):  # noqa: E501
 
         conn = staticglobaldb.dbconn
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
-        print(user)
         if user is None:
             return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login")
         auth_key = conn.generate_auth_hash(user.id)
@@ -125,4 +127,6 @@ def logout_user():  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    api_key = connexion.request.headers['api_key']
+    staticglobaldb.dbconn.delete_auth_key(api_key)
+    return 'OK', 200
