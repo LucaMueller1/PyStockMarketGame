@@ -25,14 +25,15 @@ def run(session_state):
 
     if mode_switch == "Buy":
         mode = "buy"
-        test_array = []
-        if session_state.stock_id:
-            test_array.append(session_state.stock_id)
+
+        if session_state.stock_desc:
+            #index = next(session_state.stock_names.index(name) for name in session_state.stock_names if session_state.stock_desc["symbol"] in name) + 1
+            index = [i for i, s in enumerate(session_state.stock_names) if session_state.stock_desc["symbol"] in s][0] + 1
         else:
-            test_array.append(" ")
+            index = 0
         # Get the ticker_code from the User
         st.write("Please enter your desired stock ticker and the quantity of your purchase:")
-        ticker_code_entry = st.selectbox("Stock ticker:", test_array + session_state.stock_names)
+        ticker_code_entry = st.selectbox("Stock ticker:", [" "] + session_state.stock_names, index)
 
         if ticker_code_entry != " ":
             # Splitting the ticker_code from the stock name
