@@ -9,6 +9,20 @@ from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
 
+"""
+desc: Portfolio Controller that handles requests for buying/selling stock and returning portfolio data
+
+author: Luca Mueller
+
+date: 2020-10-14
+
+mail: lucamueller32@gmail.com
+
+version: 1.0
+
+license: NONE
+"""
+
 
 def create_transaction(transaction_prepare_param):  # noqa: E501
     """Create a new stock transaction

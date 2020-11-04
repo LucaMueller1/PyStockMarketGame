@@ -11,6 +11,20 @@ from swagger_server import util
 from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
 
+"""
+desc: Stock Controller that handles all requests containing stock information
+
+author: Luca Mueller
+
+date: 2020-10-14
+
+mail: lucamueller32@gmail.com
+
+version: 1.0
+
+license: NONE
+"""
+
 
 def get_stock_description(symbol):  # noqa: E501
     """Get financials of given stock
@@ -51,7 +65,7 @@ def get_stock_history(symbol, period):  # noqa: E501
 
     if stock_value_list is None:
         return ApiError(detail="History for given stock not found", status=404, title="Not Found",
-                    type=("/stock/" + symbol + "/history"))
+                        type=("/stock/" + symbol + "/history"))
 
     return stock_value_list
 
