@@ -102,10 +102,18 @@ def get_stock_info_from_yfinance(symbol: str):
     :param symbol:
     :return:
     """
+    indexes = ["shortName", "country", "logo_url", "longBusinessSummary", "industry", "trailingAnnualDividendYield", "marketCap", "fiftyTwoWeekLow", "fiftyTwoWeekHigh", "fullTimeEmployees"]
+    # indexes = StockDescription().__dict__.keys()
+
     info = yf.Ticker(symbol).info
-    for i in info:
-        if info[i] is None:
-            info[i] = "N/A"
+    for value in info:
+        if info[value] is None:
+            info[value] = "N/A"
+
+    for index in indexes:
+        if index not in info:
+            info[index] = "N/A"
+
 
     description = StockDescription(symbol, info['shortName'], info['country'], info['logo_url'], info['longBusinessSummary'], info['industry'], info['trailingAnnualDividendYield'], info['marketCap'], info['fiftyTwoWeekLow'], info['fiftyTwoWeekHigh'], info['fullTimeEmployees'])
 
@@ -116,4 +124,7 @@ def get_stock_info_from_yfinance(symbol: str):
     return description
 
 
-#insert_stock_history_from_yfinance_to_db("IBM", "1d")
+# insert_stock_history_from_yfinance_to_db("IBM", "1d")
+# print(get_stock_info_from_yfinance("SBUX"))
+# print(yf.Ticker("SBUX").info)
+# print(get_stock_info_from_yfinance("SBUX"))
