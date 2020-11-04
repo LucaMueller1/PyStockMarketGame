@@ -6,6 +6,7 @@ import streamlit as st
 
 # Utilities Import
 import utilities.requests_server as requests_server
+import pages.broker.buy_helperfunctions as hf
 
 
 def run(session_state):
@@ -22,7 +23,6 @@ def run(session_state):
 
     # switch between BUY and SELL
     mode_switch = st.radio("Please choose whether you want to buy or sell stocks", ("Buy", "Sell"))
-
     if mode_switch == "Sell":
         st.write("Please choose the stock, that you want to sell.")
 
@@ -30,35 +30,31 @@ def run(session_state):
         ticker_code_entry = st.selectbox("WKN:", [" "] + session_state.stock_names)
         if ticker_code_entry != " ":
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[1]
-            # Connect to Database later!!!
-            quantity_of_specific_stock_in_depot = 6
-
             if st.checkbox("Sell all stocks", value=True):
                 # Set the Value of quantity to the amount user has in Depot
-                stock_quantity = 6
+                stock_quantity_for_sale = 6
 
             else:
-                # Site is split Die Seite wird aufgeteilt, sodass der User auf der rechten Seite eine Angabe hat, wie viele Aktien er von der ausgewählten Aktie im Depot hat
                 col1, col2 = st.beta_columns((4, 1))
 
                 # Selection of quantity
                 with col1:
-                    # Sollte der User eine genau Anzahl eingeben wollen, so kann er hier "textfeld" auswaehlen
                     quantity_input_method_choice = st.radio("Input method", ("Slider", "Textfield"))
 
                     # Slider
                     if quantity_input_method_choice == "Slider":
-                        stock_quantity = st.slider("Please choose the quantity of stocks", 1, 6)
+                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, 6)
 
                     # Textfeld & Button
                     if quantity_input_method_choice == "Textfield":
-                        stock_quantity_raw = st.number_input("Please choose the quantity of stocks", min_value=1,
+                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks", min_value=1,
                                                              step=1)
-                        stock_quantity = 1
+                        stock_quantity_for_sale = 1
                         if st.button("Apply"):
-                            stock_quantity = int(stock_quantity_raw.title())
+                            stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
 
-                # Anzeige der Quantitaät der ausgewaählten Aktie im Depot
+                # Anzeige der Quantität der ausgewaählten Aktie im Depot
+                quantity_of_specific_stock_in_depot = 6
                 with col2:
                     st.markdown("""
                             <div class="greyish padding">
@@ -67,21 +63,26 @@ def run(session_state):
                             </div>
                             """, unsafe_allow_html=True)
 
-            # Vorbereiten der Seitenaufteilung und Variablen für den Kauf:
-            col1, col2 = st.beta_columns(2)
 
             # Get stockinformation
-            stock_description = requests_server.get_stock_description(session_state.auth_key,
-                                                                      ticker_code_entry_for_post_request)
-            stock_sell_value_price = stock_quantity * 169.88
-            selling_fees = 9.90
-            total_sell_value = str(stock_sell_value_price - selling_fees) + "€"
+            single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
+            selling_fees = hf.get_selling_fees(session_state.auth_key)
+            stock_sell_value_price = float(stock_quantity_for_sale * single_stock_price)
+            total_sell_value = str(stock_sell_value_price - float(selling_fees)) + "$"
+
+            stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
+            stock_name = str(stock_description["stockName"])
+            dividend_yield_raw = stock_description["dividend"]
+            dividend_yield = hf.get_dividend_yield(dividend_yield_raw)
+            image_source = stock_description["logoUrl"]
+            image_source = hf.get_image_url(session_state.auth_key, image_source)
 
             # Auflistung Verkaufspreis mit Ordergebühren
+            col1, col2 = st.beta_columns(2)
             with col1:
                 st.subheader("Sell - Overview")
                 st.write("----------------------")
-                st.write("Stock value:", stock_sell_value_price)
+                st.write("Transaction value:", stock_sell_value_price)
                 st.write("Selling fees: -", selling_fees)
                 st.write("----------------------")
                 st.subheader("Total selling value:")
@@ -92,24 +93,16 @@ def run(session_state):
                     st.subheader("Sold")
                     response = requests_server.post_transaction(session_state.auth_key,
                                                                 ticker_code_entry_for_post_request,
-                                                                stock_quantity, transactionType="sell")
+                                                                stock_quantity_for_sale, transactionType="sell")
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
-                stock_name = str(stock_description["stockName"])
-                dividend_yield_raw = stock_description["dividend"]
-                if dividend_yield_raw != "N/A":
-                    dividend_yield = str(int(dividend_yield_raw) * 100)
-                else:
-                    dividend_yield = "N/A"
-                image_source = stock_description["logoUrl"]
-
                 st.markdown("""
                                             <div class="greyish padding">
                                             <h2>Stock Information</h2>
                                             <p>Stock name: <b>""" + stock_name + """ </b></p>
-                                            <p>Stock value: <b>""" + "190" + """<b></p>
-                                            <p>Dividendyield: <b>""" + dividend_yield + """<b></p>
+                                            <p>Single stock value: <b>""" + str(single_stock_price) + """<b></p>
+                                            <p>Dividend yield (%): <b>""" + str(dividend_yield) + """<b></p>
                                             <img class = "circle_and_center" src = """ + image_source + """>
                                             </div>
                                             """, unsafe_allow_html=True)
@@ -117,3 +110,5 @@ def run(session_state):
     elif mode_switch == "Buy":
         session_state.page = "boerse"
         st.experimental_rerun()
+
+
