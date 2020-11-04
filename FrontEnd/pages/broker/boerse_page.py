@@ -65,7 +65,7 @@ def run(session_state):
                             st.write("----------------------")
                             st.write("Stock price:", single_stock_value)
                             st.write("Quantity:", ticker_quantity_entry)
-                            st.write("Purchase fees:", hf.check_for_entry_string(purchase_fees))
+                            st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">"""+str(hf.check_for_entry_string(purchase_fees))+"""</code></p></div> """, unsafe_allow_html=True)
                             st.write("----------------------")
                             st.subheader("Total purchase price:")
                             st.title(total_purchase_value)

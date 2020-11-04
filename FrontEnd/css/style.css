@@ -17,6 +17,16 @@
     margin-top:-5px;
 }
 
+.reportview-container .markdown-text-container {
+    font-family: "IBM Plex Sans", sans-serif;
+    margin-bottom:-1rem
+}
+.reportview-container .markdown-text-container pre code {
+    color:#262730
+}
+.reportview-container .markdown-text-container a {
+    color:#0068c9
+}
 
 .sidebar>div {
   font-size: 15pt;
