@@ -5,6 +5,7 @@ from time import sleep
 
 # Utilities IMPORTS
 import utilities.requests_server as requests_server
+import pages.broker.buy_helperfunctions as hf
 
 
 def run(session_state):
@@ -40,78 +41,68 @@ def run(session_state):
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[1]
 
             # Get the quantity from user
-            ticker_quantity_entry = st.number_input("Quantity: ", step = 1.0)
+            ticker_quantity_entry = st.number_input("Quantity: ", step = 1.0, value = 1.0)
             ticker_quantity_entry = int(ticker_quantity_entry)
 
             # If button is clicked --> Entry submitted (quantity & ticker_code)
-            if st.button("Apply"):
-                session_state.buy_redirect = True
+            if (ticker_quantity_entry == 0):
+                st.error("Invalid quantity")
+            else:
+                if st.button("Apply"):
+                    session_state.buy_redirect = True
 
-            if session_state.buy_redirect:
-                col1, col2 = st.beta_columns(2)
-
-                stock_description = requests_server.get_stock_description(session_state.auth_key,
-                                                                          ticker_code_entry_for_post_request)
-                stock_value = round(float(requests_server.get_stockprice_history(session_state.auth_key, ticker_code_entry_for_post_request, "1d")[0]["stock_price"]), 2)
-
+                    if session_state.buy_redirect:
+                        col1, col2 = st.beta_columns(2)
 
 
-                # specific stock value
-                specific_stock_value = stock_value * int(ticker_quantity_entry)
+                        single_stock_value = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
+                        total_stock_value = hf.get_total_stock_value(single_stock_value, ticker_quantity_entry)
+                        purchase_fees = (requests_server.get_user_transaction_fee(session_state.auth_key))["transactionFee"]
+                        total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees)
+                        stock_description = requests_server.get_stock_description(session_state.auth_key,
+                                                                                  ticker_code_entry_for_post_request)
+                        stock_name = hf.check_for_entry_string(str(stock_description["stockName"]))
+                        image_source = hf.check_for_entry_string(stock_description["logoUrl"])
+                        dividend_yield_raw = hf.check_for_entry_string(stock_description["dividend"])
+                        dividend_yield = hf.get_dividend_yield(dividend_yield_raw)
 
-                # purchase_fees is static for now, but will later be fetched from database
-                purchase_fees = 9.90
+                        with col1:
+                            st.subheader("Buy - Overview")
+                            st.write("----------------------")
+                            st.write("Stock price:", single_stock_value)
+                            st.write("Quantity:", ticker_quantity_entry)
+                            st.write("Purchase fees:", hf.check_for_entry_string(purchase_fees))
+                            st.write("----------------------")
+                            st.subheader("Total purchase price:")
+                            st.title(total_purchase_value)
 
-                # Add purchase_fees to specific_stock_value
-                total_purchase_value = str(specific_stock_value + purchase_fees) + "€"
+                            if st.button("Buy"):
+                                # send post request to DB
+                                response = requests_server.post_transaction(session_state.auth_key,
+                                                                            ticker_code_entry_for_post_request,
+                                                                            ticker_quantity_entry, transactionType="buy")
 
-                # Place price information and "Kaufen" button on the left side
-                with col1:
-                    st.subheader("Buy - Overview")
-                    st.write("----------------------")
-                    st.write("Stock price:", specific_stock_value)
-                    st.write("Purchase fees:", purchase_fees)
-                    st.write("----------------------")
-                    st.subheader("Total purchase price:")
-                    st.title(total_purchase_value)
+                                st.write("You can view your purchased stocks in your securities account.")
+                                sleep(2)
 
-                    if st.button("Buy"):
-                        # send post request to DB
-                        response = requests_server.post_transaction(session_state.auth_key,
-                                                                    ticker_code_entry_for_post_request,
-                                                                    ticker_quantity_entry, transactionType="buy")
+                                session_state.buy_redirect = False
+                                st.experimental_rerun()
 
-                        st.write("You can view your purchased stocks in your securities account.")
-                        sleep(2)
 
-                        session_state.buy_redirect = False
-                        st.experimental_rerun()
-
-                        # This is where the actual buy happens
-                        # Once connected to BE: Get Price of chosen stock & fee --> Calculate end price
-
-                # Place stock information on the right side
-                with col2:
-                    # Information to be inserted in markdown
-                    stock_name = str(stock_description["stockName"])
-                    dividend_yield_raw = stock_description["dividend"]
-                    if dividend_yield_raw != "N/A":
-                        dividend_yield = str(int(dividend_yield_raw) * 100)
-                    else:
-                        dividend_yield = "N/A"
-                    image_source = stock_description["logoUrl"]
-
-                    st.markdown("""
-                                    <div class="greyish padding">
-                                    <h2>Stock information</h2>
-                                    <p>Stock name: <b>""" + stock_name + """ </b></p>
-                                    <p>Stock value: <b>""" + "190" + """<b></p>
-                                    <p>Dividendyield (%): <b>""" + dividend_yield + """<b></p>
-                                    <img class = "circle_and_center" src = """ + image_source + """>
-                                    </div>
-                                    """, unsafe_allow_html=True)
+                        # Place stock information on the right side
+                        with col2:
+                            st.markdown("""
+                                            <div class="greyish padding">
+                                            <h2>Stock information</h2>
+                                            <p>Stock name: <b>""" + stock_name + """ </b></p>
+                                            <p>Stock value: <b>""" + str(single_stock_value) + """<b></p>
+                                            <p>Dividend Yield (%): <b>""" + str(dividend_yield) + """<b></p>
+                                            <img class = "circle_and_center" src = """ + image_source + """>
+                                            </div>
+                                            """, unsafe_allow_html=True)
 
 
     elif mode_switch == "Sell":
         session_state.page = "sell"
         st.experimental_rerun()
+
