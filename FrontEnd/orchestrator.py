@@ -27,8 +27,7 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-session_state = SessionState.get(page='login', auth_key='', stock_id=None, stock_names=None, first_name=None, buy_redirect=False)
-
+session_state = SessionState.get(page='login', auth_key='', stock_desc=None, stock_names=None, graph_data=None, first_name=None, buy_redirect=False)
 
 if session_state.page == "login":
     login_page.run(session_state)
@@ -38,9 +37,9 @@ if session_state.page == "depot":
     depot_page.run(session_state)
 if session_state.page == "boerse":
     boerse_page.run(session_state)
-if session_state.page == "stock_info" and session_state.stock_id is not None:
+if session_state.page == "stock_info" and session_state.stock_desc is not None:
     stock_analysis_page.run(session_state)
-if session_state.page == "stock_info" and session_state.stock_id is None:
+if session_state.page == "stock_info" and session_state.stock_desc is None:
     stock_screener_page.run(session_state)
 # Broker page is divided into boerse and sell page, which is why it is listed as a separate session_state page below
 if session_state.page == "sell":
