@@ -1,16 +1,17 @@
 from streamlit_echarts import st_echarts
 
-def show_chart():
+def show_chart(historical_data):
+
     options = {
         "xAxis": {
             "type": 'category',
-            "data": ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            "data": [data_point["timestamp"][:9] for data_point in historical_data]
         },
         "yAxis": {
             "type": 'value'
         },
         "series": [{
-            "data": [820, 932, 901, 934, 1290, 1330, 1320],
+            "data": [data_point["stock_price"] for data_point in historical_data],
             "type": 'line'
         }],
         "dataZoom": [{
