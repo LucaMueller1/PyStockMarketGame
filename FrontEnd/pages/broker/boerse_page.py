@@ -52,10 +52,8 @@ def run(session_state):
 
                 stock_description = requests_server.get_stock_description(session_state.auth_key,
                                                                           ticker_code_entry_for_post_request)
-                stock_value = requests_server.get_stockprice_history(session_state.auth_key, ticker_code_entry_for_post_request, "1d")
-                print(stock_value)
-                stock_value = stock_value["stock_price"]
-                print(stock_value)
+                stock_value = round(float(requests_server.get_stockprice_history(session_state.auth_key, ticker_code_entry_for_post_request, "1d")[0]["stock_price"]), 2)
+
 
 
                 # specific stock value
