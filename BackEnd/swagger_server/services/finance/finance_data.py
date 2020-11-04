@@ -40,7 +40,6 @@ def get_stock_history_from_yfinance(symbol: str, period: str):
         conn.insert_course(value)
 
 
-@TypeError
 def get_stock_history_to_frontend(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
