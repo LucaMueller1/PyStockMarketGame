@@ -22,9 +22,6 @@ def get_stock_description(symbol):  # noqa: E501
 
     :rtype: StockDescription
     """
-    if symbol == "DDAIF":
-        return ApiError(detail="Description for given stock not found", status=418, title="I'm a teapot",
-                        type=("/stock/" + symbol + "/description"))
     description = finance_data.get_stock_info_from_yfinance(symbol)
     if description is None:
         return ApiError(detail="Description for given stock not found", status=404, title="Not Found",
