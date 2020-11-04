@@ -4,7 +4,7 @@ def buy_stock(symbol: str, anzahl: int):
     # is there enough money
     # lock access to buying, selling (security)
     # buy stocks
-    pass
+
     return True
 
 

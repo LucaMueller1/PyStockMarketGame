@@ -128,8 +128,7 @@ class DatabaseConn:
 
         return rs
 
-
-    def get_stock_by_symbol(self, symbol: str) -> StockDescription:
+    def get_stock_by_symbol(self, symbol: str) ->  StockDescription:
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `symbol` = :symbol"""),
