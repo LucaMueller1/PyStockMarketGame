@@ -48,7 +48,7 @@ def get_single_stock_value(auth_key, ticker_code):
         return "N/A"
 
 @st.cache(show_spinner=False )
-def get_selling_fees(auth_key):
+def get_transaction_fees(auth_key):
     selling_fees = (requests_server.get_user_transaction_fee(auth_key))["transactionFee"]
     return selling_fees
 

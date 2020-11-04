@@ -66,7 +66,7 @@ def run(session_state):
 
             # Get stockinformation
             single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
-            selling_fees = hf.get_selling_fees(session_state.auth_key)
+            selling_fees = hf.get_transaction_fees(session_state.auth_key)
             stock_sell_value_price = float(stock_quantity_for_sale * single_stock_price)
             total_sell_value = str(stock_sell_value_price - float(selling_fees)) + "$"
 

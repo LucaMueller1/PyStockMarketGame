@@ -51,7 +51,7 @@ def run(session_state):
                         # Collecting stock information
                         single_stock_value = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
                         total_stock_value = hf.get_total_stock_value(single_stock_value, ticker_quantity_entry)
-                        purchase_fees = hf.get_selling_fees(session_state.auth_key)
+                        purchase_fees = hf.get_transaction_fees(session_state.auth_key)
                         total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees)
                         stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
                         stock_name = hf.check_for_entry_string(str(stock_description["stockName"]))
