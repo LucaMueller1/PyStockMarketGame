@@ -7,7 +7,6 @@ import utilities.requests_server as requests_server
 
 # MODULES IMPORTS
 import streamlit as st
-import flag
 
 def local_css(file_name):
         with open(file_name) as f:
@@ -15,12 +14,11 @@ def local_css(file_name):
 
 def run(session_state):
 
-    description = requests_server.get_stock_description(session_state.auth_key, session_state.stock_id)
-
     local_css("FrontEnd/css/style.css")
+    description = session_state.stock_desc
 
     if st.button("🔍 return to search"):
-        session_state.stock_id = None
+        session_state.stock_desc = None
         st.experimental_rerun()
 
     st.title(description["stockName"])

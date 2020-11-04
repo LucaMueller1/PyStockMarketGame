@@ -22,8 +22,10 @@ def run(session_state):
     selected = st.selectbox("search by name or ticker:", [""] + session_state.stock_names)
 
     if st.button("OK"):
+        symbol = re.sub(pattern=".*: ", string=selected, repl="")
+        session_state.stock_desc = requests_server.get_stock_description(session_state.auth_key, symbol)
+
         session_state.page = "stock_info"
-        session_state.stock_id = re.sub(pattern=".*: ", string=selected, repl="")
         st.experimental_rerun()
 
 
