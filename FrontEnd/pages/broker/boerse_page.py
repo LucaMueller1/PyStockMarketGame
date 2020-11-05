@@ -11,7 +11,7 @@ from streamlit import caching
 
 def run(session_state):
     side_bar.run(session_state)
-
+    session_state.buy_redirect = False
     # Load CSS File for Formatting
     def local_css(file_name):
         with open(file_name) as f:
@@ -39,62 +39,55 @@ def run(session_state):
             ticker_quantity_entry = st.number_input("Quantity: ", step = 1, value = 1, min_value=1)
             ticker_quantity_entry = int(ticker_quantity_entry)
 
-            # If button is clicked --> Entry submitted (quantity & ticker_code)
-            if (ticker_quantity_entry == 0):
-                st.error("Invalid quantity")
-            else:
-                if st.button("Apply"):
-                    session_state.buy_redirect = True
+            col1, col2 = st.beta_columns(2)
 
-                    if session_state.buy_redirect:
-                        col1, col2 = st.beta_columns(2)
+            # Collecting stock information
+            single_stock_value = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
+            total_stock_value = hf.get_total_stock_value(single_stock_value, ticker_quantity_entry)
+            purchase_fees = hf.get_transaction_fees(session_state.auth_key)
+            total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees)
+            stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
+            stock_name = hf.check_for_entry_string(str(stock_description["stockName"]))
+            image_source = stock_description["logoUrl"]
+            image_source = hf.get_image_url(session_state.auth_key, image_source)
+            dividend_yield_raw = hf.check_for_entry_string(stock_description["dividend"])
+            dividend_yield = hf.get_dividend_yield(dividend_yield_raw)
 
-                        # Collecting stock information
-                        single_stock_value = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
-                        total_stock_value = hf.get_total_stock_value(single_stock_value, ticker_quantity_entry)
-                        purchase_fees = hf.get_transaction_fees(session_state.auth_key)
-                        total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees)
-                        stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
-                        stock_name = hf.check_for_entry_string(str(stock_description["stockName"]))
-                        image_source = stock_description["logoUrl"]
-                        image_source = hf.get_image_url(session_state.auth_key, image_source)
-                        dividend_yield_raw = hf.check_for_entry_string(stock_description["dividend"])
-                        dividend_yield = hf.get_dividend_yield(dividend_yield_raw)
+            with col1:
+                st.subheader("Buy - Overview")
+                st.write("----------------------")
+                st.write("Stock price:", single_stock_value)
+                st.write("Quantity:", ticker_quantity_entry)
+                st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(purchase_fees)) + """</code></p></div> """, unsafe_allow_html=True)
+                st.write("----------------------")
+                st.subheader("Total purchase price:")
+                st.title(total_purchase_value)
 
-                        with col1:
-                            st.subheader("Buy - Overview")
-                            st.write("----------------------")
-                            st.write("Stock price:", single_stock_value)
-                            st.write("Quantity:", ticker_quantity_entry)
-                            st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(purchase_fees)) + """</code></p></div> """, unsafe_allow_html=True)
-                            st.write("----------------------")
-                            st.subheader("Total purchase price:")
-                            st.title(total_purchase_value)
+                if st.button("Buy"):
+                    # send post request to DB
+                    response = requests_server.post_transaction(session_state.auth_key,
+                                                                ticker_code_entry_for_post_request,
+                                                                ticker_quantity_entry, transaction_type="buy")
+                    print(response)
 
-                            if st.button("Buy"):
-                                # send post request to DB
-                                response = requests_server.post_transaction(session_state.auth_key,
-                                                                            ticker_code_entry_for_post_request,
-                                                                            ticker_quantity_entry, transactionType="buy")
-
-                                st.write("You can view your purchased stocks in your securities account.")
-                                sleep(2)
-
-                                session_state.buy_redirect = False
-                                st.experimental_rerun()
+                    st.write("You can view your purchased stocks in your securities account.")
+                    sleep(2)
 
 
-                        # Place stock information on the right side
-                        with col2:
-                            st.markdown("""
-                                            <div class="greyish padding">
-                                            <h2>Stock information</h2>
-                                            <p>Stock name: <b>""" + stock_name + """ </b></p>
-                                            <p>Stock value: <b>""" + str(single_stock_value) + """<b></p>
-                                            <p>Dividend Yield (%): <b>""" + str(dividend_yield) + """<b></p>
-                                            <img class = "circle_and_center" src = """ + image_source + """>
-                                            </div>
-                                            """, unsafe_allow_html=True)
+                    st.experimental_rerun()
+
+
+            # Place stock information on the right side
+            with col2:
+                st.markdown("""
+                                <div class="greyish padding">
+                                <h2>Stock information</h2>
+                                <p>Stock name: <b>""" + stock_name + """ </b></p>
+                                <p>Stock value: <b>""" + str(single_stock_value) + """<b></p>
+                                <p>Dividend Yield (%): <b>""" + str(dividend_yield) + """<b></p>
+                                <img class = "circle_and_center" src = """ + image_source + """>
+                                </div>
+                                """, unsafe_allow_html=True)
 
 
     elif mode_switch == "Sell":

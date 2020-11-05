@@ -7,6 +7,7 @@ from streamlit import caching
 # Utilities Import
 import utilities.requests_server as requests_server
 import pages.broker.buy_helperfunctions as hf
+from time import sleep
 
 
 def run(session_state):
@@ -31,6 +32,8 @@ def run(session_state):
         if ticker_code_entry != " ":
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[0]
             maximum_available_quantity_for_stock = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry_for_post_request))
+
+
             if st.checkbox("Sell all stocks", value=True):
                 # Set the Value of quantity to the amount user has in Depot
                 stock_quantity_for_sale = maximum_available_quantity_for_stock
@@ -52,7 +55,6 @@ def run(session_state):
                         stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
 
                 # Anzeige der Quantität der ausgewaählten Aktie im Depot
-                quantity_of_specific_stock_in_depot = 6
                 with col2:
                     st.markdown("""
                             <div class="greyish padding">
@@ -92,7 +94,12 @@ def run(session_state):
                     st.subheader("Sold")
                     response = requests_server.post_transaction(session_state.auth_key,
                                                                 ticker_code_entry_for_post_request,
-                                                                stock_quantity_for_sale, transactionType="sell")
+                                                                stock_quantity_for_sale, transaction_type="sell")
+                    st.write("Your specified stocks have been sold.")
+                    sleep(2)
+
+                    caching.clear_cache()
+                    st.experimental_rerun()
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
