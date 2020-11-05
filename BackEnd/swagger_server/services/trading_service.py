@@ -78,8 +78,9 @@ def get_portfolio_positions(user: User):
                 prev_position.amount -= next_amount
 
             #new Buy-In price (division by zero)
-            if prev_position.amount == 0:
-                prev_position.stock_buyin_price = 0
+            if prev_position.amount <= 0:
+                stocks[symbol_index] = None
+                stocks.remove(symbol_index)
             else:
                 prev_position.stock_buyin_price = prev_value/prev_position.amount # 895€ / 8stk
 
