@@ -11,6 +11,8 @@ from swagger_server.models.settings import Settings
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
+from swagger_server.services import trading_service
+from swagger_server.models.user import User
 
 """
 desc: Portfolio Controller that handles requests for buying/selling stock and returning portfolio data
@@ -73,7 +75,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
 
 
-def get_portfolio():  # noqa: E501
+def get_portfolio(user: User):  # noqa: E501
     """Get all current positions
 
     Returns all the current stock positions of the logged in user # noqa: E501
@@ -81,7 +83,8 @@ def get_portfolio():  # noqa: E501
 
     :rtype: List[PortfolioPosition]
     """
-    return 'do some magic!'
+    returned = trading_service.stock_portfolio_position(user)
+    return returned
 
 
 def get_portfolio_value():  # noqa: E501
@@ -92,4 +95,5 @@ def get_portfolio_value():  # noqa: E501
 
     :rtype: List[PortfolioValue]
     """
+
     return 'do some magic!'

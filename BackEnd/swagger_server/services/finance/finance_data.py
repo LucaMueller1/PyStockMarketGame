@@ -60,7 +60,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
                 continue
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
-            multiplier+=0.1
+            multiplier*1.1
         return returned
 
     if symbol == "DDAIF":
