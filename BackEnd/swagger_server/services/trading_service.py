@@ -77,7 +77,11 @@ def get_portfolio_positions(user: User):
                 prev_value -= next_value
                 prev_position.amount -= next_amount
 
-            prev_position.stock_buyin_price = prev_value/prev_position.amount # 895€ / 8stk
+            #new Buy-In price (division by zero)
+            if prev_position.amount == 0:
+                prev_position.stock_buyin_price = 0
+            else:
+                prev_position.stock_buyin_price = prev_value/prev_position.amount # 895€ / 8stk
 
             # override PortfolioPosition
             stocks[symbol_index] = prev_position
