@@ -14,6 +14,13 @@ from swagger_server.services.db_service import DatabaseConn
 # "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE")
 
 
+def check_current_stock_price(symbol: str):
+    conn = DatabaseConn()
+    course_today = conn.get_stock_price_from_today(symbol)
+    if course_today is None:
+        course_today = insert_stock_history_from_yfinance_to_db(symbol, "1d")
+    return course_today
+
 def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()

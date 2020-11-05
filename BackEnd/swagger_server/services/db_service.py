@@ -224,7 +224,6 @@ class DatabaseConn:
 
         return returned
 
-
     def update_stock(self, stock_description: StockDescription):
 
         returned = False
@@ -247,3 +246,8 @@ class DatabaseConn:
                   "datetime": stock_value.timestamp}))
             returned = True
         return returned
+
+    def get_stock_price_from_today(self, symbol: str):
+        # return StockValue Object or just Open Course...
+        value = StockValue()
+        return value
