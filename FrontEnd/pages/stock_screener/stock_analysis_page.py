@@ -21,10 +21,14 @@ def run(session_state):
         session_state.stock_desc = None
         st.experimental_rerun()
 
-    st.title(description["stockName"])
-    st.markdown(f"""<img src="{description["logoUrl"]}" style="border-radius: 50%">""", unsafe_allow_html=True)
+    st.markdown(f"""<h1 style="max-height: 3em"><img src="{description["logoUrl"]}" style="border-radius: 10%"> {description["stockName"]}<h1>""", unsafe_allow_html=True)
 
     chart_generator.show_chart(session_state.graph_data)
+
+    st.write("----")
+    if st.button("go to broker page 🛍️"):
+        session_state.page = "boerse"
+        st.experimental_rerun()
 
     general_information = st.beta_expander("general information", expanded=True)
     general_information.write(f"""**Symbol:** {description["symbol"]}""")

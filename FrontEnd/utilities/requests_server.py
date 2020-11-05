@@ -9,6 +9,8 @@ def login(user_name_input: str, password_input: str) -> requests.Response:
 
     return requests.post(BASE_URL + "user/login", json=json)
 
+def logout(auth_key: str):
+    return requests.get(BASE_URL + "user/logout", headers={"api_key": auth_key})
 
 def register(first_name: str, name: str, mail: str, password: str, start_capital: float):
     json = {'firstName': first_name,

@@ -3,15 +3,18 @@ from streamlit_echarts import st_echarts
 def show_chart(historical_data):
 
     options = {
+        "tooltip": {
+        "trigger": 'axis'
+        },
         "xAxis": {
             "type": 'category',
-            "data": [data_point["timestamp"][:9] for data_point in historical_data]
+            "data": [data_point["timestamp"][:10] for data_point in historical_data]
         },
         "yAxis": {
             "type": 'value'
         },
         "series": [{
-            "data": [data_point["stock_price"] for data_point in historical_data],
+            "data": [round(data_point["stock_price"],2) for data_point in historical_data],
             "type": 'line'
         }],
         "dataZoom": [{
@@ -30,4 +33,4 @@ def show_chart(historical_data):
         }],
     }
 
-    st_echarts(options=options)
+    st_echarts(options=options, height="25em")
