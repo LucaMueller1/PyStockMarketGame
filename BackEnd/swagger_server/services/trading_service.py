@@ -2,8 +2,6 @@ import pandas as pd
 from swagger_server.services.db_service import DatabaseConn
 from swagger_server.models.portfolio_position import PortfolioPosition
 from swagger_server.models.user import User
-from swagger_server.models.api_error import ApiError
-from swagger_server.models.stock_value import StockValue
 from swagger_server.services.finance import finance_data
 
 def buy_stock(symbol: str, anzahl: int):
@@ -23,10 +21,15 @@ def stock_values_available(symbol: str, anzahl: int):
 
 
 def get_portfolio_positions(user: User):
-    """ Gets all the stocks and calculates the average buy-in price.
+    """ !!! this does not calculate the history of the depot !!!
+        This function creates a PortfolioPosition for every Stock that has been bought or sold
+        in the past.
+        it checks through every transaction made in the past and modifies it so that there is the average
+        Buy-In price as well as the current amount of stocks owned.
 
     :param user: current user
     :return: Array of PortfolioPositions
+    :test: make some transactions and go to the portfolio site of the stock.
     """
     # get all stock transactions
     conn = DatabaseConn()
@@ -41,7 +44,7 @@ def get_portfolio_positions(user: User):
         next_amount = transaction[0].amount
         current_stock_price = 100
         transaction_fee = transaction[0].transaction_fee
-        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount)     # price at buy
+        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy
         transaction_type = transaction[0].transaction_type
 
 
@@ -54,28 +57,29 @@ def get_portfolio_positions(user: User):
                 break
 
         if not found:
+
             current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
             stocks.append(PortfolioPosition(symbol, stock_name, next_amount, current_stock_price, next_stock_buyin_price))
         else:
-            # get Portfoliopostition with symbol thats already in list
+            # get Portfoliopostition out of list
             prev_position = stocks[symbol_index] # 5 Aktien 120€ + 5€
 
 
 
-            # Buy-In/Amount Berechnung
+            # Buy-In/Amount calculation
             prev_value = prev_position.amount * prev_position.stock_buyin_price # 5*120 = 600 + 5€ = 605€
             next_value = next_amount * next_stock_buyin_price # 3*95€ + 5€ = 290€
 
             if transaction_type == "buy":
                 prev_value += next_value                # 605 + 290 = 895€
-                prev_position.amount += next_amount     # 5   + 3   = 8€
+                prev_position.amount += next_amount     # 5   + 3   = 8stk
             else:
                 prev_value -= next_value
                 prev_position.amount -= next_amount
 
-            prev_position.stock_buyin_price = prev_value/prev_position.amount
+            prev_position.stock_buyin_price = prev_value/prev_position.amount # 895€ / 8stk
 
-            # Überschreiben
+            # override PortfolioPosition
             stocks[symbol_index] = prev_position
 
             stocks[symbol_index]
@@ -94,6 +98,6 @@ def get_portfolio_history(user: User):
     pass
 
 
-user = User(2, "Luca", "Weissbeck", "lucaweissbeck@yahoo.de", '$2b$12$.7atD7IuL.LH0/XbGONOiu3l6aJ2Ux/1r2/ExWIsJYukcymy8181C', 10000, 10000)
+# user = User(2, "Luca", "Weissbeck", "lucaweissbeck@yahoo.de", '$2b$12$.7atD7IuL.LH0/XbGONOiu3l6aJ2Ux/1r2/ExWIsJYukcymy8181C', 10000, 10000)
 # stock_portfolio_position(user)
-get_portfolio_positions(user)
+# get_portfolio_positions(user)

@@ -83,7 +83,7 @@ def get_portfolio(user: User):  # noqa: E501
 
     :rtype: List[PortfolioPosition]
     """
-    returned = trading_service.stock_portfolio_position(user)
+    returned = trading_service.get_portfolio_position(user)
     return returned
 
 
