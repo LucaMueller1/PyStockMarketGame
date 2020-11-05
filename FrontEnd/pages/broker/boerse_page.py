@@ -68,7 +68,7 @@ def run(session_state):
                     response = requests_server.post_transaction(session_state.auth_key,
                                                                 ticker_code_entry_for_post_request,
                                                                 ticker_quantity_entry, transaction_type="buy")
-                    print(response)
+                    print(response.text)
 
                     st.write("You can view your purchased stocks in your securities account.")
                     sleep(2)
