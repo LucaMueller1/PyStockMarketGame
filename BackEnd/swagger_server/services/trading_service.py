@@ -12,12 +12,47 @@ def buy_stock(symbol: str, anzahl: int):
     return True
 
 
-def stock_values_available(symbol: str, anzahl: int):
+def stock_values_available(user: User):
+    conn = DatabaseConn()
+    transactions = conn.get_transactions_and_stock_by_user(user)
 
-    # get amount owned
-    # check if anzahl >= amount owned
-    pass
-    return True
+    stocks = []
+    for transaction in transactions:
+        symbol = transaction[1].symbol
+        next_amount = transaction[0].amount
+        transaction_type = transaction[0].transaction_type
+
+
+        symbol_index = None
+        found = False
+        for i in range(len(stocks)):
+            if stocks[i].symbol == symbol:
+                found = True
+                symbol_index = i
+                break
+
+        if not found:
+            stocks.append(PortfolioPosition(symbol, None, next_amount, None, None))
+        else:
+            # get Portfoliopostition out of list
+            prev_position = stocks[symbol_index] # 5 Aktien 120€ + 5€
+
+            if transaction_type == "buy":
+                prev_position.amount += next_amount     # 5   + 3   = 8stk
+            else:
+                prev_position.amount -= next_amount
+
+            #new Buy-In price (division by zero)
+            if prev_position.amount <= 0:
+                stocks[symbol_index] = None
+                stocks.pop(symbol_index)
+            else:
+                # override PortfolioPosition
+                stocks[symbol_index] = prev_position
+
+
+
+    return stocks
 
 
 def get_portfolio_positions(user: User):
