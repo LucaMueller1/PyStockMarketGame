@@ -39,7 +39,7 @@ def get_stock_description(symbol):  # noqa: E501
     description = finance_data.get_stock_info_from_yfinance(symbol)
     if description is None:
         return ApiError(detail="Description for given stock not found", status=404, title="Not Found",
-                        type=("/stock/" + symbol + "/description"))
+                        type=("/stock/" + symbol + "/description")), 404
 
     return description
 
@@ -59,13 +59,13 @@ def get_stock_history(symbol, period):  # noqa: E501
     """
     if not re.match("^\\d+(d$)|^\\d+(mo$)|^\\d+(y$)|^ytd$|^max$", period):
         return ApiError(detail="Given period not matching pattern", status=404, title="Not Found",
-                        type=("/stock/" + symbol + "/history"))
+                        type=("/stock/" + symbol + "/history")), 404
 
     stock_value_list = finance_data.get_stock_history_to_frontend(symbol, period)
 
     if stock_value_list is None:
         return ApiError(detail="History for given stock not found", status=404, title="Not Found",
-                        type=("/stock/" + symbol + "/history"))
+                        type=("/stock/" + symbol + "/history")), 404
 
     return stock_value_list
 
@@ -81,7 +81,7 @@ def get_stock_sustainability(symbol):  # noqa: E501
     :rtype: StockSustainability
     """
     return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found",
-                    type=("/stock/" + symbol + "/sustainability"))
+                    type=("/stock/" + symbol + "/sustainability")), 404
 
 
 def get_stocks():  # noqa: E501
@@ -92,9 +92,5 @@ def get_stocks():  # noqa: E501
 
     :rtype: List[StockSearchResult]
     """
-
     stock_list = staticglobaldb.dbconn.get_stock_search_results()
-
-    if (stock_list is None) or (len(stock_list) < 1):
-        return 'No Content', 204
     return stock_list

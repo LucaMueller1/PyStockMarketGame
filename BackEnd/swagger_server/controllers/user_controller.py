@@ -43,7 +43,7 @@ def create_user(user_param):  # noqa: E501
     if insertion:
         return 'OK', 200
     else:
-        return ApiError(detail="Failed to create user", status=400, title="Bad Request", type="/user")
+        return ApiError(detail="Failed to create user", status=400, title="Bad Request", type="/user"), 400
 
 
 def create_user_settings(settings_param):  # noqa: E501
@@ -91,7 +91,7 @@ def get_user():  # noqa: E501
     api_key = connexion.request.headers['api_key']
     print(api_key)
     if api_key is None:
-        return ApiError(detail="No user authorized for given api_key", status=401, title="Unauthorized", type="/user")
+        return ApiError(detail="No user authorized for given api_key", status=401, title="Unauthorized", type="/user"), 401
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
 
     return user
@@ -127,7 +127,7 @@ def login_user(user_prepare_login_param):  # noqa: E501
         conn = staticglobaldb.dbconn
         user = conn.check_password(user_prepare_login_param.email, user_prepare_login_param.password)
         if user is None:
-            return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login")
+            return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login"), 404
         auth_key = conn.generate_auth_hash(user.id)
 
     return auth_key

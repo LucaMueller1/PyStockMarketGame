@@ -45,7 +45,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
 
         if transaction_prepare_param.amount <= 0:
             return ApiError(detail="Invalid stock quantity", status=400, title="Bad Request",
-                            type="/portfolio/transaction")
+                            type="/portfolio/transaction"), 400
 
         user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user is authorized
         settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
@@ -63,7 +63,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
                 return transaction
             else:
                 return ApiError(detail="Insufficient cash", status=400, title="Bad Request",
-                                type="/portfolio/transaction")
+                                type="/portfolio/transaction"), 400
         else:  # sell stock
             # check if buy-amount is sufficient
             available_positions = trading_service.stock_values_available(user)
@@ -82,9 +82,9 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
                 return transaction
             else:
                 return ApiError(detail="Insufficient stock quantity to sell", status=400, title="Bad Request",
-                                type="/portfolio/transaction")
+                                type="/portfolio/transaction"), 400
 
-    return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
+    return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction"), 400
 
 
 def get_portfolio():  # noqa: E501
