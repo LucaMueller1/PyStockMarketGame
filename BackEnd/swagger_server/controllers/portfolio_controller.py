@@ -6,9 +6,25 @@ from swagger_server.models.portfolio_position import PortfolioPosition  # noqa: 
 from swagger_server.models.portfolio_value import PortfolioValue  # noqa: E501
 from swagger_server.models.transaction import Transaction  # noqa: E501
 from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa: E501
+from swagger_server.models.user import User
+from swagger_server.models.settings import Settings
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
+
+"""
+desc: Portfolio Controller that handles requests for buying/selling stock and returning portfolio data
+
+author: Luca Mueller
+
+date: 2020-10-14
+
+mail: lucamueller32@gmail.com
+
+version: 1.0
+
+license: NONE
+"""
 
 
 def create_transaction(transaction_prepare_param):  # noqa: E501
@@ -24,23 +40,35 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     if connexion.request.is_json:
         transaction_prepare_param = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
         api_key = connexion.request.headers['api_key']
-        user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user is authorized
+
+        user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user is authorized
+        settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+
         stock_quotation = finance_data.insert_stock_history_from_yfinance_to_db(transaction_prepare_param.symbol, "1d")
-        transaction_value = (transaction_prepare_param.amount * stock_quotation.stock_price)
+        transaction_value = (abs(transaction_prepare_param.amount) * stock_quotation.stock_price)
+
+        print(transaction_prepare_param.transaction_type + "-Transaction from user: " + user.first_name + " of " + str(transaction_prepare_param.amount) + " " + transaction_prepare_param.symbol + ": " + str(transaction_value))
 
         if transaction_prepare_param.transaction_type.lower() == "buy":  # buy stock
             if user.money_available >= transaction_value:
                 transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-                user.money_available(user.money_available - transaction_value)
+                user.money_available = user.money_available - transaction_value - abs(settings.transaction_fee)  # absoulte value to make sure that user doesnt cheat
+                # RETURN USER OBJECT BACK TO DANIEL AND UPDATE IN DB
                 return transaction
             else:
                 return ApiError(detail="Insufficient cash", status=400, title="Bad Request",
                                 type="/portfolio/transaction")
         else:  # sell stock
             # check if buy-amount is sufficient
-            transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-            user.money_available(user.money_available + transaction_value)
-            return transaction
+            if True is True:
+                transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
+                user.money_available = (user.money_available + transaction_value) - abs(settings.transaction_fee)
+                # RETURN USER OBJECT BACK TO DANIEL AND UPDATE IN DB
+                return transaction
+            else:
+                return ApiError(detail="Insufficient stock quantity to sell", status=400, title="Bad Request",
+                                type="/portfolio/transaction")
+
 
     return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
 

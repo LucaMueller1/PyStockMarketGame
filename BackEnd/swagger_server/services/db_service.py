@@ -44,13 +44,13 @@ class DatabaseConn:
 
         return returned
 
-    def delete_auth_key(self, authkey: AuthKey) -> bool:
+    def delete_auth_key(self, authkey: str) -> bool:
         returned = True
         try:
             with self.engine.connect() as con:
                 con.execute(sqla.text(
-                    """"DELETE FROM `user_authkey` WHERE `user_authkey`.`auth_key` = :authkey"""),
-                    ({"authkey": authkey.auth_key}))
+                    """DELETE FROM `user_authkey` WHERE `user_authkey`.`auth_key` = :authkey ;"""),
+                    ({"authkey": authkey}))
         except:
             returned = False
 
