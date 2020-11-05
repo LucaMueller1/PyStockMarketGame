@@ -83,13 +83,10 @@ def get_portfolio_positions(user: User):
                 stocks.pop(symbol_index)
             else:
                 prev_position.stock_buyin_price = prev_value/prev_position.amount # 895€ / 8stk
+                # override PortfolioPosition
+                stocks[symbol_index] = prev_position
 
-            # override PortfolioPosition
-            stocks[symbol_index] = prev_position
 
-            stocks[symbol_index]
-
-    print(stocks)
 
     return stocks
 
