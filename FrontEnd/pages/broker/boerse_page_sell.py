@@ -3,7 +3,7 @@ import pages.side_bar as side_bar
 
 # Modules Import
 import streamlit as st
-
+from streamlit import caching
 # Utilities Import
 import utilities.requests_server as requests_server
 import pages.broker.buy_helperfunctions as hf
@@ -26,13 +26,14 @@ def run(session_state):
     if mode_switch == "Sell":
         st.write("Please choose the stock, that you want to sell.")
 
-        # Get the stock from user, which he / she wants to sell
-        ticker_code_entry = st.selectbox("WKN:", [" "] + session_state.stock_names)
+        depot_array, depot_information = hf.get_depo_array(session_state.auth_key)
+        ticker_code_entry = st.selectbox("Stock ticker:", [" "] + depot_array)
         if ticker_code_entry != " ":
-            ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[1]
+            ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[0]
+            maximum_available_quantity_for_stock = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry_for_post_request))
             if st.checkbox("Sell all stocks", value=True):
                 # Set the Value of quantity to the amount user has in Depot
-                stock_quantity_for_sale = 6
+                stock_quantity_for_sale = maximum_available_quantity_for_stock
 
             else:
                 col1, col2 = st.beta_columns((4, 1))
@@ -43,15 +44,12 @@ def run(session_state):
 
                     # Slider
                     if quantity_input_method_choice == "Slider":
-                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, 6)
+                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, maximum_available_quantity_for_stock)
 
                     # Textfeld & Button
                     if quantity_input_method_choice == "Textfield":
-                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks", min_value=1,
-                                                             step=1)
-                        stock_quantity_for_sale = 1
-                        if st.button("Apply"):
-                            stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
+                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks", min_value=1, max_value= maximum_available_quantity_for_stock, step=1, value = 1)
+                        stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
 
                 # Anzeige der Quantität der ausgewaählten Aktie im Depot
                 quantity_of_specific_stock_in_depot = 6
@@ -59,7 +57,7 @@ def run(session_state):
                     st.markdown("""
                             <div class="greyish padding">
                             <h4>Quantity in Depot</h4>
-                            <h1>""" + str(quantity_of_specific_stock_in_depot) + """</h1>
+                            <h1>""" + str(maximum_available_quantity_for_stock) + """</h1>
                             </div>
                             """, unsafe_allow_html=True)
 
@@ -67,8 +65,8 @@ def run(session_state):
             # Get stockinformation
             single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
             selling_fees = hf.get_transaction_fees(session_state.auth_key)
-            stock_sell_value_price = float(stock_quantity_for_sale * single_stock_price)
-            total_sell_value = str(stock_sell_value_price - float(selling_fees)) + "$"
+            stock_sell_value_price = round(float(stock_quantity_for_sale * single_stock_price), 2)
+            total_sell_value = str(round((stock_sell_value_price - float(selling_fees)), 2)) + "$"
 
             stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
             stock_name = str(stock_description["stockName"])
@@ -82,8 +80,9 @@ def run(session_state):
             with col1:
                 st.subheader("Sell - Overview")
                 st.write("----------------------")
+                st.write("Selected Quantity:")
                 st.write("Transaction value:", stock_sell_value_price)
-                st.write("Selling fees: -", selling_fees)
+                st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("----------------------")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
@@ -108,7 +107,10 @@ def run(session_state):
                                             """, unsafe_allow_html=True)
 
     elif mode_switch == "Buy":
+        caching.clear_cache()
         session_state.page = "boerse"
         st.experimental_rerun()
+
+
 
 

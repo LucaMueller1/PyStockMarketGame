@@ -47,3 +47,6 @@ def get_stockprice_history(auth_key: str, symbol: str, period: str):
 
 def get_user_transaction_fee(auth_key: str):
     return requests.get(BASE_URL + "user/settings", headers={"api_key": auth_key}).json()
+
+def get_user_portfolio(auth_key: str):
+    return requests.get(BASE_URL + "portfolio", headers={"api_key": auth_key}).json()

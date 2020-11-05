@@ -6,6 +6,7 @@ from time import sleep
 # Utilities IMPORTS
 import utilities.requests_server as requests_server
 import pages.broker.buy_helperfunctions as hf
+from streamlit import caching
 
 
 def run(session_state):
@@ -35,7 +36,7 @@ def run(session_state):
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[1]
 
             # Get the quantity from user
-            ticker_quantity_entry = st.number_input("Quantity: ", step = 1.0, value = 1.0, min_value=1.0)
+            ticker_quantity_entry = st.number_input("Quantity: ", step = 1, value = 1, min_value=1)
             ticker_quantity_entry = int(ticker_quantity_entry)
 
             # If button is clicked --> Entry submitted (quantity & ticker_code)
@@ -65,7 +66,7 @@ def run(session_state):
                             st.write("----------------------")
                             st.write("Stock price:", single_stock_value)
                             st.write("Quantity:", ticker_quantity_entry)
-                            st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">"""+str(hf.check_for_entry_string(purchase_fees))+"""</code></p></div> """, unsafe_allow_html=True)
+                            st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(purchase_fees)) + """</code></p></div> """, unsafe_allow_html=True)
                             st.write("----------------------")
                             st.subheader("Total purchase price:")
                             st.title(total_purchase_value)
@@ -97,6 +98,8 @@ def run(session_state):
 
 
     elif mode_switch == "Sell":
+        caching.clear_cache()
         session_state.page = "sell"
         st.experimental_rerun()
+
 
