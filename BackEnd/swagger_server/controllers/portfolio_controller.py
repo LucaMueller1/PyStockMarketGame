@@ -75,7 +75,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     return ApiError(detail="Failed to create transaction", status=400, title="Bad Request", type="/portfolio/transaction")
 
 
-def get_portfolio(user: User):  # noqa: E501
+def get_portfolio():  # noqa: E501
     """Get all current positions
 
     Returns all the current stock positions of the logged in user # noqa: E501
@@ -83,8 +83,11 @@ def get_portfolio(user: User):  # noqa: E501
 
     :rtype: List[PortfolioPosition]
     """
-    returned = trading_service.stock_portfolio_position(user)
-    return returned
+    api_key = connexion.request.headers['api_key']
+    user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
+
+    portfolio_positions = trading_service.get_portfolio_positions(user)
+    return portfolio_positions
 
 
 def get_portfolio_value():  # noqa: E501
