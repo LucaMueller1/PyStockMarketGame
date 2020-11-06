@@ -41,7 +41,20 @@ def buy_stock(auth_key: AuthKey, stock_description: StockDescription, amount: in
     # check money available?
     if purchase_value <= money_avaiable:
         # lock access to buying, selling (security)
-        # deadlock = True
+
+        # DEADLOCK
+        """ deadlock = "buy"
+        # validate lock
+        # if deadlock != "buy"
+        #     time.sleep(0.2)
+        #     buy_stock(auth_key, stock_description, amount)
+        #     break
+        # else:
+            # do stuff
+                # create transaction - insert
+            # remove lock
+            # deadlock = False
+        """
 
         # create Transaction
         settings = conn.get_settings_by_user(user)
@@ -92,7 +105,20 @@ def sell_stock(auth_key: AuthKey, stock_description: StockDescription, amount: i
     if amount <= amount_owned:
         # success !!!!
         # lock access to buying, selling (security)
-        deadlock = True
+        # DEADLOCK
+        """ deadlock = "buy"
+        # validate lock
+        # if deadlock != "buy"
+        #     time.sleep(0.2)
+        #     buy_stock(auth_key, stock_description, amount)
+        #     break
+        # else:
+            # do stuff
+                # create transaction - insert
+            # remove lock
+            # deadlock = False
+        """
+
         # create Transaction
         settings = conn.get_settings_by_user(user)
         transaction_fee = settings.transaction_fee
