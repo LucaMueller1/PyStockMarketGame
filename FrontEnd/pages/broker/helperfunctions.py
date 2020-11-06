@@ -3,8 +3,6 @@ import streamlit as st
 import json
 
 
-# BUY
-
 
 def check_for_entry_string(entry):
     if entry != "N/A":
@@ -89,4 +87,4 @@ def get_stock_description(auth_key, ticker_code):
     stock_description = requests_server.get_stock_description(auth_key,
                                                               ticker_code)
     return stock_description
-# SELL
+

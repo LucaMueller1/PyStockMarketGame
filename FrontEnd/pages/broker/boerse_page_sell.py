@@ -6,7 +6,7 @@ import streamlit as st
 from streamlit import caching
 # Utilities Import
 import utilities.requests_server as requests_server
-import pages.broker.buy_helperfunctions as hf
+import pages.broker.helperfunctions as hf
 from time import sleep
 
 
@@ -17,6 +17,7 @@ def run(session_state):
     def local_css(file_name):
         with open(file_name) as f:
             st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
+
     local_css("FrontEnd/css/style.css")
 
     st.header("Broker")
@@ -31,8 +32,8 @@ def run(session_state):
         ticker_code_entry = st.selectbox("Stock ticker:", [" "] + depot_array)
         if ticker_code_entry != " ":
             ticker_code_entry_for_post_request = ticker_code_entry.split(": ")[0]
-            maximum_available_quantity_for_stock = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry_for_post_request))
-
+            maximum_available_quantity_for_stock = int(
+                hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry_for_post_request))
 
             if st.checkbox("Sell all stocks", value=True):
                 # Set the Value of quantity to the amount user has in Depot
@@ -47,11 +48,15 @@ def run(session_state):
 
                     # Slider
                     if quantity_input_method_choice == "Slider":
-                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, maximum_available_quantity_for_stock)
+                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1,
+                                                            maximum_available_quantity_for_stock)
 
                     # Textfeld & Button
                     if quantity_input_method_choice == "Textfield":
-                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks", min_value=1, max_value= maximum_available_quantity_for_stock, step=1, value = 1)
+                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks",
+                                                                      min_value=1,
+                                                                      max_value=maximum_available_quantity_for_stock,
+                                                                      step=1, value=1)
                         stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
 
                 # Anzeige der Quantität der ausgewaählten Aktie im Depot
@@ -62,7 +67,6 @@ def run(session_state):
                             <h1 style="text-align:center;">""" + str(maximum_available_quantity_for_stock) + """</h1>
                             </div>
                             """, unsafe_allow_html=True)
-
 
             # Get stockinformation
             single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry_for_post_request)
@@ -80,11 +84,14 @@ def run(session_state):
             # Auflistung Verkaufspreis mit Ordergebühren
             col1, col2 = st.beta_columns(2)
             with col1:
+                st.write("----------------------")
                 st.subheader("Sell - Overview")
                 st.write("----------------------")
                 st.write("Selected Quantity:", stock_quantity_for_sale)
                 st.write("Transaction value ($):", stock_sell_value_price)
-                st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees ($): <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
+                st.markdown(
+                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees ($): <code style="color: #F52D5B;">""" + str(
+                        hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("----------------------")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
@@ -93,11 +100,8 @@ def run(session_state):
                 if st.button("Sell"):
                     st.subheader("Sold")
                     sell_response = requests_server.post_transaction(session_state.auth_key,
-                                                                ticker_code_entry_for_post_request,
-                                                                stock_quantity_for_sale, transaction_type="sell")
-
-
-
+                                                                     ticker_code_entry_for_post_request,
+                                                                     stock_quantity_for_sale, transaction_type="sell")
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
@@ -105,7 +109,7 @@ def run(session_state):
                                             <div class="greyish padding">
                                             <h2><u>Stock Information</u></h2>
                                             <p>Stock name: <b>""" + stock_name + """ </b></p>
-                                            <p>Single stock value: <b>""" + str(single_stock_price)+ "$" + """<b></p>
+                                            <p>Single stock value: <b>""" + str(single_stock_price) + "$" + """<b></p>
                                             <p>Dividend yield (%): <b>""" + str(dividend_yield) + """<b></p>
                                             <img class = "circle_and_center" src = """ + image_source + """>
                                             </div>
@@ -115,7 +119,3 @@ def run(session_state):
         caching.clear_cache()
         session_state.page = "boerse"
         st.experimental_rerun()
-
-
-
-
