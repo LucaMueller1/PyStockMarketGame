@@ -21,9 +21,6 @@ class DatabaseConn:
     def __init__(self):
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
                                          echo=True)
-        # self.insert_user("demo@demo.de","test1234")
-        # print(self.check_password( "demo@demo.de", "test123"))
-        # print(self.check_auth_hash("6412048607212403114747023040737760377761651296630363127651933227449611792731"))
 
     def insert_user(self, user: User) -> bool:
         auth_password = bcrypt.hashpw(str(user.password).encode('utf8'), bcrypt.gensalt())
@@ -247,7 +244,13 @@ class DatabaseConn:
             returned = True
         return returned
 
-    def get_stock_price_from_today(self, symbol: str):
+    def get_stock_price_from_today(self, stock_value: StockDescription) ->StockValue:
         # return StockValue Object or just Open Course...
-        value = StockValue()
-        return value
+        returned = None
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text(
+                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = "2020-11-03" ORDER BY `timestamp` DESC LIMIT 1"""),
+                ({"symbol": stock_value.symbol}))
+            for row in rs:
+                returned = StockValue(id=row['course_id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+        return returned
