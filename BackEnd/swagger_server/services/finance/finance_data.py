@@ -13,13 +13,31 @@ from swagger_server.services.db_service import DatabaseConn
 # "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE",
 # "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE")
 
+def check_current_stock_price(stock_description: StockDescription):
+    """
+    check_current_stock_price is a helper function that calls the DB and
+    checks if there is a price for the stock_description.symbol for today.
+    If ther is none it will call the current stock_price from the yfinance
+    api.
 
-def check_current_stock_price(symbol: str):
+    :param stock_description: it might only need the symbol attribute set in the
+                                StockDescription Model
+    :return: StockValue - with the current stock_price
+    """
     conn = DatabaseConn()
-    course_today = conn.get_stock_price_from_today(symbol)
-    if course_today is None:
-        course_today = insert_stock_history_from_yfinance_to_db(symbol, "1d")
-    return course_today
+    stock_value = conn.get_stock_price_from_today(stock_description) # StockValue Model
+
+    if stock_value is not None: # StockValue
+        # get price for today
+        stock_price = stock_value.stock_price # stock_price from StockValue
+    else:
+        # get it from API
+        # + insert into table
+        symbol = stock_description.symbol # Symbol from StockValue
+        stock_value = insert_stock_history_from_yfinance_to_db(symbol, "1d") # StockValue Model
+        # ^ this already calls the function insert_course for the DB
+
+    return stock_value
 
 def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
@@ -30,6 +48,7 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     :param period: The period of which the data is requested from the API
                 (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
                 re.sub(regex, string, replace)
+    :return: StockValue
 
     """
     df = yf.Ticker(symbol).history(period)
@@ -55,6 +74,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
     :param period: The period of which the data is requested from the API
                 (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
                 re.sub(regex, string, replace)
+    :return: StockValue
 
     """
     if symbol == "IBM":
@@ -68,7 +88,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
             multiplier*1.1
-        return returned
+        return returned # StockValue
 
     if symbol == "DDAIF":
         df = yf.Ticker(symbol).history(period)
@@ -81,7 +101,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
             multiplier/1.1
-        return returned
+        return returned # StockValue
 
     df = yf.Ticker(symbol).history(period)
     returned = []
@@ -94,7 +114,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
         # low = row['Low']
         date = index
         returned.append(StockValue(None, symbol, float(open_value), str(date)))
-    return returned
+    return returned # StockValue
 
 
 def get_stock_data_from_db(symbol: str, period: str):
@@ -124,10 +144,10 @@ def get_stock_info_from_yfinance(symbol: str):
 
     description = StockDescription(symbol, info['shortName'], info['country'], info['logo_url'], info['longBusinessSummary'], info['industry'], info['trailingAnnualDividendYield'], info['marketCap'], info['fiftyTwoWeekLow'], info['fiftyTwoWeekHigh'], info['fullTimeEmployees'])
 
-    print(description)
+    # print(description)
     conn = DatabaseConn()
     success = conn.update_stock(description)
-    print("Status: ", success)
+    # print("Status: ", success)
     return description
 
 

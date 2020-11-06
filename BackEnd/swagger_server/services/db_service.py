@@ -245,7 +245,7 @@ class DatabaseConn:
         return returned
 
     def get_stock_price_from_today(self, stock_value: StockDescription) ->StockValue:
-        # return StockValue Object or just Open Course...
+        # return StockValue Object
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
