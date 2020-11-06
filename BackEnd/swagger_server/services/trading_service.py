@@ -7,6 +7,7 @@ from swagger_server.models.stock_description import StockDescription
 from swagger_server.services.finance import finance_data
 from swagger_server.models.api_error import ApiError
 from swagger_server.models.transaction import Transaction
+import time
 import re
 
 deadlock = False # might be used in the future to prevent simultaneous buying and selling
@@ -24,8 +25,10 @@ def buy_stock(auth_key: AuthKey, stock_description: StockDescription, amount: in
     :param stock_description: might only need a StockDescription object with the symbol
     :param amount: amount of stocks being bought
     :return: Transaction - to check for mistakes
+            ApiError - in case of insufficient funds
     :test: create a transaction and check if the returned transaction has all the right values
     """
+
     conn = DatabaseConn()
     # is there enough money
     user = conn.get_user_by_auth_key(auth_key)
@@ -39,6 +42,7 @@ def buy_stock(auth_key: AuthKey, stock_description: StockDescription, amount: in
     if purchase_value <= money_avaiable:
         # lock access to buying, selling (security)
         # deadlock = True
+
         # create Transaction
         settings = conn.get_settings_by_user(user)
         transaction_fee = settings.transaction_fee
@@ -63,6 +67,7 @@ def sell_stock(auth_key: AuthKey, stock_description: StockDescription, amount: i
     :param stock_description: might only need a StockDescription object with the symbol
     :param amount: amount of stocks being bought
     :return: Transaction - to check for mistakes
+            ApiError - in case of insufficient stocks owned
     :test: create a transaction and check if the returned transaction has all the right values
 
     """
