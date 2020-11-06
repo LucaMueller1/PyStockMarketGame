@@ -20,7 +20,7 @@ def get_total_stock_value(single_stock_value, quantity):
 
 def get_total_purchase_value(total_stock_value, purchase_fees):
     if total_stock_value != "N/A":
-        return (str(total_stock_value + purchase_fees) + "$")
+        return (str(float(total_stock_value) + float(purchase_fees)) + "$")
     else:
         return "N/A"
 
