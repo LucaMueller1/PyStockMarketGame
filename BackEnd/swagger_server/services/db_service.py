@@ -254,3 +254,13 @@ class DatabaseConn:
             for row in rs:
                 returned = StockValue(id=row['course_id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
         return returned
+
+    def update_user(self, user: User) -> bool:
+        returned = False
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text(
+                """UPDATE `users` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `money_available` = :money_available, `starting_capital` = :starting_capital WHERE `users`.`userID` = :userid;  """),
+                ({"first_name": user.first_name, "userid": user.id, "last_name": user.last_name,
+                  "email": user.email, "money_available": user.money_available, "starting_capital": user.starting_capital}))
+            returned = True
+        return returned
