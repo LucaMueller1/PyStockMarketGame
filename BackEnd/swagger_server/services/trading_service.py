@@ -12,7 +12,7 @@ import re
 
 deadlock = False # might be used in the future to prevent simultaneous buying and selling
 
-def buy_stock(auth_key: AuthKey, stock_description: StockDescription, amount: int):
+def buy_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: int):
     """
     buy_stock is being called when there are stocks being bought. It checks if there is
     enough money available for the transaction the user wants to make and creates a
@@ -67,7 +67,7 @@ def buy_stock(auth_key: AuthKey, stock_description: StockDescription, amount: in
         return ApiError(detail="Not enough money available for this transaction", status=400, title="Insufficient Cash", type="/portfolio/transaction")
 
 
-def sell_stock(auth_key: AuthKey, stock_description: StockDescription, amount: int):
+def sell_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: int):
     """
     sell_stock is being called when there are stocks being sold. It checks if there are
     enough stocks owned for the transaction the user wants to make and creates a

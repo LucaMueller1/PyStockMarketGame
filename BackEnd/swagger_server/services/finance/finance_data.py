@@ -39,6 +39,7 @@ def check_current_stock_price(stock_description: StockDescription):
 
     return stock_value
 
+
 def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
@@ -117,12 +118,6 @@ def get_stock_history_to_frontend(symbol: str, period: str):
     return returned # StockValue
 
 
-def get_stock_data_from_db(symbol: str, period: str):
-    print(symbol)
-    print(period)
-    pass
-
-
 def get_stock_info_from_yfinance(symbol: str):
     """
 
@@ -151,6 +146,13 @@ def get_stock_info_from_yfinance(symbol: str):
     return description
 
 
+#
+#
+# def get_stock_data_from_db(symbol: str, period: str):
+#     print(symbol)
+#     print(period)
+
+#     pass
 # insert_stock_history_from_yfinance_to_db("IBM", "1d")
 # print(get_stock_info_from_yfinance("SBUX"))
 # print(yf.Ticker("SBUX").info)
