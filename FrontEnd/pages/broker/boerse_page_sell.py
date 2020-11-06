@@ -59,7 +59,7 @@ def run(session_state):
                     st.markdown("""
                             <div class="greyish padding">
                             <h4>Quantity in Depot</h4>
-                            <h1>""" + str(maximum_available_quantity_for_stock) + """</h1>
+                            <h1 style="text-align:center;">""" + str(maximum_available_quantity_for_stock) + """</h1>
                             </div>
                             """, unsafe_allow_html=True)
 
@@ -82,9 +82,9 @@ def run(session_state):
             with col1:
                 st.subheader("Sell - Overview")
                 st.write("----------------------")
-                st.write("Selected Quantity:")
-                st.write("Transaction value:", stock_sell_value_price)
-                st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
+                st.write("Selected Quantity:", stock_quantity_for_sale)
+                st.write("Transaction value ($):", stock_sell_value_price)
+                st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees ($): <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("----------------------")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
@@ -92,22 +92,20 @@ def run(session_state):
                 # Sell button
                 if st.button("Sell"):
                     st.subheader("Sold")
-                    response = requests_server.post_transaction(session_state.auth_key,
+                    sell_response = requests_server.post_transaction(session_state.auth_key,
                                                                 ticker_code_entry_for_post_request,
                                                                 stock_quantity_for_sale, transaction_type="sell")
-                    st.write("Your specified stocks have been sold.")
-                    sleep(2)
 
-                    caching.clear_cache()
-                    st.experimental_rerun()
+
+
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
                 st.markdown("""
                                             <div class="greyish padding">
-                                            <h2>Stock Information</h2>
+                                            <h2><u>Stock Information</u></h2>
                                             <p>Stock name: <b>""" + stock_name + """ </b></p>
-                                            <p>Single stock value: <b>""" + str(single_stock_price) + """<b></p>
+                                            <p>Single stock value: <b>""" + str(single_stock_price)+ "$" + """<b></p>
                                             <p>Dividend yield (%): <b>""" + str(dividend_yield) + """<b></p>
                                             <img class = "circle_and_center" src = """ + image_source + """>
                                             </div>

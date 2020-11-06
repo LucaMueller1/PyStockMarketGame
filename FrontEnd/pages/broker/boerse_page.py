@@ -65,13 +65,20 @@ def run(session_state):
 
                 if st.button("Buy"):
                     # send post request to DB
-                    response = requests_server.post_transaction(session_state.auth_key,
+                    buy_response = requests_server.post_transaction(session_state.auth_key,
                                                                 ticker_code_entry_for_post_request,
                                                                 ticker_quantity_entry, transaction_type="buy")
-                    print(response.text)
+                    user_has_sufficient_cash = hf.check_for_sufficient_cash_user(buy_response)
+                    print(user_has_sufficient_cash)
+                    if user_has_sufficient_cash is False:
+                        st.error("Insufficient funds")
+                        sleep(2)
+                        st.experimental_rerun()
 
-                    st.write("You can view your purchased stocks in your securities account.")
+                    st.write("Your specified stocks have been bought and can be viewed in your portfolio")
                     sleep(2)
+
+
 
 
                     st.experimental_rerun()
@@ -81,7 +88,7 @@ def run(session_state):
             with col2:
                 st.markdown("""
                                 <div class="greyish padding">
-                                <h2>Stock information</h2>
+                                <h2><u>Stock information<u></h2>
                                 <p>Stock name: <b>""" + stock_name + """ </b></p>
                                 <p>Stock value: <b>""" + str(single_stock_value) + """<b></p>
                                 <p>Dividend Yield (%): <b>""" + str(dividend_yield) + """<b></p>
