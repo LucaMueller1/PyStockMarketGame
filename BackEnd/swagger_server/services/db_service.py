@@ -264,3 +264,9 @@ class DatabaseConn:
                   "email": user.email, "money_available": user.money_available, "starting_capital": user.starting_capital}))
             returned = True
         return returned
+
+    def get_all_users(self) -> list():
+        users = []
+        users.append()
+
+        return users
