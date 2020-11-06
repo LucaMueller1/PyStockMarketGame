@@ -249,7 +249,7 @@ class DatabaseConn:
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
-                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = "2020-11-03" ORDER BY `timestamp` DESC LIMIT 1"""),
+                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = CURRENT_DATE() ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_value.symbol}))
             for row in rs:
                 returned = StockValue(id=row['course_id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
