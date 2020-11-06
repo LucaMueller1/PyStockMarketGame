@@ -266,7 +266,8 @@ class DatabaseConn:
         return returned
 
     def get_all_users(self) -> list:
+        pass
         users = []
-        users.append()
+        users.append(None)
 
         return users

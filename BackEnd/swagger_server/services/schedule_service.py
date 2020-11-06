@@ -10,7 +10,7 @@ users = conn.get_all_users()
 stocks = []
 
 for user in users:
-    portfolio = trading_service.get_portfolio_positions()
+    portfolio = trading_service.get_portfolio_positions(user)
     for position in portfolio:
         symbol = position.symbol
         # make sure double data is not collected
