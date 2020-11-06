@@ -59,7 +59,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
             if user.money_available >= transaction_value:
                 transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
                 user.money_available = user.money_available - transaction_value - abs(settings.transaction_fee)  # absoulte value to make sure that user doesnt cheat
-                # RETURN USER OBJECT BACK TO DANIEL AND UPDATE IN DB
+                staticglobaldb.dbconn.update_user(user)  # Update User in database
                 return transaction
             else:
                 return ApiError(detail="Insufficient cash", status=400, title="Bad Request",
@@ -78,7 +78,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
             if stock_available:
                 transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
                 user.money_available = (user.money_available + transaction_value) - abs(settings.transaction_fee)
-                # RETURN USER OBJECT BACK TO DANIEL AND UPDATE IN DB
+                staticglobaldb.dbconn.update_user(user)  # Update User in database
                 return transaction
             else:
                 return ApiError(detail="Insufficient stock quantity to sell", status=400, title="Bad Request",
