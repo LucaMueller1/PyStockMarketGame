@@ -27,9 +27,9 @@ license: NONE
 def create_user(user_param):  # noqa: E501
     """Create user
 
-    This can only be done by the logged in user. # noqa: E501
+    This can only be done by the logged in user # noqa: E501
 
-    :param user_param: Created user object
+    :param user_param: User object to create
     :type user_param: dict | bytes
 
     :rtype: None
@@ -64,13 +64,11 @@ def create_user_settings(settings_param):  # noqa: E501
         return 'OK', 200
 
 
-def delete_user(user_id):  # noqa: E501
+def delete_user():  # noqa: E501
     """Delete user
 
-    This can only be done by the logged in user. # noqa: E501
+    This can only be done by the logged in user # noqa: E501
 
-    :param user_id: The name that needs to be deleted
-    :type user_id: int
 
     :rtype: None
     """
@@ -89,9 +87,9 @@ def get_user():  # noqa: E501
     :rtype: User
     """
     api_key = connexion.request.headers['api_key']
-    print(api_key)
     if api_key is None:
-        return ApiError(detail="No user authorized for given api_key", status=401, title="Unauthorized", type="/user"), 401
+        return ApiError(detail="No user authorized for given api_key", status=401, title="Unauthorized",
+                        type="/user"), 401
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
 
     return user
@@ -100,7 +98,7 @@ def get_user():  # noqa: E501
 def get_user_settings():  # noqa: E501
     """Get the settings of the logged in user
 
-    Returns the settings of the logged in user # noqa: E501
+    Returns the settings object of the logged in user # noqa: E501
 
 
     :rtype: Settings
@@ -112,9 +110,9 @@ def get_user_settings():  # noqa: E501
 
 
 def login_user(user_prepare_login_param):  # noqa: E501
-    """Logs user into the system and returns auth key
+    """Logs user into the system and returns api key
 
-     # noqa: E501
+    Authenticates user and returns api key for other requests # noqa: E501
 
     :param user_prepare_login_param: Created user object
     :type user_prepare_login_param: dict | bytes
@@ -136,7 +134,7 @@ def login_user(user_prepare_login_param):  # noqa: E501
 def logout_user():  # noqa: E501
     """Logs out current logged in user session
 
-     # noqa: E501
+    This can only be done by the logged in user # noqa: E501
 
 
     :rtype: None

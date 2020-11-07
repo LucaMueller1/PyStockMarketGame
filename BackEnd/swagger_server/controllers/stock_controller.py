@@ -29,7 +29,7 @@ license: NONE
 def get_stock_description(symbol):  # noqa: E501
     """Get financials of given stock
 
-     # noqa: E501
+    Returns financials which include dividend, p/e-value and much more # noqa: E501
 
     :param symbol: Symbol of searched stock
     :type symbol: str
@@ -73,7 +73,7 @@ def get_stock_history(symbol, period):  # noqa: E501
 def get_stock_sustainability(symbol):  # noqa: E501
     """Get information about the sustainability of given stock
 
-    Returns an object that describes the sustainability companies # noqa: E501
+    Returns sustainability object that contains vital environmental data of the given stock  # noqa: E501
 
     :param symbol: Symbol of searched stock
     :type symbol: str
