@@ -16,13 +16,15 @@ class PortfolioPosition(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, symbol: str=None, stock_name: str=None, amount: int=None, stock_value: StockValue=None, stock_buyin_price: float=None):  # noqa: E501
+    def __init__(self, symbol: str=None, stock_name: str=None, logo_url: str=None, amount: int=None, stock_value: StockValue=None, stock_buyin_price: float=None):  # noqa: E501
         """PortfolioPosition - a model defined in Swagger
 
         :param symbol: The symbol of this PortfolioPosition.  # noqa: E501
         :type symbol: str
         :param stock_name: The stock_name of this PortfolioPosition.  # noqa: E501
         :type stock_name: str
+        :param logo_url: The logo_url of this PortfolioPosition.  # noqa: E501
+        :type logo_url: str
         :param amount: The amount of this PortfolioPosition.  # noqa: E501
         :type amount: int
         :param stock_value: The stock_value of this PortfolioPosition.  # noqa: E501
@@ -33,6 +35,7 @@ class PortfolioPosition(Model):
         self.swagger_types = {
             'symbol': str,
             'stock_name': str,
+            'logo_url': str,
             'amount': int,
             'stock_value': StockValue,
             'stock_buyin_price': float
@@ -41,6 +44,7 @@ class PortfolioPosition(Model):
         self.attribute_map = {
             'symbol': 'symbol',
             'stock_name': 'stockName',
+            'logo_url': 'logoUrl',
             'amount': 'amount',
             'stock_value': 'stockValue',
             'stock_buyin_price': 'stock_buyin_price'
@@ -48,6 +52,7 @@ class PortfolioPosition(Model):
 
         self._symbol = symbol
         self._stock_name = stock_name
+        self._logo_url = logo_url
         self._amount = amount
         self._stock_value = stock_value
         self._stock_buyin_price = stock_buyin_price
@@ -104,6 +109,27 @@ class PortfolioPosition(Model):
         """
 
         self._stock_name = stock_name
+
+    @property
+    def logo_url(self) -> str:
+        """Gets the logo_url of this PortfolioPosition.
+
+
+        :return: The logo_url of this PortfolioPosition.
+        :rtype: str
+        """
+        return self._logo_url
+
+    @logo_url.setter
+    def logo_url(self, logo_url: str):
+        """Sets the logo_url of this PortfolioPosition.
+
+
+        :param logo_url: The logo_url of this PortfolioPosition.
+        :type logo_url: str
+        """
+
+        self._logo_url = logo_url
 
     @property
     def amount(self) -> int:

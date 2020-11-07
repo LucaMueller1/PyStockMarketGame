@@ -50,7 +50,7 @@ class TestUserController(BaseTestCase):
         Delete user
         """
         response = self.client.open(
-            '/api/user/{user_id}'.format(user_id=789),
+            '/api/user',
             method='DELETE')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
@@ -80,7 +80,7 @@ class TestUserController(BaseTestCase):
     def test_login_user(self):
         """Test case for login_user
 
-        Logs user into the system and returns auth key
+        Logs user into the system and returns api key
         """
         user_prepare_login_param = UserPrepareLogin()
         response = self.client.open(

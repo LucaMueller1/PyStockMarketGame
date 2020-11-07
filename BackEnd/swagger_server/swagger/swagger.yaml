@@ -86,6 +86,10 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Transaction"
+        "400":
+          description: "Insufficient cash to buy or stock quantity to sell"
+          schema:
+            $ref: "#/definitions/ApiError"
         default:
           description: "unexpected error"
           schema:
@@ -160,7 +164,8 @@ paths:
       tags:
       - "stock"
       summary: "Get financials of given stock"
-      description: ""
+      description: "Returns financials which include dividend, p/e-value and much\
+        \ more"
       operationId: "get_stock_description"
       produces:
       - "application/json"
@@ -191,7 +196,8 @@ paths:
       tags:
       - "stock"
       summary: "Get information about the sustainability of given stock"
-      description: "Returns an object that describes the sustainability companies"
+      description: "Returned sustainability object that contains vital environmental\
+        \ data of the given stock "
       operationId: "get_stock_sustainability"
       produces:
       - "application/json"
@@ -244,14 +250,14 @@ paths:
       tags:
       - "user"
       summary: "Create user"
-      description: "This can only be done by the logged in user."
+      description: "This can only be done by the logged in user"
       operationId: "create_user"
       produces:
       - "application/json"
       parameters:
       - in: "body"
         name: "user_param"
-        description: "Created user object"
+        description: "User object to create"
         required: true
         schema:
           $ref: "#/definitions/User"
@@ -263,12 +269,31 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       x-swagger-router-controller: "swagger_server.controllers.user_controller"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user"
+      operationId: "delete_user"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ApiError"
+      security:
+      - api_key: []
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
   /user/login:
     post:
       tags:
       - "user"
-      summary: "Logs user into the system and returns auth key"
-      description: ""
+      summary: "Logs user into the system and returns api key"
+      description: "Authenticates user and returns api key for other requests"
       operationId: "login_user"
       consumes:
       - "application/json"
@@ -300,37 +325,11 @@ paths:
       tags:
       - "user"
       summary: "Logs out current logged in user session"
-      description: ""
+      description: "This can only be done by the logged in user"
       operationId: "logout_user"
       produces:
       - "application/json"
       parameters: []
-      responses:
-        "200":
-          description: "successful operation"
-        default:
-          description: "unexpected error"
-          schema:
-            $ref: "#/definitions/ApiError"
-      security:
-      - api_key: []
-      x-swagger-router-controller: "swagger_server.controllers.user_controller"
-  /user/{user_id}:
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "delete_user"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "user_id"
-        in: "path"
-        description: "The name that needs to be deleted"
-        required: true
-        type: "integer"
-        format: "int64"
       responses:
         "200":
           description: "successful operation"
@@ -346,7 +345,7 @@ paths:
       tags:
       - "user"
       summary: "Get the settings of the logged in user"
-      description: "Returns the settings of the logged in user"
+      description: "Returns the settings object of the logged in user"
       operationId: "get_user_settings"
       produces:
       - "application/json"
@@ -524,6 +523,9 @@ definitions:
         type: "string"
       stockName:
         type: "string"
+      logoUrl:
+        type: "string"
+        format: "uri"
       amount:
         type: "integer"
         format: "int32"
@@ -542,6 +544,7 @@ definitions:
       amount: 0
       stockName: "stockName"
       stock_buyin_price: 5.962134
+      logoUrl: "http://example.com/aeiou"
   PortfolioValue:
     type: "object"
     properties:
