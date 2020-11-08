@@ -1,6 +1,6 @@
 import yfinance as yf
 
-from swagger_server.models import StockValue, StockDescription
+from swagger_server.models import StockValue, StockDescription, StockSustainability
 from swagger_server.services.db_service import DatabaseConn
 
 """
@@ -144,6 +144,22 @@ def get_stock_info_from_yfinance(symbol: str):
     success = conn.update_stock(description)
     # print("Status: ", success)
     return description
+
+
+def get_stock_sustainability(symbol: str):
+    """
+
+    :param symbol:
+    :return:
+    """
+    sus = yf.Ticker(symbol).sustainability
+    if sus is not None:
+        sus = sus.to_dict()['Value']
+        return sus
+    else:
+        return {}
+
+
 
 
 #
