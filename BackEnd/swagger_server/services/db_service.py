@@ -245,13 +245,13 @@ class DatabaseConn:
             returned = True
         return returned
 
-    def get_stock_price_from_today(self, stock_value: StockDescription) ->StockValue:
+    def get_stock_price_from_today(self, stock_symbol: str) ->StockValue:
         # return StockValue Object
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = CURRENT_DATE() ORDER BY `timestamp` DESC LIMIT 1"""),
-                ({"symbol": stock_value.symbol}))
+                ({"symbol": stock_symbol}))
             for row in rs:
                 returned = StockValue(id=row['course_id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
         return returned
