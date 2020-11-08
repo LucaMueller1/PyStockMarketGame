@@ -195,7 +195,8 @@ class DatabaseConn:
                                                                  timestamp=row['timestamp']), amount=row['amount'],
                                           transaction_type=row['transaction_type'],
                                           transaction_fee=row['transaction_fee'])
-                stocksearchresult = StockSearchResult(symbol=row['symbol'], stock_name=row['name'])
+                stocksearchresult = StockDescription(symbol=row['symbol'], stock_name=row['name'],
+                                            logo_url=row['logo_url'])
                 returned.append((transaction, stocksearchresult))
 
         return returned
