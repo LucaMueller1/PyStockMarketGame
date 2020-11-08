@@ -19,8 +19,10 @@ from dateutil.relativedelta import relativedelta
 class DatabaseConn:
 
     def __init__(self):
+        #self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',echo=True)
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
-                                         echo=True)
+                                         echo=False)
+
 
     def insert_user(self, user: User) -> bool:
         auth_password = bcrypt.hashpw(str(user.password).encode('utf8'), bcrypt.gensalt())
