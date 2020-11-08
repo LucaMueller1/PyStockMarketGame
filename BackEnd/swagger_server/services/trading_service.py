@@ -207,6 +207,7 @@ def get_portfolio_positions(user: User):
     for transaction in transactions:
         symbol = transaction[1].symbol #AAPL
         stock_name = transaction[1].stock_name # Apple
+        logo_url = transaction[1].logo_url
         next_amount = transaction[0].amount # 5
         transaction_fee = transaction[0].transaction_fee # 10€
         next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
@@ -223,7 +224,7 @@ def get_portfolio_positions(user: User):
 
         if not found:
             current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
-            stocks.append(PortfolioPosition(symbol, stock_name, next_amount, current_stock_price, next_stock_buyin_price))
+            stocks.append(PortfolioPosition(symbol=symbol, stock_name=stock_name, logo_url=logo_url, amount=next_amount, stock_value=current_stock_price, stock_buyin_price=next_stock_buyin_price))
         else:
             # get PortfolioPostition out of list
             prev_transaction = stocks[symbol_index] # 5 Aktien 120€ + 5€

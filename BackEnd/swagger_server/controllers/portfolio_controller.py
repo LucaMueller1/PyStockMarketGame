@@ -57,7 +57,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
         if transaction_prepare_param.transaction_type.lower() == "buy":  # buy stock
             if user.money_available >= transaction_value:
                 transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-                user.money_available = user.money_available - transaction_value - abs(settings.transaction_fee)  # absoulte value to make sure that user doesnt cheat
+                user.money_available = user.money_available - transaction_value - abs(float(settings.transaction_fee))  # absoulte value to make sure that user doesnt cheat
                 staticglobaldb.dbconn.update_user(user)  # Update User in database
                 return transaction
             else:
