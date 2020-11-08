@@ -7,18 +7,13 @@ from time import sleep
 import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
 from streamlit import caching
-
+import utilities.utils as utils
 
 def run(session_state):
     side_bar.run(session_state)
     session_state.buy_redirect = False
 
-    # Load CSS File for Formatting
-    def local_css(file_name):
-        with open(file_name) as f:
-            st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
-
-    local_css("FrontEnd/css/style.css")
+    utils.local_css("FrontEnd/css/style.css")
 
     st.title("broker")
     st.subheader("Welcome to your personalised broker. Here you can buy and sell your stocks.")

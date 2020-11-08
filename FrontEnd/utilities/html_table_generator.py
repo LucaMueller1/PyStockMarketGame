@@ -1,4 +1,11 @@
 class PortfolioTable():
+    """
+    desc: main function, generates app
+    param: (type) name, (type) name
+    return: (type)
+    test:
+    """
+
     def __init__(self):
         self.html = ""
 
@@ -20,6 +27,9 @@ class PortfolioTable():
             color = "red"
 
         self.html += f"""<td style="color:{color};">{relative_gain}%</td></tr>"""
+
+    def __calculate_relative_gain(self, current_price: float, buyin_price: float) -> float:
+        return round((current_price-buyin_price)/buyin_price*100,2)
 
     def add_headers(self):
         self.html += f"""<tr style="background-color:transparent;color:black;font-size:small">
@@ -44,6 +54,3 @@ class PortfolioTable():
 
     def get_html(self):
         return self.html
-
-    def __calculate_relative_gain(self, current_price: float, buyin_price: float) -> float:
-        return round((current_price-buyin_price)/buyin_price*100,2)

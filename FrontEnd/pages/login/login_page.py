@@ -21,8 +21,7 @@ def run(session_state):
     password_input = st.text_input("password:", type="password")
 
     if st.button("log in"):
-        #session_state.page = "depot"
-        #st.experimental_rerun()
+
         response = requests_server.login(user_name_input, password_input)
 
         if "authKey" in response.json():

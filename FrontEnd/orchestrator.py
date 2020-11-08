@@ -25,9 +25,11 @@ footer {visibility: hidden;}
 </style>
 
 """
+
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 session_state = SessionState.get(page='login', auth_key='', stock_desc=None, stock_names=None, graph_data=None, buy_redirect=False)
+
 
 if session_state.page == "login":
     login_page.run(session_state)
