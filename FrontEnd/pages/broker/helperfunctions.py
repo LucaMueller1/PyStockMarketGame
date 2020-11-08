@@ -3,7 +3,6 @@ import streamlit as st
 import json
 
 
-
 def check_for_entry_string(entry):
     if entry != "N/A":
         return entry
@@ -39,16 +38,16 @@ def get_image_url(auth_key, logoUrl):
     else:
         return "https://coolbackgrounds.io/images/backgrounds/white/pure-white-background-85a2a7fd.jpg"
 
+
 def check_for_sufficient_cash_user(sellresponse):
     sellresponse = json.loads(sellresponse.text)
-    if("status" in sellresponse):
+    if ("status" in sellresponse):
         if (sellresponse["status"] == 400):
             sufficient_cash = False
             return sufficient_cash
     else:
         sufficient_cash = True
         return sufficient_cash
-
 
 
 @st.cache(show_spinner=False)
@@ -87,4 +86,3 @@ def get_stock_description(auth_key, ticker_code):
     stock_description = requests_server.get_stock_description(auth_key,
                                                               ticker_code)
     return stock_description
-

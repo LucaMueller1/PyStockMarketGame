@@ -76,10 +76,8 @@ def run(session_state):
 
             stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry_for_post_request)
             stock_name = str(stock_description["stockName"])
-            dividend_yield_raw = stock_description["dividend"]
-            dividend_yield = hf.get_dividend_yield(dividend_yield_raw)
-            image_source = stock_description["logoUrl"]
-            image_source = hf.get_image_url(session_state.auth_key, image_source)
+            dividend_yield = hf.get_dividend_yield(stock_description["dividend"])
+            image_source = hf.get_image_url(session_state.auth_key, (stock_description["logoUrl"]))
 
             # Auflistung Verkaufspreis mit Ordergebühren
             col1, col2 = st.beta_columns(2)
@@ -95,6 +93,7 @@ def run(session_state):
                 st.write("----------------------")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
+                st.subheader("+/-:")
 
                 # Sell button
                 if st.button("Sell"):

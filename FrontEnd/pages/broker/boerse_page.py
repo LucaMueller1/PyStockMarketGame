@@ -82,6 +82,7 @@ def run(session_state):
                         st.experimental_rerun()
 
                     st.write("Your specified stocks have been bought and can be viewed in your portfolio")
+                    st.balloons()
                     sleep(2)
 
                     st.experimental_rerun()
