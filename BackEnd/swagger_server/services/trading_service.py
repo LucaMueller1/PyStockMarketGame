@@ -7,6 +7,7 @@ from swagger_server.models.stock_description import StockDescription
 from swagger_server.services.finance import finance_data
 from swagger_server.models.api_error import ApiError
 from swagger_server.models.transaction import Transaction
+from swagger_server.controllers import staticglobaldb
 import time
 import re
 
@@ -198,8 +199,8 @@ def get_portfolio_positions(user: User):
             price should be equal to what you bought/sold
     """
     # get all stock transactions
-    conn = DatabaseConn()
-    transactions = conn.get_transactions_and_stock_by_user(user)
+    # conn = DatabaseConn()
+    transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
     # print(transactions)
 
     # for every symbol
@@ -223,8 +224,7 @@ def get_portfolio_positions(user: User):
                 break
 
         if not found:
-            current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
-            stocks.append(PortfolioPosition(symbol=symbol, stock_name=stock_name, logo_url=logo_url, amount=next_amount, stock_value=current_stock_price, stock_buyin_price=next_stock_buyin_price))
+            stocks.append(PortfolioPosition(symbol=symbol, stock_name=stock_name, logo_url=logo_url, amount=next_amount, stock_value=None, stock_buyin_price=next_stock_buyin_price))
         else:
             # get PortfolioPostition out of list
             prev_transaction = stocks[symbol_index] # 5 Aktien 120€ + 5€
@@ -249,6 +249,13 @@ def get_portfolio_positions(user: User):
                 prev_transaction.stock_buyin_price = prev_value/prev_transaction.amount # 895€ / 8stk
                 # override PortfolioPosition
                 stocks[symbol_index] = prev_transaction
+
+    for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
+        if stocks[index].stock_value is None:
+            current_stock_price = staticglobaldb.dbconn.get_stock_price_from_today(symbol)
+            if current_stock_price is None:
+                current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
+            stocks[index].stock_value = current_stock_price
 
     return stocks
 
