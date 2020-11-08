@@ -209,7 +209,7 @@ class DatabaseConn:
             rs = con.execute(sqla.text("""SELECT * FROM `user_settings` WHERE `userid` = :userid """),
                              ({"userid": user.id}))
             for row in rs:
-                if row['user_setting'] == 'transaction_fee': transaction_fee = int(row['value'])
+                if row['user_setting'] == 'transaction_fee': transaction_fee = float(row['value'])
         returned = Settings(transaction_fee=transaction_fee)
 
         return returned
