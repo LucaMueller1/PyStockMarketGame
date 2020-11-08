@@ -115,7 +115,7 @@ def run(session_state):
                                             <h2><u>Stock Information</u></h2>
                                             <p>Stock name: <b>""" + stock_name + """ </b></p>
                                             <p>Single stock value: <b>""" + str(single_stock_price) + "$" + """<b></p>
-                                            <p>Dividend yield (%): <b>""" + str(dividend_yield) + """<b></p>
+                                            <p>Dividend Yield: <b>""" + str(dividend_yield) + "%" + """<b></p>
                                             <img class = "circle_and_center" src = """ + image_source + """>
                                             </div>
                                             """, unsafe_allow_html=True)

@@ -12,14 +12,15 @@ def check_for_entry_string(entry):
 
 def get_total_stock_value(single_stock_value, quantity):
     if single_stock_value != "N/A":
-        return (single_stock_value * quantity)
+        return single_stock_value * quantity
     else:
         return "N/A"
 
 
 def get_total_purchase_value(total_stock_value, purchase_fees):
     if total_stock_value != "N/A":
-        return (str(float(total_stock_value) + float(purchase_fees)) + "$")
+        total_purchase_value = round((total_stock_value + purchase_fees), 2)
+        return (str(total_purchase_value) + "$")
     else:
         return "N/A"
 
@@ -90,6 +91,12 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
         total_change = "+" + str(total_change) + "$"
         return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>""" + total_change + """</code></p></div> """
 
+def get_user_balance(auth_key):
+    user = requests_server.get_user(auth_key)
+    user_balance = user["moneyAvailable"]
+    return user_balance
+
+
 
 @st.cache(show_spinner=False)
 def get_single_stock_value(auth_key, ticker_code):
@@ -103,8 +110,8 @@ def get_single_stock_value(auth_key, ticker_code):
 
 @st.cache(show_spinner=False)
 def get_transaction_fees(auth_key):
-    selling_fees = (requests_server.get_user_transaction_fee(auth_key))["transactionFee"]
-    return selling_fees
+    transaction_fees = (requests_server.get_user_transaction_fee(auth_key))["transactionFee"]
+    return transaction_fees
 
 
 @st.cache(show_spinner=False)

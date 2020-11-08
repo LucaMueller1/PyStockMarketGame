@@ -17,7 +17,7 @@ def run(session_state):
     st.header("Hello " + user["firstName"] + "!")
     st.subheader("Cash available: " + str(user["moneyAvailable"]) + "$")
 
-    chart_generator.show_chart(session_state.graph_data)
+    #chart_generator.show_chart(session_state.graph_data)
 
     html_table = PortfolioTable()
     html_table.open()
