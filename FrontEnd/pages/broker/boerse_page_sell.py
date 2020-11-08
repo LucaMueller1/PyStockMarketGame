@@ -99,10 +99,13 @@ def run(session_state):
 
                 # Sell button
                 if st.button("Sell"):
-                    st.subheader("Sold")
                     sell_response = requests_server.post_transaction(session_state.auth_key,
                                                                      ticker_code_entry_for_post_request,
                                                                      stock_quantity_for_sale, transaction_type="sell")
+                    st.subheader("Sold")
+                    caching.clear_cache()
+                    session_state.page = "boerse"
+                    st.experimental_rerun()
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
