@@ -13,7 +13,7 @@ def run(session_state):
 
     portfolio = requests_server.get_user_portfolio(session_state.auth_key)
     user = requests_server.get_user(session_state.auth_key)
-    st.title("portfolio")
+    st.title("Portfolio")
     st.header("Hello " + user["firstName"] + "!")
     st.subheader("Cash available: " + str(user["moneyAvailable"]) + "$")
 

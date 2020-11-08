@@ -3,38 +3,36 @@ import streamlit as st
 
 # UTILS IMPORT
 import utilities.requests_server as requests_server
-
-def local_css(file_name):
-        with open(file_name) as f:
-            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+import utilities.utils as utils
 
 def run(session_state):
 
-    local_css("FrontEnd/css/style.css")
+    utils.local_css("FrontEnd/css/style.css")
 
-    st.sidebar.title("navigation")
+    st.sidebar.title("Navigation")
 
     with st.sidebar.beta_container():
 
-        if st.button("📈 portfolio"):
+        if st.button("📈 Portfolio"):
             session_state.page = "depot"
             st.experimental_rerun()
 
-        if st.button("💸 broker"):
+        if st.button("💸 Broker"):
             session_state.page = "boerse"
             st.experimental_rerun()
 
-        if st.button("🔎 stock screener"):
+        if st.button("🔎 Stock Screener"):
             session_state.page = "stock_info"
             st.experimental_rerun()
 
-        if st.button("⚙ settings️"):
+        if st.button("⚙ Settings️"):
             session_state.page = "about"
             st.experimental_rerun()
 
-    st.sidebar.title("log out")
+    st.sidebar.title("Log Out")
 
-    if st.sidebar.button("bye 👋"):
+    if st.sidebar.button("Bye 👋"):
         requests_server.logout(session_state.auth_key)
+        session_state = SessionState.get(page='login', auth_key='', stock_desc=None, stock_names=None, graph_data=None, buy_redirect=False)
         session_state.page = "login"
         st.experimental_rerun()
