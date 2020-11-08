@@ -32,6 +32,7 @@ def create_user(user_param):  # noqa: E501
     :type user_param: dict | bytes
 
     :rtype: None
+    :test Correct: Request with valid user as body - here: {"id": 0,"firstName": "Alf","lastName": "Becker","email": "becker.alfred0905@gmail.com","password": "farbissina1997","startingCapital": 85363,"moneyAvailable": 85363} adds user to database and returns HTTP 200. Incorrect: Request with invalid user_body returns API error object
     """
     insertion = False
     if connexion.request.is_json:
@@ -54,6 +55,7 @@ def create_user_settings(settings_param):  # noqa: E501
     :type settings_param: dict | bytes
 
     :rtype: None
+    :test Correct: Request with valid user as body - here: {"id": 0,"firstName": "Alf","lastName": "Becker","email": "becker.alfred0905@gmail.com","password": "farbissina1997","startingCapital": 85363,"moneyAvailable": 85363} adds user to database and returns HTTP 200. Incorrect: Request with invalid user_body returns API error object
     """
     api_key = connexion.request.headers['api_key']
     if connexion.request.is_json:
@@ -70,6 +72,7 @@ def delete_user():  # noqa: E501
 
 
     :rtype: None
+    :test Correct: Request with valid api_key deletes registered user object. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     api_key = connexion.request.headers['api_key']
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
@@ -84,6 +87,7 @@ def get_user():  # noqa: E501
 
 
     :rtype: User
+    :test Correct: Request with valid api_key returns user object. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     api_key = connexion.request.headers['api_key']
     if api_key is None:
@@ -101,6 +105,7 @@ def get_user_settings():  # noqa: E501
 
 
     :rtype: Settings
+    :test Correct: Request with valid api_key returns settings object for authorized user. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     api_key = connexion.request.headers['api_key']
     user = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
@@ -117,6 +122,7 @@ def login_user(user_prepare_login_param):  # noqa: E501
     :type user_prepare_login_param: dict | bytes
 
     :rtype: AuthKey
+    :test Correct: Request with valid user_prepare_login_param - here: {"email": "becker.alfred0905@gmail.com","password": "farbissina1997"} returns AuthKey object. Incorrect: Request with invalid body returns internal error
     """
     if connexion.request.is_json:
         user_prepare_login_param = UserPrepareLogin.from_dict(connexion.request.get_json())  # noqa: E501
@@ -137,6 +143,7 @@ def logout_user():  # noqa: E501
 
 
     :rtype: None
+    :test Correct: Request with valid api_key returns HTTP 200 and invalidates the user api_key. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     api_key = connexion.request.headers['api_key']
     staticglobaldb.dbconn.delete_auth_key(api_key)

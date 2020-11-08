@@ -37,6 +37,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
     :type transaction_prepare_param: dict | bytes
 
     :rtype: Transaction
+    :test Correct: Request with valid transaction_prepare_param object in body (according to swagger doc) (here: {"symbol": "AAPL","amount": 10,"transactionType": "buy"},  returns executed transaction object. Incorrect: Request with invalid object in body (e.g. symbol LOL) returns internal Error object
     """
     if connexion.request.is_json:
         transaction_prepare_param = TransactionPrepare.from_dict(connexion.request.get_json())  # noqa: E501
@@ -93,6 +94,7 @@ def get_portfolio():  # noqa: E501
 
 
     :rtype: List[PortfolioPosition]
+    :test Correct: Request with valid api_key returns list of all portfolio positions for that user. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     api_key = connexion.request.headers['api_key']
     user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
@@ -108,6 +110,6 @@ def get_portfolio_value():  # noqa: E501
 
 
     :rtype: List[PortfolioValue]
+    :test Correct: Request with valid api_key returns list of portfolioValue objects that can be used to draw a graph. Incorrect: Request with invalid api_key returns unauthorized error object
     """
-
     return 'do some magic!'

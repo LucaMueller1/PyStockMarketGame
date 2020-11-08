@@ -14,7 +14,7 @@ desc: Stock Controller that handles all requests containing stock information
 
 author: Luca Mueller
 
-date: 2020-10-14
+date: 2020-11-07
 
 mail: lucamueller32@gmail.com
 
@@ -33,6 +33,7 @@ def get_stock_description(symbol):  # noqa: E501
     :type symbol: str
 
     :rtype: StockDescription
+    :test Correct: Request with symbol AAPL returns full description object. Incorrect: Request with symbol LOL returns internal Error object
     """
     description = finance_data.get_stock_info_from_yfinance(symbol)
     if description is None:
@@ -53,7 +54,7 @@ def get_stock_history(symbol, period):  # noqa: E501
     :type period: str
 
     :rtype: List[StockValue]
-    :test 1mom returns ApiError, 7d returns list of stock_values
+    :test Correct: 7d returns list of stock_values in period of 7 days. Incorrect: 1mom returns ApiError
     """
     if not re.match("^\\d+(d$)|^\\d+(mo$)|^\\d+(y$)|^ytd$|^max$", period):
         return ApiError(detail="Given period not matching pattern", status=404, title="Not Found",
@@ -77,6 +78,7 @@ def get_stock_sustainability(symbol):  # noqa: E501
     :type symbol: str
 
     :rtype: StockSustainability
+    :test Correct: Request with symbol AAPL returns full sustainability object. Incorrect: Request with symbol LOL returns internal Error object
     """
     sustainability = finance_data.get_stock_sustainability(symbol)
     return sustainability
@@ -92,6 +94,7 @@ def get_stocks():  # noqa: E501
 
 
     :rtype: List[StockSearchResult]
+    :test Correct: Request with valid api_key returns list of all stocks in database. Incorrect: Request with invalid api_key returns unauthorized error object
     """
     stock_list = staticglobaldb.dbconn.get_stock_search_results()
     return stock_list
