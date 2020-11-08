@@ -162,7 +162,7 @@ def stock_values_available(user: User):
                 break
 
         if not found:
-            stocks.append(PortfolioPosition(symbol, None, next_amount, None, None))
+            stocks.append(PortfolioPosition(symbol=symbol, stock_name=None, logo_url=None, amount=next_amount, stock_value=None, stock_buyin_price=None))
         else:
             # get Portfoliopostition out of list
             prev_position = stocks[symbol_index]  # 5 Stocks 120€ + 5€
@@ -252,9 +252,9 @@ def get_portfolio_positions(user: User):
 
     for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
         if stocks[index].stock_value is None:
-            current_stock_price = staticglobaldb.dbconn.get_stock_price_from_today(symbol)
+            current_stock_price = staticglobaldb.dbconn.get_stock_price_from_today(stocks[index].symbol)
             if current_stock_price is None:
-                current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
+                current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(stocks[index].symbol, "1d")
             stocks[index].stock_value = current_stock_price
 
     return stocks
