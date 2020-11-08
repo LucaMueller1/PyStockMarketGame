@@ -4,6 +4,14 @@ import json
 
 
 def get_total_stock_value(single_stock_value, quantity):
+    """
+    Calculates the total stock value by multiplying the current stock value, chosen by the user, value by the wanted quantity.
+
+    :param single_stock_value: (Float) Current value for stock chosen by user
+    :param quantity: (Int) Selected quantity by user
+    :return: (Float) If the input parameter "single_stock_value" does not equal "N/A" the function outputs a float representing the total stock value. Otherwise it will return "N/A"
+    :test Correct: Method is called using a valid (Float) single_stock_value and a valid (Int) quantity, thus returning a float for the total stock value. Incorrect: Either parameter is of type string --> The method will return the string "N/A"
+    """
     if single_stock_value != "N/A":
         return single_stock_value * quantity
     else:
@@ -11,6 +19,14 @@ def get_total_stock_value(single_stock_value, quantity):
 
 
 def get_total_purchase_value(total_stock_value, purchase_fees):
+    """
+    Calculates the total purchase value by adding the purchase_fees onto the total_stock_value and rounding the calcuting to two decimals.
+
+    :param total_stock_value: (Float) The total_stock_value is made up by the current_stock_value for the stock chosen by the user multiplied by the quantity chosen by the user.
+    :param purchase_fees: (Float) The purchase fees can manually be set by the user and represent a fixed value, which is added upon every purchase. This can range from 1$ to 30$ in 0.5$ steps.
+    :return: If the input parameter total_stock_value does not equal "N/A" the function outputs a String representing the total_stock_value including the purchase fees. Otherwise it will return "N/A"
+    :test Correct: Method is called using a valid (Float) total_stock_value and a valid (Float) purchase_fee, thus returning a string for the total_purchase_value. Incorrect: Either parameter is of type string --> The method will return the string "N/A"
+    """
     if total_stock_value != "N/A":
         total_purchase_value = round((float(total_stock_value) + float(purchase_fees)), 2)
         return (str(total_purchase_value) + "$")
