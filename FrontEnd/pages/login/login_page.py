@@ -8,7 +8,10 @@ import streamlit as st
 
 def run(session_state):
     """
-    4000100 run login page
+    desc: main function, generates app
+    param: (type) name, (type) name
+    return: (type)
+    test:
     """
 
     if st.button("↪️ signup"):
