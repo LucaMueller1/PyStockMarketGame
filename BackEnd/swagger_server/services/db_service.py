@@ -253,7 +253,7 @@ class DatabaseConn:
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = CURRENT_DATE() ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_symbol}))
             for row in rs:
-                returned = StockValue(id=row['course_id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+                returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
         return returned
 
     def update_user(self, user: User) -> bool:
