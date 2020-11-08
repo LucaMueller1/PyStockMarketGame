@@ -89,6 +89,7 @@ def run(session_state):
 
             # Place stock information on the right side
             with col2:
+                st.write("---")
                 st.markdown("""
                                 <div class="greyish padding">
                                 <h2><u>Stock information<u></h2>

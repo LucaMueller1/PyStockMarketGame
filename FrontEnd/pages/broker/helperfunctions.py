@@ -65,6 +65,32 @@ def get_stock_quantity_in_depot(depot_information, stock_ticker):
             return item["amount"]
 
 
+def get_buyin_for_stock(depot_information, stock_ticker):
+    for item in depot_information:
+        if item["symbol"] == stock_ticker:
+            return float(item["stock_buyin_price"])
+
+
+def calculate_change_buyin_current(stock_buyin, single_stock_price):
+    change = round((float(single_stock_price) - float(stock_buyin)), 2)
+    if change < 0:
+        change = str(change) + "$"
+        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: #F52D5B;">""" + change + """</code></p></div> """
+    else:
+        change = "+" + str(change) + "$"
+        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code>""" + change + """</code></p></div> """
+
+
+def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
+    total_change = round((float(single_stock_price * stock_quantity) - float(stock_buyin * stock_quantity)), 2)
+    if total_change < 0:
+        total_change = str(total_change) + "$"
+        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code style="color: #F52D5B;">""" + total_change + """</code></p></div> """
+    else:
+        total_change = "+" + str(total_change) + "$"
+        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>""" + total_change + """</code></p></div> """
+
+
 @st.cache(show_spinner=False)
 def get_single_stock_value(auth_key, ticker_code):
     stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[0]

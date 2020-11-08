@@ -78,22 +78,24 @@ def run(session_state):
             stock_name = str(stock_description["stockName"])
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"])
             image_source = hf.get_image_url(session_state.auth_key, (stock_description["logoUrl"]))
+            stock_buyin_price = hf.get_buyin_for_stock(depot_information, ticker_code_entry_for_post_request)
 
             # Auflistung Verkaufspreis mit Ordergebühren
             col1, col2 = st.beta_columns(2)
             with col1:
-                st.write("----------------------")
+                st.write("---")
                 st.subheader("Sell - Overview")
-                st.write("----------------------")
-                st.write("Selected Quantity:", stock_quantity_for_sale)
-                st.write("Transaction value ($):", stock_sell_value_price)
-                st.markdown(
-                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees ($): <code style="color: #F52D5B;">""" + str(
-                        hf.check_for_entry_string(selling_fees)) + """</code></p></div> """, unsafe_allow_html=True)
-                st.write("----------------------")
+                st.write("---")
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Stock Quantity: <b><code style="color: black;">""" + str(stock_quantity_for_sale) + """</code></b></p></div> """, unsafe_allow_html=True)
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Transaction Value: <b><code style="color: black;">""" + str(stock_sell_value_price) + "$" + """</code></b></p></div> """, unsafe_allow_html=True)
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Selling Fees: <code style="color: #F52D5B;">""" + str(hf.check_for_entry_string(selling_fees)) + "$" + """</code></p></div> """, unsafe_allow_html=True)
+                st.write("---")
+                st.write(hf.calculate_change_buyin_current(stock_buyin_price, single_stock_price), unsafe_allow_html=True)
+                st.write(hf.calculate_total_change(stock_buyin_price, single_stock_price, stock_quantity_for_sale), unsafe_allow_html=True)
+                st.write("---")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
-                st.subheader("+/-:")
+                print(stock_buyin_price)
 
                 # Sell button
                 if st.button("Sell"):
@@ -104,6 +106,7 @@ def run(session_state):
 
             # Aktieninformationen neben der Verkaufsauflistung anzeigen
             with col2:
+                st.write("---")
                 st.markdown("""
                                             <div class="greyish padding">
                                             <h2><u>Stock Information</u></h2>
