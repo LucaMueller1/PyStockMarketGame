@@ -162,7 +162,7 @@ def stock_values_available(user: User):
                 break
 
         if not found:
-            stocks.append(PortfolioPosition(symbol, None, next_amount, None, None))
+            stocks.append(PortfolioPosition(symbol=symbol, stock_name=None, logo_url=None, amount=next_amount, stock_value=None, stock_buyin_price=None))
         else:
             # get Portfoliopostition out of list
             prev_position = stocks[symbol_index]  # 5 Stocks 120€ + 5€
