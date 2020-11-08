@@ -2,7 +2,7 @@
 import utilities.SessionState as SessionState
 import utilities.requests_server as requests_server
 
-# MODULES IMPORTS
+# MODULE IMPORTS
 import streamlit as st
 
 
@@ -27,7 +27,6 @@ def run(session_state):
 
         if "authKey" in response.json():
             session_state.auth_key = response.json()["authKey"]
-            session_state.first_name = requests_server.get_first_name(session_state.auth_key)
             response = requests_server.get_stock_names(session_state.auth_key).json()
             session_state.stock_names = [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in response]
 
