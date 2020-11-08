@@ -4,21 +4,18 @@ import pages.side_bar as side_bar
 # Modules Import
 import streamlit as st
 from streamlit import caching
+
 # Utilities Import
 import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
 from time import sleep
+import utilities.utils as utils
 
 
 def run(session_state):
     side_bar.run(session_state)
 
-    # Load CSS File for Formatting
-    def local_css(file_name):
-        with open(file_name) as f:
-            st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
-
-    local_css("FrontEnd/css/style.css")
+    utils.local_css("FrontEnd/css/style.css")
 
     st.header("Broker")
     st.subheader("Welcome to your personalised broker. Here you can buy and sell your stocks.")
@@ -115,7 +112,7 @@ def run(session_state):
                                             <h2><u>Stock Information</u></h2>
                                             <p>Stock name: <b>""" + stock_name + """ </b></p>
                                             <p>Single stock value: <b>""" + str(single_stock_price) + "$" + """<b></p>
-                                            <p>Dividend yield (%): <b>""" + str(dividend_yield) + """<b></p>
+                                            <p>Dividend Yield: <b>""" + str(dividend_yield) + "%" + """<b></p>
                                             <img class = "circle_and_center" src = """ + image_source + """>
                                             </div>
                                             """, unsafe_allow_html=True)
