@@ -169,9 +169,9 @@ class DatabaseConn:
         returned = None
         with self.engine.connect() as con:
             con.execute(sqla.text(
-                """INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, :transaction_fee); """),
+                """INSERT INTO `transactions` (`transaction_id`, `user_id`, `symbol`, `course_id`, `amount`, `transaction_type`, `transaction_fee`) VALUES (NULL, :userid, :symbol, (SELECT id FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` <= now() ORDER BY `timestamp` DESC LIMIT 1) , :amount, :buysell, (SELECT user_settings.value FROM `user_settings` WHERE user_settings.userid = 2 AND user_settings.user_setting = 'transaction_fee')); """),
                 ({"symbol": transaction.symbol, "userid": user.id, "amount": transaction.amount,
-                  "buysell": transaction.transaction_type, "transaction_fee": 10}))
+                  "buysell": transaction.transaction_type}))
             rs = con.execute(sqla.text(
                 """SELECT * FROM `transactions` JOIN tradable_values_prices ON transactions.course_id = tradable_values_prices.id WHERE `user_id` = :userid ORDER BY `transaction_id` DESC LIMIT 1  """),
                 ({"userid": user.id}))
