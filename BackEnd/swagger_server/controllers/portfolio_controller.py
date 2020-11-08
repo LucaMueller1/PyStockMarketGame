@@ -76,7 +76,7 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
 
             if stock_available:
                 transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-                user.money_available = (user.money_available + transaction_value) - abs(settings.transaction_fee)
+                user.money_available = (user.money_available + transaction_value) - abs(float(settings.transaction_fee))
                 staticglobaldb.dbconn.update_user(user)  # Update User in database
                 return transaction
             else:
