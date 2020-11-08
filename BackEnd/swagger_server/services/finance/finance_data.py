@@ -173,4 +173,3 @@ def get_stock_sustainability(symbol: str):
 # print(get_stock_info_from_yfinance("SBUX"))
 # print(yf.Ticker("SBUX").info)
 # print(get_stock_info_from_yfinance("SBUX"))
-get_stock_sustainability("AAPL")
