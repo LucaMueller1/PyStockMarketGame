@@ -3,13 +3,6 @@ import streamlit as st
 import json
 
 
-def check_for_entry_string(entry):
-    if entry != "N/A":
-        return entry
-    else:
-        return "N/A"
-
-
 def get_total_stock_value(single_stock_value, quantity):
     if single_stock_value != "N/A":
         return single_stock_value * quantity
@@ -72,7 +65,7 @@ def get_buyin_for_stock(depot_information, stock_ticker):
             return float(item["stock_buyin_price"])
 
 
-def calculate_change_buyin_current(stock_buyin, single_stock_price):
+def rename_calculate_change_buyin_current(stock_buyin, single_stock_price):
     change = round((float(single_stock_price) - float(stock_buyin)), 2)
     if change < 0:
         change = str(change) + "$"

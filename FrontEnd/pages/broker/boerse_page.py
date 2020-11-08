@@ -1,12 +1,14 @@
 # PAGE IMPORTS
 import pages.side_bar as side_bar
 import streamlit as st
+
+# Modules Import
 from time import sleep
+from streamlit import caching
 
 # Utilities IMPORTS
 import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
-from streamlit import caching
 import utilities.utils as utils
 
 def run(session_state):
@@ -15,13 +17,13 @@ def run(session_state):
 
     utils.local_css("FrontEnd/css/style.css")
 
-    st.title("broker")
+    st.title("Broker")
     st.subheader("Welcome to your personalised broker. Here you can buy and sell your stocks.")
 
+    # Switch between BUY and SELL
     mode_switch = st.radio("Please choose whether you want to buy or sell stocks", ("Buy", "Sell"))
     if mode_switch == "Buy":
         if session_state.stock_desc:
-            # index = next(session_state.stock_names.index(name) for name in session_state.stock_names if session_state.stock_desc["symbol"] in name) + 1
             index = [i for i, s in enumerate(session_state.stock_names) if session_state.stock_desc["symbol"] in s][
                         0] + 1
         else:
@@ -67,7 +69,7 @@ def run(session_state):
                                                                     ticker_code_entry,
                                                                     ticker_quantity_entry, transaction_type="buy")
                     user_has_sufficient_cash = hf.check_for_sufficient_cash_user(buy_response)
-                    print(user_has_sufficient_cash)
+
                     if user_has_sufficient_cash is False:
                         st.error("Insufficient funds")
                         sleep(2)
@@ -85,7 +87,7 @@ def run(session_state):
                 st.write("""
                                 <div class="greyish padding">
                                 <h2><u>Stock Information<u></h2>
-                                <p>Stock name: <b>""" + stock_name + """ </b></p>
+                                <p>Stock name: <b>""" + str(stock_name) + """ </b></p>
                                 <p>Stock value: <b>""" + str(single_stock_value) + "$" + """<b></p>
                                 <p>Dividend Yield: <b>""" + str(dividend_yield) + "%" + """<b></p>
                                 <img class = "circle_and_center" src = """ + image_source + """>
