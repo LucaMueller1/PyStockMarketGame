@@ -20,10 +20,10 @@ def run(session_state):
     #chart_generator.show_chart(session_state.graph_data)
 
     html_table = PortfolioTable()
-    html_table.open()
+    html_table.open_table()
     html_table.add_headers()
     html_table.add_portfolio(portfolio)
-    html_table.close()
+    html_table.close_table()
 
     st.markdown(html_table.get_html(), unsafe_allow_html=True)
 

@@ -37,7 +37,7 @@ class PortfolioTable():
                         <td>name</td>
                         <td>amount</td>
                         <td>buy in price</td>
-                        <td>current price</td>
+                        <td>market price</td>
                         <td>gain (%)</td>
                         </tr>
                         """
@@ -46,10 +46,10 @@ class PortfolioTable():
         for i in range(len(stock_data)):
             self.__add_row(stock_data[i])
 
-    def open(self):
+    def open_table(self):
         self.html += """<table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:collapse">"""
 
-    def close(self):
+    def close_table(self):
         self.html += """</table>"""
 
     def get_html(self):
