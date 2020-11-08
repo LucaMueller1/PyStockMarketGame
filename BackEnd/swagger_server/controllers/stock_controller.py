@@ -1,5 +1,3 @@
-import connexion
-import six
 import re
 
 from swagger_server.models.api_error import ApiError  # noqa: E501

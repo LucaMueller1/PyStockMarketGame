@@ -1,5 +1,4 @@
 import connexion
-import six
 
 from swagger_server.models.api_error import ApiError  # noqa: E501
 from swagger_server.models.auth_key import AuthKey  # noqa: E501
