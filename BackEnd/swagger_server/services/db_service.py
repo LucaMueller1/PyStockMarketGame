@@ -266,8 +266,12 @@ class DatabaseConn:
         return returned
 
     def get_all_users(self) -> list:
-        pass
         users = []
-        users.append(None)
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT * FROM `users` """))
+            for row in rs:
+                users.append(User(row['userID'], row['first_name'], row['last_name'], row['email'], None,
+                            row['starting_capital'], row['money_available']))
+
 
         return users
