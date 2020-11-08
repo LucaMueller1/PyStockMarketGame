@@ -78,8 +78,11 @@ def get_stock_sustainability(symbol):  # noqa: E501
 
     :rtype: StockSustainability
     """
-    return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found",
-                    type=("/stock/" + symbol + "/sustainability")), 404
+    sustainability = finance_data.get_stock_sustainability(symbol)
+    return sustainability
+
+    # return ApiError(detail="Sustainability-information for given stock not found", status=404, title="Not Found",
+    #                 type=("/stock/" + symbol + "/sustainability")), 404
 
 
 def get_stocks():  # noqa: E501
