@@ -27,6 +27,7 @@ def get_total_purchase_value(total_stock_value, purchase_fees):
     :return: If the input parameter total_stock_value does not equal "N/A" the function outputs a String representing the total_stock_value including the purchase fees. Otherwise it will return "N/A"
     :test Correct: Method is called using a valid (Float) total_stock_value and a valid (Float) purchase_fee, thus returning a string for the total_purchase_value. Incorrect: Either parameter is of type string --> The method will return the string "N/A"
     """
+
     if total_stock_value != "N/A":
         total_purchase_value = round((float(total_stock_value) + float(purchase_fees)), 2)
         return (str(total_purchase_value) + "$")
@@ -105,8 +106,23 @@ def get_user_balance(auth_key):
     user_balance = user["moneyAvailable"]
     return user_balance
 
+def get_sustainability_info(auth_key, stock_ticker):
+    sustainability_info = requests_server.get_sustainability_info(auth_key, stock_ticker)
+    sustainability_warning_list = []
+    for key in sustainability_info:
+        if sustainability_info[key] == True:
+            sustainability_warning_list.append(key)
+    return sustainability_warning_list
 
-
+def build_warning_html(sustainability_warning_list):
+    return_string = ""
+    if len(sustainability_warning_list) > 0:
+        for item in sustainability_warning_list:
+            return_string = return_string + "⚠️ " + item.title() + """<p>&nbsp</p>"""
+        return return_string
+    else:
+        return_string = "✅No apparent warnings found."
+        return return_string
 @st.cache(show_spinner=False)
 def get_single_stock_value(auth_key, ticker_code):
     stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[0]
@@ -128,3 +144,4 @@ def get_stock_description(auth_key, ticker_code):
     stock_description = requests_server.get_stock_description(auth_key,
                                                               ticker_code)
     return stock_description
+

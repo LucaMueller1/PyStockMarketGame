@@ -60,3 +60,6 @@ def delete_user(auth_key: str):
 def post_settings(auth_key:str, transactionFee: float):
     json = {"transactionFee": transactionFee}
     return requests.post(BASE_URL + "user/settings", headers={"api_key": auth_key}, json=json)
+
+def get_sustainability_info(auth_key: str, symbol: str):
+    return requests.get(BASE_URL + f"stock/{symbol}/sustainability", headers={"api_key":auth_key}).json()

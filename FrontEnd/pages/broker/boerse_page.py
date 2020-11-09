@@ -56,21 +56,23 @@ def run(session_state):
             purchase_fees = hf.get_transaction_fees(session_state.auth_key) #Y
             total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees) #Y
             stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry) #Y
-            #stock_name = hf.check_for_entry_string(str(stock_description["stockName"])) #Y
+            stock_name = (str(stock_description["stockName"])) #Y
             image_source = hf.get_image_url(session_state.auth_key, stock_description["logoUrl"]) #Y
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"]) #Y
             user_balance = hf.get_user_balance(session_state.auth_key) #Y
+            sustainability_warnings_stock = hf.get_sustainability_info(session_state.auth_key, ticker_code_entry)
 
             with col1:
                 st.write("----------------------")
                 st.subheader("Buy - Overview")
                 st.write("----------------------")
-                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Stock Price: <b><code style="color: black;">""" + str(single_stock_value) + "$" + """</code></b></p></div> """, unsafe_allow_html=True)
-                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Stock Quantity: <b><code style="color: black;">""" + str(ticker_quantity_entry) + """</code></b></p></div> """, unsafe_allow_html=True)
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Available Funds: <b><code>""" + str(user_balance) + "$" + """</code></b></p></div> """, unsafe_allow_html=True)
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Chosen Quantity: <b><code style="color: black;">""" + str(ticker_quantity_entry) + """</code></b></p></div> """, unsafe_allow_html=True)
                 st.markdown("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">""" + str(purchase_fees) + "$" + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("----------------------")
                 st.subheader("Total Purchase Price:")
                 st.title(total_purchase_value)
+                print(total_purchase_value)
 
                 if st.button("Buy"):
                     # send post request to DB
@@ -86,29 +88,28 @@ def run(session_state):
 
                     st.write("Your specified stocks have been bought and can be viewed in your portfolio")
                     st.balloons()
-                    sleep(2)
+                    sleep(1)
                     caching.clear_cache()
 
                     st.experimental_rerun()
 
             # Place stock information on the right side
             with col2:
+                hf.get_sustainability_info(session_state.auth_key, ticker_code_entry)
                 st.write("---")
                 st.write("""
-                                <div class="greyish padding">
+                                <div class="greyish padding box">
                                 <h2><u>Stock Information<u></h2>
-                                <p>Stock value: <b>""" + str(single_stock_value) + "$" + """<b></p>
+                                <p>Stock Name: <b>""" + str(stock_name) + """<b></p>
                                 <p>Dividend Yield: <b>""" + str(dividend_yield) + "%" + """<b></p>
                                 <img class = "circle_and_center" src = """ + image_source + """>
-                                </div>
-                                """, unsafe_allow_html=True)
-                st.write("""<h4>&nbsp</h4>""", unsafe_allow_html=True)
-                st.write("""
-                                <div class="greyish padding boxes-available-funds">
-                                <h4 style="text-align:center;">Available Funds:</h4>
-                                <h2 style="text-align:center;">""" + str(user_balance) + "$" + """</h2>
-                                </div>
-                                """, unsafe_allow_html=True)
+                                <hr>
+                                <h4 style="text-align:center;">Stock Value:</h4>
+                                <h2 style="text-align:center;">""" + str(single_stock_value) + "$" + """</h2>
+                                <hr>
+                                <h4 style="text-align:center;">WARNING:</h4>
+                                <p style="text-align:center;">"""+ hf.build_warning_html(sustainability_warnings_stock) +"""</p>
+                                </div>""", unsafe_allow_html=True)
 
 
     elif mode_switch == "Sell":
