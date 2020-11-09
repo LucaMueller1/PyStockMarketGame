@@ -21,7 +21,7 @@ def register(first_name: str, name: str, mail: str, password: str, start_capital
             'startingCapital': start_capital,
             'moneyAvailable': start_capital}
 
-    return requests.post(BASE_URL + "user", json=json)
+    return requests.post(BASE_URL + "user", json=json).json()
 
 @st.cache(show_spinner=False)
 def get_user(auth_key: str) -> str:

@@ -15,7 +15,7 @@ import streamlit as st
 def run(session_state):
     """
     desc:   run the log in page, requires SessionState object
-        for storing session variables.
+            for storing session variables.
     param:  (SessionState) session_state
     """
 
