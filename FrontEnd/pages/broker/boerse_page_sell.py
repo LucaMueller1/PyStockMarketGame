@@ -38,38 +38,41 @@ def run(session_state):
             ticker_code_entry = ticker_code_entry_raw.split(": ")[0]
             quantity_in_user_portfolio = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry))
 
-            if st.checkbox("Sell all stocks", value=True):
-                # Set the Value of quantity to the amount user has in Depot
-                stock_quantity_for_sale = quantity_in_user_portfolio
+            if quantity_in_user_portfolio > 1:
+                if st.checkbox("Sell all stocks", value=True):
+                    # Set the Value of quantity to the amount user has in Depot
+                    stock_quantity_for_sale = quantity_in_user_portfolio
 
+                else:
+                    col1, col2 = st.beta_columns((4, 1))
+
+                    # Selection of quantity
+                    with col1:
+                        quantity_input_method_choice = st.radio("Input method", ("Slider", "TextInput"))
+
+                        # Slider
+                        if quantity_input_method_choice == "Slider":
+                            stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1,
+                                                                quantity_in_user_portfolio)
+
+                        # Textfeld & Button
+                        if quantity_input_method_choice == "Textfield":
+                            stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks",
+                                                                          min_value=1,
+                                                                          max_value=quantity_in_user_portfolio,
+                                                                          step=1, value=1)
+                            stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
+
+                    # Anzeige der Quantität der ausgewaählten Aktie im Depot
+                    with col2:
+                        st.markdown("""
+                                <div class="greyish padding">
+                                <h4>Quantity in Depot</h4>
+                                <h1 style="text-align:center;">""" + str(quantity_in_user_portfolio) + """</h1>
+                                </div>
+                                """, unsafe_allow_html=True)
             else:
-                col1, col2 = st.beta_columns((4, 1))
-
-                # Selection of quantity
-                with col1:
-                    quantity_input_method_choice = st.radio("Input method", ("Slider", "TextInput"))
-
-                    # Slider
-                    if quantity_input_method_choice == "Slider":
-                        stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1,
-                                                            quantity_in_user_portfolio)
-
-                    # Textfeld & Button
-                    if quantity_input_method_choice == "Textfield":
-                        stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks",
-                                                                      min_value=1,
-                                                                      max_value=quantity_in_user_portfolio,
-                                                                      step=1, value=1)
-                        stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
-
-                # Anzeige der Quantität der ausgewaählten Aktie im Depot
-                with col2:
-                    st.markdown("""
-                            <div class="greyish padding">
-                            <h4>Quantity in Depot</h4>
-                            <h1 style="text-align:center;">""" + str(quantity_in_user_portfolio) + """</h1>
-                            </div>
-                            """, unsafe_allow_html=True)
+                stock_quantity_for_sale = quantity_in_user_portfolio
 
             # Get stockinformation
             single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry)
@@ -88,7 +91,7 @@ def run(session_state):
                 st.write("---")
                 st.subheader("Sell - Overview")
                 st.write("---")
-                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Stock Quantity: <b><code style="color: black;">""" + str(stock_quantity_for_sale) + """</code></b></p></div> """, unsafe_allow_html=True)
+                st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Quantity in Portfolio: <b><code style="color: black;">""" + str(stock_quantity_for_sale) + """</code></b></p></div> """, unsafe_allow_html=True)
                 st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Transaction Value: <b><code style="color: black;">""" + str(stock_sell_value_price) + "$" + """</code></b></p></div> """, unsafe_allow_html=True)
                 st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Selling Fees: <code style="color: #F52D5B;">""" + str(selling_fees) + "$" + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("---")
@@ -113,7 +116,7 @@ def run(session_state):
             with col2:
                 st.write("---")
                 st.markdown("""
-                                            <div class="greyish padding">
+                                            <div class="greyish padding box">
                                             <h2><u>Stock Information</u></h2>
                                             <p>Stock name: <b>""" + str(stock_name) + """ </b></p>
                                             <p>Single stock value: <b>""" + str(single_stock_price) + "$" + """<b></p>

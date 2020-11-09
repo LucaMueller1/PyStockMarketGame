@@ -108,7 +108,7 @@ def run(session_state):
                                 <h2 style="text-align:center;">""" + str(single_stock_value) + "$" + """</h2>
                                 <hr>
                                 <h4 style="text-align:center;">WARNING:</h4>
-                                <p style="text-align:center;">"""+ hf.build_warning_html(sustainability_warnings_stock) +"""</p>
+                                """+ hf.build_warning_html(sustainability_warnings_stock) +"""
                                 </div>""", unsafe_allow_html=True)
 
 
