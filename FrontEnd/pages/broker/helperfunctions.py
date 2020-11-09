@@ -24,7 +24,7 @@ def get_total_purchase_value(total_stock_value, purchase_fees):
 
     :param total_stock_value: (Float) The total_stock_value is made up by the current_stock_value for the stock chosen by the user multiplied by the quantity chosen by the user.
     :param purchase_fees: (Float) The purchase fees can manually be set by the user and represent a fixed value, which is added upon every purchase. This can range from 1$ to 30$ in 0.5$ steps.
-    :return: If the input parameter total_stock_value does not equal "N/A" the function outputs a String representing the total_stock_value including the purchase fees. Otherwise it will return "N/A"
+    :return: (String) If the input parameter total_stock_value does not equal "N/A" the function outputs a String representing the total_stock_value including the purchase fees. Otherwise it will return "N/A"
     :test Correct: Method is called using a valid (Float) total_stock_value and a valid (Float) purchase_fee, thus returning a string for the total_purchase_value. Incorrect: Either parameter is of type string --> The method will return the string "N/A"
     """
 
@@ -36,6 +36,14 @@ def get_total_purchase_value(total_stock_value, purchase_fees):
 
 
 def get_dividend_yield(dividend_yield_raw):
+    """
+    Calculates the dividend yield in percentage and rounds the result to two decimals.
+
+    :param dividend_yield_raw: (Float) Dividend yield is part of the stock description acquired in the buy page.
+    :return: (Float) calculated dividend yield.
+    :test Correct: Method is called using a valid float and thus returns a further processed float. Incorrect: Method is called using a String, it will then return the string "N/A"
+    """
+
     if dividend_yield_raw != "N/A":
         dividend_yield = round(float((dividend_yield_raw) * 100), 2)
         return dividend_yield
@@ -43,17 +51,33 @@ def get_dividend_yield(dividend_yield_raw):
         return "N/A"
 
 
-def get_image_url(auth_key, logoUrl):
+def get_image_url(logoUrl):
+    """
+    Ensures that the image URL is valid. If the image URL is invalid, the function returns a white image.
+
+    :param logoUrl: (String) logoUrl is part of the stock description acquired in the buy page.
+    :return: (String) returns the method parameter as long as it does not equal "N/A"
+    :test Correct: Method is called using a valid URL string. The method subsequently returns the input URL. Incorrect: Method is called using an integer which will return a blank white image.
+    """
     if logoUrl != "N/A":
         return logoUrl
     else:
         return "https://coolbackgrounds.io/images/backgrounds/white/pure-white-background-85a2a7fd.jpg"
 
 
-def check_for_sufficient_cash_user(sellresponse):
-    sellresponse = json.loads(sellresponse.text)
-    if ("status" in sellresponse):
-        if (sellresponse["status"] == 400):
+def check_for_sufficient_cash_user(buy_response):
+    """
+    Ensures that the user has sufficient cash in his portfolio by analysing the response which is returned by the API after committing the buy transaction.
+
+    :param buy_response: (Response object) response received from API after committing the buy on the buy page.
+    :return: (Boolean) returns True or False depending on the reponse object of the API request.
+    :test Correct: Method is called using a valid response object (e.g.: {'amount': 1, 'id': 24, 'stockValue': {'id': 25, 'stock_price': 161.59, 'symbol': 'AAP', 'timestamp': '2020-11-09T00:00:00Z'}, 'transactionFee': 10, 'transactionType': 'buy'}
+    ). A "True" boolean is subsequently returned. Incorrect: Method is called using a reponse type object which status equals 400 and therefore returns False.
+    """
+    buy_response = json.loads(buy_response.text)
+    print(buy_response)
+    if ("status" in buy_response):
+        if (buy_response["status"] == 400):
             sufficient_cash = False
             return sufficient_cash
     else:
@@ -63,7 +87,15 @@ def check_for_sufficient_cash_user(sellresponse):
 
 @st.cache(show_spinner=False)
 def get_depo_array(auth_key):
+    """
+    API GET request for different stocks in user portfolio is written into a list.
+
+    :param auth_key: (String) API key authorizing the user to use described GET request.
+    :return: depo_array --> (list), user_portfolio --> (list)
+    :test Correct: A valid auth_key is provided in order for the GET request to the API to work. Both the depo array and the user portfolio is acquired and returned. Incorrect: No auth key is provided leading to a failed GET request and returning a 401 unauthorized error.
+    """
     user_portfolio = requests_server.get_user_portfolio(auth_key)
+    print(user_portfolio)
     depo_array = []
     for item in user_portfolio:
         depo_array.append(item["symbol"] + ": " + item["stockName"])
