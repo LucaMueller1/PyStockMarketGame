@@ -27,7 +27,8 @@ class DatabaseConn:
 
     """
 
-    def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
+   # def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
+    def __init__(self):
         """
 
             desc: database init function, initializes Database Engine
