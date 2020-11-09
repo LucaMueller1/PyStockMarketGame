@@ -1,6 +1,5 @@
 """
-desc: Encoder is used to encode objects to JSON via FlaskJSONEncoder
-author: Luca Mueller
+desc: Encoder is used to encode objects to JSON via FlaskJSONEncoder. Can be implemented in a subclass to return a serializable object for given parameter
 date: 2020-11-07
 """
 
