@@ -11,7 +11,7 @@ from swagger_server import util
 
 class AuthKey(Model):
     """
-    desc: AuthKey is used to authenticate the user to use request in his session
+    desc: AuthKey is used to authenticate the user to use subsequent requests
     author: Luca Mueller
     date: 2020-11-09
     """

@@ -21,7 +21,7 @@ def run(session_state):
     if st.button("OK"):
         if selected != "":
             gif = random_gif(
-            tag="animal cute dog cat pig giraffe",
+            tag="gay running office the_office sex",
             api_key="AQPeA7J1SUXWSzjFPfCGd2j1nERlE81O",
             )
             st.write("---------")
