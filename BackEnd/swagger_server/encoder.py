@@ -1,3 +1,9 @@
+"""
+desc: Encoder is used to encode objects to JSON via FlaskJSONEncoder
+author: Luca Mueller
+date: 2020-11-07
+"""
+
 from connexion.apps.flask_app import FlaskJSONEncoder
 import six
 

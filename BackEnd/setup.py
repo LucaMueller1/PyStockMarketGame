@@ -1,4 +1,9 @@
 # coding: utf-8
+"""
+desc: Setup is used to package and build the project through setuptools
+author: Luca Mueller
+date: 2020-11-07
+"""
 
 from setuptools import setup, find_packages
 

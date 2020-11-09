@@ -9,6 +9,12 @@ T = typing.TypeVar('T')
 
 
 class Model(object):
+    """
+    desc: Model is the parent class of all swagger-models and contains operations necessary for all models
+    author: Luca Mueller
+    date: 2020-11-09
+    """
+
     # swaggerTypes: The key is attribute name and the
     # value is attribute type.
     swagger_types = {}
