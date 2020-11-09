@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+desc: Main is used to configure and run the Flask/Connexion Server
+author: Luca Mueller
+date: 2020-11-07
+"""
 
 import connexion
 
