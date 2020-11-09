@@ -29,8 +29,11 @@ def create_user(user_param):  # noqa: E501
     insertion = False
     if connexion.request.is_json:
         user_param = User.from_dict(connexion.request.get_json())  # noqa: E501
-        user_param.money_available = user_param.starting_capital
-        insertion = staticglobaldb.dbconn.insert_user(user_param)
+        if user_param.starting_capital <= 0:
+            insertion = False
+        else:
+            user_param.money_available = user_param.starting_capital
+            insertion = staticglobaldb.dbconn.insert_user(user_param)
 
     if insertion:
         return 'OK', 200
