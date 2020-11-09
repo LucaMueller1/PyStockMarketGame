@@ -54,8 +54,6 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
 
     """
     df = yf.Ticker(symbol).history(period)
-    print("ACHTUNG!!!")
-    print(df)
     conn = DatabaseConn()
 
     value = None
@@ -87,7 +85,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
         multiplier = 1
         for index, row in df.iterrows():
             open_value = row['Open']*multiplier
-            if open_value is None:
+            if open_value is None or pd.isna(open_value):
                 continue
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
@@ -100,7 +98,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
         multiplier = 1
         for index, row in df.iterrows():
             open_value = row['Open']*multiplier
-            if open_value is None:
+            if open_value is None or pd.isna(open_value):
                 continue
             date = index
             returned.append(StockValue(None, symbol, float(open_value), str(date)))
@@ -111,7 +109,7 @@ def get_stock_history_to_frontend(symbol: str, period: str):
     returned = []
     for index, row in df.iterrows():
         open_value = row['Open']
-        if open_value is None:
+        if open_value is None or pd.isna(open_value):
             continue
         # close = row['Close']
         # high = row['High']
