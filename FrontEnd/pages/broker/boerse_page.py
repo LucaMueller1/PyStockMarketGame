@@ -11,6 +11,15 @@ import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
 import utilities.utils as utils
 
+"""
+    desc: Creates FrontEnd page for buy portion of the broker page using the Streamlit framework.
+
+    author: Luca Weissbeck
+
+    date: 2020-10-14
+"""
+
+
 def run(session_state):
     side_bar.run(session_state)
     session_state.buy_redirect = False
