@@ -17,14 +17,42 @@ from dateutil.relativedelta import relativedelta
 
 
 class DatabaseConn:
+    """
 
+        desc: Handles the Database Connection as well as all Database related functions
+
+        author: Daniel Ebert
+
+        date: 2020-11-09
+
+    """
+
+   # def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
     def __init__(self):
+        """
+
+            desc: database init function, initializes Database Engine
+
+            param: (str) databaseAddress, (str) databaseuser, (str) databasePassword, (str) databaseName
+
+            test: Correct:
+
+        """
         #self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',echo=True)
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
                                          echo=False)
 
 
     def insert_user(self, user: User) -> bool:
+        """
+
+            desc: insert User into Database Function. Called after registering
+
+            param: (User) user
+
+            test: Correct:
+
+        """
         auth_password = bcrypt.hashpw(str(user.password).encode('utf8'), bcrypt.gensalt())
         returned = True
         try:
