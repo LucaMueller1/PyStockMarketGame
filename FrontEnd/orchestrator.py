@@ -14,7 +14,6 @@ import utilities.SessionState as SessionState
 
 # MODULES IMPORTS
 import streamlit as st
-from streamlit import caching
 
 st.beta_set_page_config(page_title="PyBroker")
 
@@ -38,7 +37,6 @@ if session_state.page == "registration":
 if session_state.page == "depot":
     depot_page.run(session_state)
 if session_state.page == "boerse":
-    caching.clear_cache()
     boerse_page.run(session_state)
 if session_state.page == "stock_info" and session_state.stock_desc is not None:
     stock_analysis_page.run(session_state)

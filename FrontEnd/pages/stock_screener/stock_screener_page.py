@@ -15,7 +15,8 @@ def run(session_state):
 
     st.title("Stock Screener")
 
-    selected = st.selectbox("search by name or ticker:", [""] + session_state.stock_names)
+    selected = st.selectbox("search by name or ticker:", [""] +
+                            requests_server.get_combined_stock_names(session_state.auth_key))
 
     if st.button("OK"):
         if selected != "":
