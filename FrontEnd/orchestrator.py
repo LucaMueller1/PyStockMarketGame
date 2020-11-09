@@ -15,7 +15,7 @@ import utilities.SessionState as SessionState
 # MODULES IMPORTS
 import streamlit as st
 
-st.beta_set_page_config(page_title="PyBroker")
+st.set_page_config(page_title="PyBroker")
 
 hide_streamlit_style = """
 <style>
