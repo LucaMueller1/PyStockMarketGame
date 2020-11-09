@@ -1,3 +1,9 @@
+"""
+desc: Portfolio Controller that handles requests for buying/selling stock and returning portfolio data
+author: Luca Mueller
+date: 2020-10-14
+"""
+
 import connexion
 
 from swagger_server.models.api_error import ApiError  # noqa: E501
@@ -12,20 +18,6 @@ from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
 from swagger_server.services import trading_service
 from swagger_server.models.user import User
-
-"""
-desc: Portfolio Controller that handles requests for buying/selling stock and returning portfolio data
-
-author: Luca Mueller
-
-date: 2020-10-14
-
-mail: lucamueller32@gmail.com
-
-version: 1.0
-
-license: NONE
-"""
 
 
 def create_transaction(transaction_prepare_param):  # noqa: E501

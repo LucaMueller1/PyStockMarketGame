@@ -33,14 +33,14 @@ def run(session_state):
     mode_switch = st.radio("Please choose whether you want to buy or sell stocks", ("Buy", "Sell"))
     if mode_switch == "Buy":
         if session_state.stock_desc:
-            index = [i for i, s in enumerate(session_state.stock_names) if session_state.stock_desc["symbol"] in s][
+            index = [i for i, s in enumerate(requests_server.get_combined_stock_names(session_state.auth_key)) if session_state.stock_desc["symbol"] in s][
                         0] + 1
         else:
             index = 0
 
         # Get the ticker_code from the User
         st.write("Please enter your desired stock ticker and the quantity of your purchase:")
-        ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + session_state.stock_names, index)
+        ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + requests_server.get_combined_stock_names(session_state.auth_key), index)
         if ticker_code_entry_raw != " ":
             ticker_code_entry = ticker_code_entry_raw.split(": ")[1]
 
@@ -56,7 +56,7 @@ def run(session_state):
             purchase_fees = hf.get_transaction_fees(session_state.auth_key) #Y
             total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees) #Y
             stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry) #Y
-            stock_name = hf.check_for_entry_string(str(stock_description["stockName"])) #Y
+            #stock_name = hf.check_for_entry_string(str(stock_description["stockName"])) #Y
             image_source = hf.get_image_url(session_state.auth_key, stock_description["logoUrl"]) #Y
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"]) #Y
             user_balance = hf.get_user_balance(session_state.auth_key) #Y
@@ -87,6 +87,7 @@ def run(session_state):
                     st.write("Your specified stocks have been bought and can be viewed in your portfolio")
                     st.balloons()
                     sleep(2)
+                    caching.clear_cache()
 
                     st.experimental_rerun()
 
@@ -96,7 +97,6 @@ def run(session_state):
                 st.write("""
                                 <div class="greyish padding">
                                 <h2><u>Stock Information<u></h2>
-                                <p>Stock name: <b>""" + str(stock_name) + """ </b></p>
                                 <p>Stock value: <b>""" + str(single_stock_value) + "$" + """<b></p>
                                 <p>Dividend Yield: <b>""" + str(dividend_yield) + "%" + """<b></p>
                                 <img class = "circle_and_center" src = """ + image_source + """>
@@ -112,6 +112,5 @@ def run(session_state):
 
 
     elif mode_switch == "Sell":
-        caching.clear_cache()
         session_state.page = "sell"
         st.experimental_rerun()

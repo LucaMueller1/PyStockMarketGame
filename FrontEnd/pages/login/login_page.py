@@ -1,3 +1,9 @@
+"""
+    desc:       log in module for PyBroker Streamlit GUI
+    author:     Ben Schaper
+    date:       2020-11-09
+"""
+
 # UTILITIES IMPORTS
 import utilities.SessionState as SessionState
 import utilities.requests_server as requests_server
@@ -8,10 +14,9 @@ import streamlit as st
 
 def run(session_state):
     """
-    desc: main function, generates app
-    param: (type) name, (type) name
-    return: (type)
-    test:
+    desc:   run the log in page, requires SessionState object
+        for storing session variables.
+    param:  (SessionState) session_state
     """
 
     if st.button("↪️ signup"):
@@ -25,16 +30,14 @@ def run(session_state):
 
     if st.button("log in"):
 
-        response = requests_server.login(user_name_input, password_input)
+        login_response = requests_server.login(user_name_input, password_input)
 
-        if "authKey" in response.json():
-            session_state.auth_key = response.json()["authKey"]
-            response = requests_server.get_stock_names(session_state.auth_key).json()
-            session_state.stock_names = [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in response]
+        if "authKey" in login_response:
+            session_state.auth_key = login_response["authKey"]
 
             session_state.page = "depot"
             st.experimental_rerun()
         else:
-            st.warning("you entered invalid credentials")
+            st.error("Incorrect user name or password.")
 
     st.write("-----------")

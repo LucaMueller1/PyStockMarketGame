@@ -1,4 +1,5 @@
 import yfinance as yf
+import pandas as pd
 
 from swagger_server.models import StockValue, StockDescription, StockSustainability
 from swagger_server.services.db_service import DatabaseConn
@@ -53,12 +54,14 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
 
     """
     df = yf.Ticker(symbol).history(period)
+    print("ACHTUNG!!!")
+    print(df)
     conn = DatabaseConn()
 
     value = None
     for index, row in df.iterrows():
         open_value = row['Open']
-        if open_value is None:
+        if open_value is None or pd.isna(open_value):
             continue
         date = index
         value = StockValue(None, symbol, float(open_value), str(date))

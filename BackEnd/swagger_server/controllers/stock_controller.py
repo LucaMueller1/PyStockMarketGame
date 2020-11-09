@@ -1,3 +1,9 @@
+"""
+desc: Stock Controller that handles all requests containing stock information
+author: Luca Mueller
+date: 2020-11-07
+"""
+
 import re
 
 from swagger_server.models.api_error import ApiError  # noqa: E501
@@ -8,20 +14,6 @@ from swagger_server.models.stock_value import StockValue  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
-
-"""
-desc: Stock Controller that handles all requests containing stock information
-
-author: Luca Mueller
-
-date: 2020-11-07
-
-mail: lucamueller32@gmail.com
-
-version: 1.0
-
-license: NONE
-"""
 
 
 def get_stock_description(symbol):  # noqa: E501

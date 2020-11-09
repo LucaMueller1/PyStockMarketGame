@@ -1,3 +1,9 @@
+"""
+desc: User Controller that handles all requests concerning the user
+author: Luca Mueller
+date: 2020-10-14
+"""
+
 import connexion
 
 from swagger_server.models.api_error import ApiError  # noqa: E501
@@ -7,20 +13,6 @@ from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
 from swagger_server import util
 from swagger_server.controllers import staticglobaldb
-
-"""
-desc: User Controller that handles all requests concerning the user
-
-author: Luca Mueller
-
-date: 2020-10-14
-
-mail: lucamueller32@gmail.com
-
-version: 1.0
-
-license: NONE
-"""
 
 
 def create_user(user_param):  # noqa: E501

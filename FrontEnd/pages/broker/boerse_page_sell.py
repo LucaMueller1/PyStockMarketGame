@@ -123,6 +123,5 @@ def run(session_state):
                                             """, unsafe_allow_html=True)
 
     elif mode_switch == "Buy":
-        caching.clear_cache()
         session_state.page = "boerse"
         st.experimental_rerun()
