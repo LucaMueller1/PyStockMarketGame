@@ -24,10 +24,9 @@ def run(session_state):
             hf.delete_user(session_state.auth_key)
             session_state.page = "login"
             st.experimental_rerun()
-    gifs = ["Austin_Powers", "The_Office", "Gay", "Penis", "Cats", "Dogs", "Cute_Animals"]
+    gifs = ["AustinPowers", "TheOffice", "Gay", "Penis", "Cats", "Dogs", "Cute_Animals"]
     pre_selected_index_of_gif = session_state.gif_tag[1]
     gif_selected = st.selectbox("GIF Topic:", gifs, index=pre_selected_index_of_gif)
     index_in_gif = gifs.index(gif_selected)
     session_state.gif_tag=(gif_selected, index_in_gif)
-    print(session_state.gif_tag)
 
