@@ -82,7 +82,7 @@ def run(session_state):
             stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry)
             stock_name = str(stock_description["stockName"])
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"])
-            image_source = hf.get_image_url(session_state.auth_key, (stock_description["logoUrl"]))
+            image_source = hf.get_image_url((stock_description["logoUrl"]))
             stock_buyin_price = hf.get_buyin_for_stock(depot_information, ticker_code_entry)
 
             # Auflistung Verkaufspreis mit Ordergebühren
