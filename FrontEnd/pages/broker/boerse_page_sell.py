@@ -98,7 +98,6 @@ def run(session_state):
                 st.write("---")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
-                print(stock_buyin_price)
 
                 # Sell button
                 if st.button("Sell"):
