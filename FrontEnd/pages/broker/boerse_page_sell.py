@@ -37,12 +37,10 @@ def run(session_state):
         if ticker_code_entry_raw != " ":
             ticker_code_entry = ticker_code_entry_raw.split(": ")[0]
             quantity_in_user_portfolio = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry))
-
             if quantity_in_user_portfolio > 1:
                 if st.checkbox("Sell all stocks", value=True):
                     # Set the Value of quantity to the amount user has in Depot
                     stock_quantity_for_sale = quantity_in_user_portfolio
-
                 else:
                     col1, col2 = st.beta_columns((4, 1))
 
@@ -56,7 +54,7 @@ def run(session_state):
                                                                 quantity_in_user_portfolio)
 
                         # Textfeld & Button
-                        if quantity_input_method_choice == "Textfield":
+                        if quantity_input_method_choice == "TextInput":
                             stock_quantity_for_sale_raw = st.number_input("Please choose the quantity of stocks",
                                                                           min_value=1,
                                                                           max_value=quantity_in_user_portfolio,
