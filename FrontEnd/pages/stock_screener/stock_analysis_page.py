@@ -30,18 +30,20 @@ def run(session_state):
     general_information.write(f"""**Symbol:** {description["symbol"]}""")
     general_information.write(f"""**Country:** {description["country"]}""")
     general_information.write(f"""**Industry:** {description["industry"]}""")
-    general_information.write(f"""**Full Time Employees:** {description["fullTimeEmployees"]}""")
+    general_information.write(f"""**Full Time Employees:** {description["fullTimeEmployees"]:,}""")
 
     financial_information = st.beta_expander("Financial Information", expanded=True)
-    financial_information.write(f"""**Market Capitalization:** {description["marketCap"]}$""")
-    financial_information.write(f"""**Dividend Yield:** {round(description["dividend"]*100,2)}%""")
+    financial_information.write(f"""**Market Capitalization:** {round(description["marketCap"]/1000000000,3):,}B$""")
+    if type(description["dividend"]) == float:
+        financial_information.write(f"""**Dividend Yield:** {round(description["dividend"]*100,2)}%""")
     financial_information.write(f"""**52 Week High:** {description["fiftyTwoWeekHigh"]}$""")
     financial_information.write(f"""**52 Week Low:** {description["fiftyTwoWeekLow"]}$""")
 
     long_description = st.beta_expander(f"""Description for {description["stockName"]}""")
     long_description.write(f"""'{description["longDescription"]}'""")
 
-    side_bar.run(session_state)
     if st.button("🛍️ go to broker"):
         session_state.page = "boerse"
         st.experimental_rerun()
+
+    side_bar.run(session_state)

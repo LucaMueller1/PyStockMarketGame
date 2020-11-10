@@ -42,8 +42,8 @@ def run(session_state):
                 session_state.page = "login"
                 st.experimental_rerun()
             else:
-                st.error("user creation failed")
+                st.error("User creation failed")
         else:
-            st.error("are you sure?")
+            st.error("Are you sure?")
 
     st.write("-----------")
