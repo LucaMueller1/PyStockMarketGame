@@ -91,11 +91,10 @@ def get_depo_array(auth_key):
     API GET request for different stocks in user portfolio is written into a list.
 
     :param auth_key: (String) API key authorizing the user to use described GET request.
-    :return: depo_array --> (list), user_portfolio --> (list)
+    :return: depo_array --> (List), user_portfolio --> (List)
     :test Correct: A valid auth_key is provided in order for the GET request to the API to work. Both the depo array and the user portfolio is acquired and returned. Incorrect: No auth key is provided leading to a failed GET request and returning a 401 unauthorized error.
     """
     user_portfolio = requests_server.get_user_portfolio(auth_key)
-    print(user_portfolio)
     depo_array = []
     for item in user_portfolio:
         depo_array.append(item["symbol"] + ": " + item["stockName"])
@@ -103,18 +102,43 @@ def get_depo_array(auth_key):
 
 
 def get_stock_quantity_in_depot(depot_information, stock_ticker):
+    """
+    Retrieve the stock quantity in portfolio for a selected stock from the user.
+
+    :param depot_information: (list) This is the second return parameter returned from the get_depo_array function.
+    :param stock_ticker: (String) Stock selected by user
+    :return: (Int) Quantity of selected stock in portfolio
+    :test Correct: A valid list for depot information is being passed into the method as well as a valid stock ticker. The stock ticker can be found in the portfolio information and the quantity of the specific stock in the portfolio can be returned. Incorrect: A valid list for stock description is passed into the method, however the stock ticker can not be found inside the description.
+    """
     for item in depot_information:
         if item["symbol"] == stock_ticker:
             return item["amount"]
 
 
+
 def get_buyin_for_stock(depot_information, stock_ticker):
+    """
+    Retrieve the  buy in price for a selected stock from user.
+
+    :param depot_information: (list) This is the second return parameter returned from the get_depo_array function.
+    :param stock_ticker: (String) Stock selected by user
+    :return: (Float) Buy in price of selected stock in portfolio
+    :test Correct: A valid list for depot information is passed into the method as well as a valid stock ticker. Therefore, the buy in price for the specified stock ticker will be returned. Incorrect: Instead of a list for depot information a numerical value such as an integer is passed into the method leading to an error in the for loop.
+    """
     for item in depot_information:
         if item["symbol"] == stock_ticker:
             return float(item["stock_buyin_price"])
 
 
-def rename_calculate_change_buyin_current(stock_buyin, single_stock_price):
+def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
+    """
+    Returns HTML element containing the total change of the stock from the buyin price to the current price.
+
+    :param stock_buyin: (Float) Buy in price for specfic stock retrieved from depot_information using the get_buyin_for_stock method.
+    :param single_stock_price: (Float) Most recent value in stock market for stock specified. Calculated using the get_single_stock_value method.
+    :return: (HTML string) The return is a String containing HTML elements, thus the method can easily be implemented into an st.write method using HTML by concatenating the return of this function with the rest of the st.write function.
+    :test Correct: Method is called with a valid stock_buyin float as well as a valid single_stock_price float. Depending on the calculated change in the method, this will return a different string, which can be concatenated into an HTML element. Incorrect: Method is called without any parameter input resulting in an error at the change calculation, as no elements are provided to calculate the change with.
+    """
     change = round((float(single_stock_price) - float(stock_buyin)), 2)
     if change < 0:
         change = str(change) + "$"
