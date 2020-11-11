@@ -1,12 +1,15 @@
 from swagger_server.services.finance import finance_data
 from swagger_server.services import trading_service
 from swagger_server.services.db_service import DatabaseConn
+from swagger_server.controllers import staticglobaldb
+from swagger_server.services.finance import finance_data
 
 import pandas_market_calendars as mcal
 import pandas as pd
 import datetime
 
-def InsertStockData():
+
+def insert_stock_data():
     print("CronJob for inserting StockData started at: " + str(datetime.datetime.now()))
     nyse_market_time = mcal.get_calendar('NYSE')
     start_time = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -15,12 +18,9 @@ def InsertStockData():
     is_open = nyse_market_time.open_at_time(early, pd.Timestamp(datetime.datetime.now(), tz="Europe/Berlin"))
     print("Is stock market open:", is_open)
 
-def util_format_datetime_for_expiry(self, weeks: int) -> str:
-    now = datetime.now()
-    # result = now + relativedelta(weeks=weeks)
-    # result = result.strftime('%Y-%m-%d %H:%M:%S')
-   #  return result
-
-
-
-InsertStockData()
+    if is_open:
+        symbols = staticglobaldb.dbconn.get_all_stocks_distinct_in_transactions()
+        for symbol in symbols:
+            if staticglobaldb.dbconn.get_stock_price_from_today(symbol) is None:
+                finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
+                print("Inserting stock quotes for all users portfolio positions")

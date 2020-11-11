@@ -9,7 +9,8 @@ import connexion
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from swagger_server import encoder
-from swagger_server.services.schedule_service import InsertStockData
+from swagger_server.services.schedule_service import insert_stock_data
+
 
 def main():
     start_scheduler()
@@ -18,10 +19,12 @@ def main():
     app.add_api('swagger.yaml', arguments={'title': 'PyBroker'})
     app.run(port=8080)
 
+
 def start_scheduler():
     sched = BackgroundScheduler(daemon=True)
-    sched.add_job(InsertStockData, 'interval', minutes=1)
+    sched.add_job(insert_stock_data, 'interval', minutes=15)
     sched.start()
+
 
 if __name__ == '__main__':
     main()
