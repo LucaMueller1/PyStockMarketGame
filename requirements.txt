@@ -12,3 +12,4 @@ python-dateutil>=2.8.1
 requests>=2.24.0
 html5lib == 1.1
 APScheduler == 3.6.3
+pandas-market-calendars == 1.6.1
