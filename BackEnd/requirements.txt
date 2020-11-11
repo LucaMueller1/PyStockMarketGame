@@ -1,7 +1,9 @@
 connexion == 2.7.0
-python_dateutil == 2.6.0
+python_dateutil == 2.8.1
 setuptools >= 21.0.0
 sqlalchemy >= 1.3.20
 bcrypt >= 3.2.0
 PyMySQL == 0.10.1
 pandas >= 1.1.3
+html5lib == 1.1
+APScheduler == 3.6.3
