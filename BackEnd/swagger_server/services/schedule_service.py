@@ -24,3 +24,4 @@ def insert_stock_data():
             if staticglobaldb.dbconn.get_stock_price_from_today(symbol) is None:
                 finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
                 print("Inserting stock quotes for all users portfolio positions")
+
