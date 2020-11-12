@@ -257,10 +257,18 @@ def get_portfolio_positions(user: User):
 
 
 def get_portfolio_history(user: User):
-    """ Gives History of whole Portfolio for one User for use in a graph
+    """ Gives History of whole Portfolio for one User for use in a graph.
+        get_portfolio_history takes the user as input and gets all the users
+        transactions from the DB. For each day since the first trade it goes
+        through the transactions and creates/updates PortfolioPositions.
+        Based on the positions it calculates it into a PortfolioValue for
+        each day.
 
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date: 12.11.2020
     :param user: the User from which the PortfolioValues (History) should be returned
-    :return: list of PortfolioValue
+    :return: List[PortfolioValue]
+    :test: provide a user as input. You should receive a list of PortfolioValues
     """
 
     # get all stock transactions

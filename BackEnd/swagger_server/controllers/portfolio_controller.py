@@ -104,4 +104,8 @@ def get_portfolio_value():  # noqa: E501
     :rtype: List[PortfolioValue]
     :test Correct: Request with valid api_key returns list of portfolioValue objects that can be used to draw a graph. Incorrect: Request with invalid api_key returns unauthorized error object
     """
-    return 'do some magic!'
+    api_key = connexion.request.headers['api_key']
+    user: User = staticglobaldb.conn.get_user_by_auth_key(api_key)
+
+    portfolio_value = trading_service.get_portfolio_history(user)
+    return portfolio_value
