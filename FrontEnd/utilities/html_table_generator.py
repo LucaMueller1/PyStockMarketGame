@@ -1,3 +1,5 @@
+import streamlit as st
+
 class PortfolioTable():
     """
     desc: main function, generates app
@@ -26,6 +28,7 @@ class PortfolioTable():
         if relative_gain < 0:
             color = "red"
 
+        self.html += f"""<td style="color:{color};">{round(row_data["stockValue"]["stock_price"]-row_data["stock_buyin_price"],2)}$</td>"""
         self.html += f"""<td style="color:{color};">{relative_gain}%</td></tr>"""
 
     def __calculate_relative_gain(self, current_price: float, buyin_price: float) -> float:
@@ -38,6 +41,7 @@ class PortfolioTable():
                         <td>amount</td>
                         <td>buy in price</td>
                         <td>market price</td>
+                        <td>gain ($)</td>
                         <td>gain (%)</td>
                         </tr>
                         """

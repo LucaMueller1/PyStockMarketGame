@@ -25,6 +25,8 @@ footer {visibility: hidden;}
 
 """
 
+
+
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 session_state = SessionState.get(page='login', auth_key='', stock_desc=None, graph_data=None, buy_redirect=False, gif_tag=("Gay", 2))

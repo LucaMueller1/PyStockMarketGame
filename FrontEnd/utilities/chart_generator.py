@@ -1,8 +1,12 @@
 from streamlit_echarts import st_echarts
+import streamlit as st
 
-def show_chart(historical_data):
+def show_chart(historical_data, name:str):
 
     options = {
+        "title": {
+        "text": f"Chart for {name}"
+        },
         "tooltip": {
         "trigger": 'axis'
         },

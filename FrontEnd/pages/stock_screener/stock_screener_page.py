@@ -34,7 +34,7 @@ def run(session_state):
             symbol = re.sub(pattern=".*: ", string=selected, repl="")
             session_state.stock_desc = requests_server.get_stock_description(session_state.auth_key, symbol)
             session_state.graph_data = requests_server.get_stockprice_history(
-                session_state.auth_key, session_state.stock_desc["symbol"], "1y"
+                session_state.auth_key, session_state.stock_desc["symbol"], "max"
             )
             session_state.page = "stock_info"
             st.experimental_rerun()
