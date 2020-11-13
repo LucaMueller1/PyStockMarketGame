@@ -9,6 +9,7 @@ from swagger_server.models.api_error import ApiError
 from swagger_server.models.transaction import Transaction
 from swagger_server.controllers import staticglobaldb
 from swagger_server.models.portfolio_value import PortfolioValue
+from swagger_server.services.finance import finance_data
 
 import datetime
 import re
@@ -352,10 +353,14 @@ def get_portfolio_history(user: User):
         #END FOR - Transactions
         stocks = remove_sold_stocks(stocks)
 
+        # get current stock_price
+        stock_description = StockDescription(symbol=symbol)
+        stock_price = finance_data.check_current_stock_price(stock_description).stock_price
+
         # calc current_depot_value -> PorfolioValue
         current_depot_value = 0
         for stock in stocks:
-            stock_value = stock.amount * stock.stock_buyin_price
+            stock_value = stock.amount * stock_price
             current_depot_value += stock_value
 
 
@@ -404,6 +409,8 @@ def get_portfolio_analytics():
     pass
 
 
-# user = staticglobaldb.dbconn.get_user_by_auth_key("17FUXFZgtTRP0cNJjqtcss0Z9kDxRZ4WswEoJbnYeqxQtPp2n1yz4ufEJuANjVHVLGYJDe0lvgpQY9o9efGHUftKATUwv3Ur6zZr2i7gRnSu5YDh2l0YHbk5Styxi2uv")
-# print(user.first_name, user.last_name)
-# get_portfolio_history(user)
+user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+print(user.first_name, user.last_name)
+history = get_portfolio_history(user)
+print(history)
+print(get_portfolio_positions(user))

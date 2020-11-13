@@ -3,6 +3,8 @@ import pandas as pd
 
 from swagger_server.models import StockValue, StockDescription, StockSustainability
 from swagger_server.services.db_service import DatabaseConn
+from swagger_server.controllers import staticglobaldb
+import datetime
 
 """
 
@@ -21,17 +23,48 @@ def check_current_stock_price(stock_description: StockDescription):
     If ther is none it will call the current stock_price from the yfinance
     api.
 
-    :param stock_description: it might only need the symbol attribute set in the
-                                StockDescription Model
+    :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
     :return: StockValue - with the current stock_price
     """
-    conn = DatabaseConn()
-    stock_value = conn.get_stock_price_from_today(stock_description) # StockValue Model
+    stock_symbol = stock_description.symbol
+    stock_value = staticglobaldb.dbconn.get_stock_price_from_today(stock_symbol) # StockValue Model
 
     if stock_value is not None: # StockValue
         # get price for today
         stock_price = stock_value.stock_price # stock_price from StockValue
     else:
+        # get it from API
+        # + insert into table
+        symbol = stock_description.symbol # Symbol from StockValue
+        stock_value = insert_stock_history_from_yfinance_to_db(symbol, "1d") # StockValue Model
+        # ^ this already calls the function insert_course for the DB
+
+    return stock_value
+
+
+def get_stock_price_for_date(stock_description: StockDescription, history_date: datetime):
+    """
+    get_stock_price_for_date is a helper function that calls the DB and
+    checks if there is a price for the stock_description.symbol for the date provided.
+    If ther is none it will call the current stock_price from the yfinance
+    api.
+
+    :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
+    :return: StockValue - with the current stock_price
+    """
+    today = datetime.datetime.now().date()
+    stock_symbol = stock_description.symbol
+
+    # making sure stock_value returnes valid data
+    stock_value = 0
+    if history_date != today:
+        stock_value = staticglobaldb.dbconn.get_stock_price_from_date(stock_symbol, history_date) # StockValue Model
+    else:
+        stock_value = check_current_stock_price(stock_description)
+
+    if stock_value is None: # StockValue
+        # get price for today
+        # stock_price = stock_value.stock_price # stock_price from StockValue
         # get it from API
         # + insert into table
         symbol = stock_description.symbol # Symbol from StockValue
