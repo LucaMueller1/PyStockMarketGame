@@ -1,10 +1,10 @@
 FROM python:3-alpine
-### uncomment to run cronjob - !!! 2nd CMD overwrites first CMD !!!
+#### uncomment to run cronjob - !!! 2nd CMD overwrites first CMD !!!
 RUN mkdir -p /usr/src/app
 
 ENV PROJ_DIR="/usr/src/app"
 #ENV LOG_FILE="${PROJ_DIR}/app.log"
-#ENV CRON_SPEC="* * * * *"
+#ENV CRON_SPEC="0 5 * * *"
 
 WORKDIR ${PROJ_DIR}
 
