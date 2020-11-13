@@ -1,20 +1,27 @@
-import schedule
-import time
 from swagger_server.services.finance import finance_data
 from swagger_server.services import trading_service
 from swagger_server.services.db_service import DatabaseConn
+from swagger_server.controllers import staticglobaldb
+from swagger_server.services.finance import finance_data
+
+import pandas_market_calendars as mcal
+import pandas as pd
+import datetime
 
 
-conn = DatabaseConn()
-users = conn.get_all_users()
-stocks = []
+def insert_stock_data():
+    print("CronJob for inserting StockData started at: " + str(datetime.datetime.now()))
+    nyse_market_time = mcal.get_calendar('NYSE')
+    start_time = datetime.datetime.now() - datetime.timedelta(days=1)
+    end_time = datetime.datetime.now() + datetime.timedelta(days=1)
+    early = nyse_market_time.schedule(start_date=start_time, end_date=end_time)
+    is_open = nyse_market_time.open_at_time(early, pd.Timestamp(datetime.datetime.now(), tz="Europe/Berlin"))
+    print("Is stock market open:", is_open)
 
-for user in users:
-    portfolio = trading_service.get_portfolio_positions(user)
-    for position in portfolio:
-        symbol = position.symbol
-        # make sure double data is not collected
-        if symbol not in stocks:
-            stocks.append(symbol)
-            schedule.every(24).hour.do(finance_data.insert_stock_history_from_yfinance_to_db(symbol))
+    if is_open:
+        symbols = staticglobaldb.dbconn.get_all_stocks_distinct_in_transactions()
+        for symbol in symbols:
+            if staticglobaldb.dbconn.get_stock_price_from_today(symbol) is None:
+                finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
+                print("Inserting stock quotes for all users portfolio positions")
 

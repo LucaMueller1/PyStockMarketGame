@@ -8,10 +8,13 @@ from swagger_server.services.finance import finance_data
 from swagger_server.models.api_error import ApiError
 from swagger_server.models.transaction import Transaction
 from swagger_server.controllers import staticglobaldb
-import time
+from swagger_server.models.portfolio_value import PortfolioValue
+
+import datetime
 import re
 
 deadlock = False # might be used in the future to prevent simultaneous buying and selling
+
 
 def buy_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: int):
     """
@@ -172,7 +175,7 @@ def stock_values_available(user: User):
             else:
                 prev_position.amount -= next_amount
 
-            #new Buy-In price (division by zero)
+            # new Buy-In price (division by zero)
             if prev_position.amount <= 0:
                 stocks[symbol_index] = None
                 stocks.pop(symbol_index)
@@ -199,7 +202,6 @@ def get_portfolio_positions(user: User):
             price should be equal to what you bought/sold
     """
     # get all stock transactions
-    # conn = DatabaseConn()
     transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
     # print(transactions)
 
@@ -229,7 +231,6 @@ def get_portfolio_positions(user: User):
             # get PortfolioPostition out of list
             prev_transaction = stocks[symbol_index] # 5 Aktien 120€ + 5€
 
-
             # Buy-In/Amount calculation
             prev_value = prev_transaction.amount * prev_transaction.stock_buyin_price # 5*120 = 600 + 5€ = 605€
             next_value = next_amount * next_stock_buyin_price # 3*95€ + 5€ = 290€
@@ -250,6 +251,134 @@ def get_portfolio_positions(user: User):
                 # override PortfolioPosition
                 stocks[symbol_index] = prev_transaction
 
+    stocks = remove_sold_stocks(stocks)
+
+    return stocks
+
+
+def get_portfolio_history(user: User):
+    """ Gives History of whole Portfolio for one User for use in a graph.
+        get_portfolio_history takes the user as input and gets all the users
+        transactions from the DB. For each day since the first trade it goes
+        through the transactions and creates/updates PortfolioPositions.
+        Based on the positions it calculates it into a PortfolioValue for
+        each day.
+
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date: 12.11.2020
+    :param user: the User from which the PortfolioValues (History) should be returned
+    :return: List[PortfolioValue]
+    :test: provide a user as input. You should receive a list of PortfolioValues
+    """
+
+    # get all stock transactions
+    transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
+    # get first trading day
+    min_date = get_min_date(transactions) # datetime
+    # print("Min-Date: ",min_date)
+    last_portfolio_value = 0
+    # start_date = min_date + datetime.timedelta(days=-1)
+    # print(start_date)
+
+    """
+    Create PortfolioValues for specific dates
+    """
+    now = datetime.datetime.now().date()
+    date = min_date
+
+    stocks = []
+    returned = [] # list of PortfolioValue
+    # while date <= now
+    while date <= now:
+        # print("working_date: ", date)
+        # print("Today is the: ", now)
+        # for every transaction
+
+        # transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
+        for transaction in transactions:
+            # print("Transactions on: ", date, ": ", len(transactions))
+            # get values
+            symbol = transaction[1].symbol #AAPL
+            stock_name = transaction[1].stock_name # Apple
+            logo_url = transaction[1].logo_url
+            next_amount = transaction[0].amount # 5
+            transaction_fee = transaction[0].transaction_fee # 10€
+            next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
+            transaction_type = transaction[0].transaction_type
+            transaction_date = transaction[0].stock_value.timestamp.date()
+
+            # take transactions from date and add to PortfolioPositions
+            # or create PortfolioPositions for the date
+            if transaction_date == date:
+                # print("Transaction found for ", date, "! It is: ", symbol)
+
+                # check if portfolio is already in stocks
+                symbol_index = None
+                found = False
+                for i in range(len(stocks)):
+                    if stocks[i].symbol == symbol:
+                        found = True
+                        symbol_index = i
+                        break
+
+                if not found:
+                    stocks.append(PortfolioPosition(symbol=symbol, stock_name=stock_name, logo_url=logo_url, amount=next_amount, stock_value=None, stock_buyin_price=next_stock_buyin_price))
+                else:
+                    # update PortfolioPosition
+                    prev_transaction = stocks[symbol_index]
+
+                    """ Buy-In/Amount calculation """
+                    prev_value = prev_transaction.amount * prev_transaction.stock_buyin_price # 5*120 = 600 + 5€ = 605€
+                    next_value = next_amount * next_stock_buyin_price # 3*95€ + 5€ = 290€
+
+                    if transaction_type == "buy":
+                        prev_value += next_value                # 605 + 290 = 895€
+                        prev_transaction.amount += next_amount     # 5   + 3   = 8stk
+                    else:
+                        prev_value -= next_value
+                        prev_transaction.amount -= next_amount
+
+                        #new Buy-In price (division by zero)
+                        if prev_transaction.amount <= 0:
+                            stocks[symbol_index] = None
+                            stocks.pop(symbol_index)
+                        else:
+                            prev_transaction.stock_buyin_price = prev_value/prev_transaction.amount # 895€ / 8stk
+                            # override PortfolioPosition
+                            stocks[symbol_index] = prev_transaction
+
+                # add PortfolioValue to list
+            # END IF date = transaction_date
+        #END FOR - Transactions
+        stocks = remove_sold_stocks(stocks)
+
+        # calc current_depot_value -> PorfolioValue
+        current_depot_value = 0
+        for stock in stocks:
+            stock_value = stock.amount * stock.stock_buyin_price
+            current_depot_value += stock_value
+
+
+        # portfolio_Value
+        portfolio_value = PortfolioValue(current_depot_value, date)
+        # print("PortfolioValue for ", date, ": ", portfolio_value)
+        returned.append(portfolio_value)
+        date += datetime.timedelta(days=1)
+        last_portfolio_value = portfolio_value
+    # END WHILE day = now
+    # print("PortfolioValues: ", returned)
+    return returned
+
+
+## Support functions Portfolio
+def remove_sold_stocks(stocks: list) -> list:
+    """
+    remove_sold_Stocks checks if a PortfolioPosition has a stock_value of zero
+    and removes the PortfolioPosition from the list
+
+    :param stocks: list() of PortfolioPositions
+    :return: list() of PortfolioPositions
+    """
     for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
         if stocks[index].stock_value is None:
             current_stock_price = staticglobaldb.dbconn.get_stock_price_from_today(stocks[index].symbol)
@@ -259,25 +388,22 @@ def get_portfolio_positions(user: User):
 
     return stocks
 
+def get_min_date(transactions: list) -> datetime:
+    min_date = None
+    for transaction in transactions:
+        current_date = transaction[0].stock_value.timestamp.date()
+        if min_date == None:
+            min_date = current_date
+        elif current_date < min_date:
+            min_date = current_date
 
-def get_portfolio_history(user: User, days: int):
-    """ Gives History of whole Portfolio for use in a graph
+    return min_date
+## End Support functions
 
-    :param user:
-    :return: array of PortfolioValue
-    """
-    current_depot_value = None
-
-    for day in range(days):
-
-        portfolio_array = get_portfolio_positions(user)
-        print(portfolio_array)
-
+def get_portfolio_analytics():
     pass
 
 
-# user = User(2, "Luca", "Weissbeck", "lucaweissbeck@yahoo.de", "$2b$12$.7atD7IuL.LH0/XbGONOiu3l6aJ2Ux/1r2/ExWIsJYukcymy8181C", 10000, 10000)
-# stock_portfolio_position(user)
-# data = get_portfolio_positions(user)
-# print(data)
-# get_portfolio_history(user, 1)
+# user = staticglobaldb.dbconn.get_user_by_auth_key("17FUXFZgtTRP0cNJjqtcss0Z9kDxRZ4WswEoJbnYeqxQtPp2n1yz4ufEJuANjVHVLGYJDe0lvgpQY9o9efGHUftKATUwv3Ur6zZr2i7gRnSu5YDh2l0YHbk5Styxi2uv")
+# print(user.first_name, user.last_name)
+# get_portfolio_history(user)

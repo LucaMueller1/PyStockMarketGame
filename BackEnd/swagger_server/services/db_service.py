@@ -306,3 +306,12 @@ class DatabaseConn:
 
 
         return users
+
+    def get_all_stocks_distinct_in_transactions(self) -> list:
+        symbols = []
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text("""SELECT DISTINCT symbol FROM `transactions` """))
+            for row in rs:
+                symbols.append(row['symbol']);
+
+        return symbols

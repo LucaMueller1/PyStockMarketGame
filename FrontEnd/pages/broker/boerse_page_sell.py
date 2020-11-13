@@ -93,7 +93,7 @@ def run(session_state):
                 st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Transaction Value: <b><code style="color: black;">""" + str(stock_sell_value_price) + "$" + """</code></b></p></div> """, unsafe_allow_html=True)
                 st.write("""<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Selling Fees: <code style="color: #F52D5B;">""" + str(selling_fees) + "$" + """</code></p></div> """, unsafe_allow_html=True)
                 st.write("---")
-                st.write(hf.rename_calculate_change_buyin_current(stock_buyin_price, single_stock_price), unsafe_allow_html=True)
+                st.write(hf.gethtml_for_change_buyin_current(stock_buyin_price, single_stock_price), unsafe_allow_html=True)
                 st.write(hf.calculate_total_change(stock_buyin_price, single_stock_price, stock_quantity_for_sale), unsafe_allow_html=True)
                 st.write("---")
                 st.subheader("Total selling value:")
