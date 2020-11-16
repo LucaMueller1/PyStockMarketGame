@@ -1,6 +1,3 @@
-from swagger_server.services.finance import finance_data
-from swagger_server.services import trading_service
-from swagger_server.services.db_service import DatabaseConn
 from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
 
@@ -11,11 +8,7 @@ import datetime
 
 def insert_stock_data():
     print("CronJob for inserting StockData started at: " + str(datetime.datetime.now()))
-    nyse_market_time = mcal.get_calendar('NYSE')
-    start_time = datetime.datetime.now() - datetime.timedelta(days=1)
-    end_time = datetime.datetime.now() + datetime.timedelta(days=1)
-    early = nyse_market_time.schedule(start_date=start_time, end_date=end_time)
-    is_open = nyse_market_time.open_at_time(early, pd.Timestamp(datetime.datetime.now(), tz="Europe/Berlin"))
+    is_open = is_market_open()
     print("Is stock market open:", is_open)
 
     if is_open:
@@ -25,3 +18,11 @@ def insert_stock_data():
                 finance_data.insert_stock_history_from_yfinance_to_db(symbol, "1d")
                 print("Inserting stock quotes for all users portfolio positions")
 
+
+def is_market_open() -> bool:
+    nyse_market_time = mcal.get_calendar('NYSE')
+    start_time = datetime.datetime.now() - datetime.timedelta(days=1)
+    end_time = datetime.datetime.now() + datetime.timedelta(days=1)
+    early = nyse_market_time.schedule(start_date=start_time, end_date=end_time)
+    is_open = nyse_market_time.open_at_time(early, pd.Timestamp(datetime.datetime.now(), tz="Europe/Berlin"))
+    return is_open

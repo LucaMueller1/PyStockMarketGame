@@ -1,15 +1,14 @@
 from swagger_server.services.db_service import DatabaseConn
 from swagger_server.models.portfolio_position import PortfolioPosition
 from swagger_server.models.user import User
-from swagger_server.services.finance import finance_data
 from swagger_server.models.auth_key import AuthKey
 from swagger_server.models.stock_description import StockDescription
-from swagger_server.services.finance import finance_data
 from swagger_server.models.api_error import ApiError
 from swagger_server.models.transaction import Transaction
 from swagger_server.controllers import staticglobaldb
 from swagger_server.models.portfolio_value import PortfolioValue
 from swagger_server.services.finance import finance_data
+import swagger_server.services.schedule_service as schedule_service
 
 import datetime
 import re
@@ -387,9 +386,15 @@ def remove_sold_stocks(stocks: list) -> list:
     """
     for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
         if stocks[index].stock_value is None:
+            # today's quotation from db
             current_stock_price = staticglobaldb.dbconn.get_stock_price_from_today(stocks[index].symbol)
             if current_stock_price is None:
-                current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(stocks[index].symbol, "1d")
+                if not schedule_service.is_market_open():
+                    # latest quotation from db
+                    current_stock_price = staticglobaldb.dbconn.get_latest_stock_price(stocks[index].symbol)
+                else:
+                    # yFinance quotation
+                    current_stock_price = finance_data.insert_stock_history_from_yfinance_to_db(stocks[index].symbol, "1d")
             stocks[index].stock_value = current_stock_price
 
     return stocks
