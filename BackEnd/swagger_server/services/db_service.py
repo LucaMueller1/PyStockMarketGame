@@ -332,10 +332,11 @@ class DatabaseConn:
         return returned
 
     def get_stock_price_from_date(self, stock_symbol: str, history_date: datetime):
+        returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
-                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = history_date ORDER BY `timestamp` DESC LIMIT 1"""),
-                ({"symbol": stock_symbol}))
+                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = :history_date ORDER BY `timestamp` DESC LIMIT 1"""),
+                ({"symbol": stock_symbol, "history_date": history_date}))
             for row in rs:
                 returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
         return returned

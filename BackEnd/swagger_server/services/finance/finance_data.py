@@ -50,17 +50,16 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
     api.
 
     :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
-    :return: StockValue - with the current stock_price
+    :return: StockValue - with the stock_price for date
     """
     today = datetime.datetime.now().date()
     stock_symbol = stock_description.symbol
 
     # making sure stock_value returnes valid data
     stock_value = 0
-    if history_date != today:
-        stock_value = staticglobaldb.dbconn.get_stock_price_from_date(stock_symbol, history_date) # StockValue Model
-    else:
-        stock_value = check_current_stock_price(stock_description)
+
+    stock_value = staticglobaldb.dbconn.get_stock_price_from_date(stock_symbol, history_date) # StockValue Model
+    print("StockValue for ", history_date,": ", stock_value)
 
     if stock_value is None: # StockValue
         # get price for today

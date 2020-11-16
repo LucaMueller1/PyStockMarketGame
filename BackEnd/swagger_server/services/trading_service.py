@@ -353,23 +353,24 @@ def get_portfolio_history(user: User):
         #END FOR - Transactions
         stocks = remove_sold_stocks(stocks)
 
-        # get current stock_price
-        stock_description = StockDescription(symbol=symbol)
-        stock_price = finance_data.check_current_stock_price(stock_description).stock_price
-
-        # calc current_depot_value -> PorfolioValue
         current_depot_value = 0
+        # get stock_price for date
         for stock in stocks:
-            stock_value = stock.amount * stock_price
-            current_depot_value += stock_value
+            d_stock_symbol = stock.symbol
+            d_stock_amount = stock.amount
+            d_stock_description = StockDescription(symbol=d_stock_symbol)
+            d_stock_price = finance_data.get_stock_price_for_date(d_stock_description, date).stock_price
+            current_depot_value += d_stock_price * d_stock_amount
+            print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
+            print("DepotValue: ", current_depot_value)
 
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
-        # print("PortfolioValue for ", date, ": ", portfolio_value)
         returned.append(portfolio_value)
         date += datetime.timedelta(days=1)
-        last_portfolio_value = portfolio_value
+        print("PortfolioValue for ", date, ": ", portfolio_value)
+
     # END WHILE day = now
     # print("PortfolioValues: ", returned)
     return returned
@@ -413,4 +414,5 @@ user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK
 print(user.first_name, user.last_name)
 history = get_portfolio_history(user)
 print(history)
+# history = staticglobaldb.dbconn.get_stock_price_from_date()
 print(get_portfolio_positions(user))
