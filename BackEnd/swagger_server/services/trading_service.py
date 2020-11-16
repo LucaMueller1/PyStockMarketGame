@@ -360,15 +360,15 @@ def get_portfolio_history(user: User):
             d_stock_description = StockDescription(symbol=d_stock_symbol)
             d_stock_price = finance_data.get_stock_price_for_date(d_stock_description, date).stock_price
             current_depot_value += d_stock_price * d_stock_amount
-            print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
-            print("DepotValue: ", current_depot_value)
+            # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
+            # print("DepotValue: ", current_depot_value)
 
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
         returned.append(portfolio_value)
         date += datetime.timedelta(days=1)
-        print("PortfolioValue for ", date, ": ", portfolio_value)
+        # print("PortfolioValue for ", date, ": ", portfolio_value)
 
     # END WHILE day = now
     # print("PortfolioValues: ", returned)
@@ -420,4 +420,4 @@ print(user.first_name, user.last_name)
 history = get_portfolio_history(user)
 print(history)
 # history = staticglobaldb.dbconn.get_stock_price_from_date()
-print(get_portfolio_positions(user))
+# print(get_portfolio_positions(user))
