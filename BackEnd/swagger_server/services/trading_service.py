@@ -362,7 +362,8 @@ def get_portfolio_history(user: User):
             current_depot_value += d_stock_price * d_stock_amount
             # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
             # print("DepotValue: ", current_depot_value)
-
+        cash = user.money_available
+        current_depot_value += cash
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
