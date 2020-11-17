@@ -14,7 +14,7 @@ from swagger_server.models.transaction_prepare import TransactionPrepare
 import datetime
 import re
 
-deadlock = False # might be used in the future to prevent simultaneous buying and selling
+# deadlock = False # might be used in the future to prevent simultaneous buying and selling
 
 
 def buy_stocks(user: User, symbol: str, amount: int):
