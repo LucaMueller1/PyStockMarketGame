@@ -10,6 +10,7 @@ from swagger_server.models.portfolio_value import PortfolioValue
 from swagger_server.services.finance import finance_data
 import swagger_server.services.schedule_service as schedule_service
 from swagger_server.models.transaction_prepare import TransactionPrepare
+from swagger_server.models.settings import Settings
 
 import datetime
 import re
@@ -37,6 +38,9 @@ def buy_stocks(user: User, symbol: str, amount: int):
     # is there enough money
     money_avaiable = user.money_available
 
+    # to fetch users transaction fee
+    settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+
     # if stock_price already in stock_prices table:
     stock_value = finance_data.check_current_stock_price(symbol)
     purchase_value = stock_value.stock_price * abs(amount)
@@ -62,9 +66,9 @@ def buy_stocks(user: User, symbol: str, amount: int):
         # buy stocks (insert transaction)
         transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare, user)
 
-        # calculate new_depo_cash & update user
-        new_depot_cash = user.money_available - (transaction.stock_value.stock_price * abs(amount))
-        user.money_available = new_depot_cash
+        # calculate new_portfolio_cash & update user
+        new_portfolio_cash = user.money_available - (transaction.stock_value.stock_price * abs(amount)) - abs(float(settings.transaction_fee))
+        user.money_available = new_portfolio_cash
         staticglobaldb.dbconn.update_user(user)
         return transaction
     else:
@@ -94,10 +98,13 @@ def sell_stocks(user: User, symbol: str, amount: int):
 
     purchase_value = stock_value.stock_price * amount # gets price from StockValue * amount
 
+    # to fetch users transaction fee
+    settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+
     # are there enough stocks owned ?
     portfolio_positions = stock_values_available(user)
 
-    # iterate trhough PortfolioPositions for position.symbol = stock_description.symbol
+    # iterate through PortfolioPositions for position.symbol = stock_description.symbol
     stock = None
     for position in portfolio_positions:
         if position.symbol == symbol:
@@ -123,11 +130,11 @@ def sell_stocks(user: User, symbol: str, amount: int):
         # create TransactionPrepare
         transaction_prepare = TransactionPrepare(symbol, amount, "sell")
         # sell stocks (insert transaction)
-        transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare)
+        transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare, user)
 
-        # calculate new_depo_cash & update user
-        new_depot_cash = user.money_available + (transaction.stock_value.stock_price * abs(amount))
-        user.money_available = new_depot_cash
+        # calculate new_portfolio_cash & update user
+        new_portfolio_cash = user.money_available + (transaction.stock_value.stock_price * abs(amount)) - abs(float(settings.transaction_fee))
+        user.money_available = new_portfolio_cash
         staticglobaldb.dbconn.update_user(user)
 
         return transaction
