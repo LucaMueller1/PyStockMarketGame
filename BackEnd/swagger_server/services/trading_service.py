@@ -362,7 +362,8 @@ def get_portfolio_history(user: User):
             current_depot_value += d_stock_price * d_stock_amount
             # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
             # print("DepotValue: ", current_depot_value)
-
+        cash = user.money_available
+        current_depot_value += cash
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
@@ -415,9 +416,9 @@ def get_portfolio_analytics():
     pass
 
 
-user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
-print(user.first_name, user.last_name)
-history = get_portfolio_history(user)
-print(history)
+# user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+# print(user.first_name, user.last_name)
+# history = get_portfolio_history(user)
+# print(history)
 # history = staticglobaldb.dbconn.get_stock_price_from_date()
 # print(get_portfolio_positions(user))
