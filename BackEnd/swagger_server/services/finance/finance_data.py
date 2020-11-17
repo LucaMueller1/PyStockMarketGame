@@ -16,7 +16,7 @@ import datetime
 # "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE",
 # "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE")
 
-def check_current_stock_price(stock_description: StockDescription):
+def check_current_stock_price(symbol: str):
     """
     check_current_stock_price is a helper function that calls the DB and
     checks if there is a price for the stock_description.symbol for today.
@@ -26,7 +26,7 @@ def check_current_stock_price(stock_description: StockDescription):
     :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
     :return: StockValue - with the current stock_price
     """
-    stock_symbol = stock_description.symbol
+    stock_symbol = symbol
     stock_value = staticglobaldb.dbconn.get_stock_price_from_today(stock_symbol) # StockValue Model
 
     if stock_value is not None: # StockValue
@@ -35,7 +35,7 @@ def check_current_stock_price(stock_description: StockDescription):
     else:
         # get it from API
         # + insert into table
-        symbol = stock_description.symbol # Symbol from StockValue
+        symbol = symbol # Symbol from StockValue
         stock_value = insert_stock_history_from_yfinance_to_db(symbol, "1d") # StockValue Model
         # ^ this already calls the function insert_course for the DB
 

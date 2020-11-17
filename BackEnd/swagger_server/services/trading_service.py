@@ -9,6 +9,7 @@ from swagger_server.controllers import staticglobaldb
 from swagger_server.models.portfolio_value import PortfolioValue
 from swagger_server.services.finance import finance_data
 import swagger_server.services.schedule_service as schedule_service
+from swagger_server.models.transaction_prepare import TransactionPrepare
 
 import datetime
 import re
@@ -16,7 +17,7 @@ import re
 deadlock = False # might be used in the future to prevent simultaneous buying and selling
 
 
-def buy_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: int):
+def buy_stocks(user: User, symbol: str, amount: int):
     """
     buy_stock is being called when there are stocks being bought. It checks if there is
     enough money available for the transaction the user wants to make and creates a
@@ -33,20 +34,15 @@ def buy_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: i
     :test: create a transaction and check if the returned transaction has all the right values
     """
 
-    conn = DatabaseConn()
     # is there enough money
-    user = conn.get_user_by_auth_key(auth_key)
     money_avaiable = user.money_available
 
     # if stock_price already in stock_prices table:
-    stock_value = finance_data.check_current_stock_price(stock_description)
-    purchase_value = stock_value.stock_price * amount
+    stock_value = finance_data.check_current_stock_price(symbol)
+    purchase_value = stock_value.stock_price * abs(amount)
 
     # check money available?
     if purchase_value <= money_avaiable:
-        # lock access to buying, selling (security)
-
-        # DEADLOCK
         """ deadlock = "buy"
         # validate lock
         # if deadlock != "buy"
@@ -60,18 +56,22 @@ def buy_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: i
             # deadlock = False
         """
 
-        # create Transaction
-        settings = conn.get_settings_by_user(user)
-        transaction_fee = settings.transaction_fee
-        transaction = Transaction(None, stock_value, amount, "buy", transaction_fee)
+        # create TransactionPrepare
+        transaction_prepare = TransactionPrepare(symbol, abs(amount), "buy")
+
         # buy stocks (insert transaction)
-        conn.insert_transaction(transaction)
+        transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare, user)
+
+        # calculate new_depo_cash & update user
+        new_depot_cash = user.money_available - (transaction.stock_value.stock_price * abs(amount))
+        user.money_available = new_depot_cash
+        staticglobaldb.dbconn.update_user(user)
         return transaction
     else:
-        return ApiError(detail="Not enough money available for this transaction", status=400, title="Insufficient Cash", type="/portfolio/transaction")
+        return None
 
 
-def sell_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: int):
+def sell_stocks(user: User, symbol: str, amount: int):
     """
     sell_stock is being called when there are stocks being sold. It checks if there are
     enough stocks owned for the transaction the user wants to make and creates a
@@ -88,11 +88,10 @@ def sell_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: 
     :test: create a transaction and check if the returned transaction has all the right values
 
     """
-    conn = DatabaseConn()
-    user = conn.get_user_by_auth_key(auth_key)
 
     # check for stock price:
-    stock_value = finance_data.check_current_stock_price(stock_description) # gets current StockValue
+    stock_value = finance_data.check_current_stock_price(symbol) # gets current StockValue
+
     purchase_value = stock_value.stock_price * amount # gets price from StockValue * amount
 
     # are there enough stocks owned ?
@@ -101,15 +100,13 @@ def sell_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: 
     # iterate trhough PortfolioPositions for position.symbol = stock_description.symbol
     stock = None
     for position in portfolio_positions:
-        if position.symbol == stock_description.symbol:
+        if position.symbol == symbol:
             stock = position
 
     amount_owned = stock.amount
 
     if amount <= amount_owned:
         # success !!!!
-        # lock access to buying, selling (security)
-        # DEADLOCK
         """ deadlock = "buy"
         # validate lock
         # if deadlock != "buy"
@@ -123,16 +120,19 @@ def sell_stocks(auth_key: AuthKey, stock_description: StockDescription, amount: 
             # deadlock = False
         """
 
-        # create Transaction
-        settings = conn.get_settings_by_user(user)
-        transaction_fee = settings.transaction_fee
-        transaction = Transaction(None, stock_value, amount, "sell", transaction_fee)
-        # buy stocks (insert transaction)
-        conn.insert_transaction(transaction)
+        # create TransactionPrepare
+        transaction_prepare = TransactionPrepare(symbol, amount, "sell")
+        # sell stocks (insert transaction)
+        transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare)
+
+        # calculate new_depo_cash & update user
+        new_depot_cash = user.money_available + (transaction.stock_value.stock_price * abs(amount))
+        user.money_available = new_depot_cash
+        staticglobaldb.dbconn.update_user(user)
+
         return transaction
     else:
-        # not enough stocks owned
-        return ApiError(detail="Not enough stocks owned for this transaction", status=400, title="Insufficient stocks", type="/portfolio/transaction")
+        return None
 
 
 def stock_values_available(user: User):
@@ -417,6 +417,8 @@ def get_portfolio_analytics():
 
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+# print(buy_stocks(user, "IBM", 1))
+#
 # print(user.first_name, user.last_name)
 # history = get_portfolio_history(user)
 # print(history)
