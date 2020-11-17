@@ -27,7 +27,7 @@ class DatabaseConn:
 
     """
 
-   # def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
+    # def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
     def __init__(self):
         """
 
@@ -38,10 +38,9 @@ class DatabaseConn:
             test: Correct:
 
         """
-        #self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',echo=True)
+        # self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',echo=True)
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
                                          echo=False, pool_size=5, pool_recycle=3600)
-
 
     def insert_user(self, user: User) -> bool:
         """
@@ -271,7 +270,7 @@ class DatabaseConn:
                                           transaction_type=row['transaction_type'],
                                           transaction_fee=row['transaction_fee'])
                 stocksearchresult = StockDescription(symbol=row['symbol'], stock_name=row['name'],
-                                            logo_url=row['logo_url'])
+                                                     logo_url=row['logo_url'])
                 returned.append((transaction, stocksearchresult))
 
         return returned
@@ -312,6 +311,8 @@ class DatabaseConn:
     def insert_course(self, stock_value: StockValue):
         returned = False
         key = 0
+        if (self.get_stock_price_from_date(stock_value.symbol, stock_value.timestamp)) is not None:
+            return True
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
                 """INSERT INTO `tradable_values_prices` (`id`, `symbol`, `market_value`, `timestamp`) VALUES (NULL, :symbol, :marketprice, :datetime); """),
@@ -320,7 +321,7 @@ class DatabaseConn:
             returned = True
         return returned
 
-    def get_stock_price_from_today(self, stock_symbol: str) ->StockValue:
+    def get_stock_price_from_today(self, stock_symbol: str) -> StockValue:
         # return StockValue Object
         returned = None
         with self.engine.connect() as con:
@@ -328,7 +329,8 @@ class DatabaseConn:
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = CURRENT_DATE() ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_symbol}))
             for row in rs:
-                returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+                returned = StockValue(id=row['id'], symbol=row['symbol'], stock_price=row['market_value'],
+                                      timestamp=row['timestamp'])
         return returned
 
     def get_stock_price_from_date(self, stock_symbol: str, history_date: datetime):
@@ -338,7 +340,8 @@ class DatabaseConn:
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = :history_date ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_symbol, "history_date": history_date}))
             for row in rs:
-                returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+                returned = StockValue(id=row['id'], symbol=row['symbol'], stock_price=row['market_value'],
+                                      timestamp=row['timestamp'])
         return returned
 
     def get_latest_stock_price(self, stock_symbol: str):
@@ -347,9 +350,9 @@ class DatabaseConn:
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_symbol}))
             for row in rs:
-                returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+                returned = StockValue(id=row['id'], symbol=row['symbol'], stock_price=row['market_value'],
+                                      timestamp=row['timestamp'])
         return returned
-
 
     def update_user(self, user: User) -> bool:
         returned = False
@@ -357,7 +360,8 @@ class DatabaseConn:
             rs = con.execute(sqla.text(
                 """UPDATE `users` SET `first_name` = :first_name, `last_name` = :last_name, `email` = :email, `money_available` = :money_available, `starting_capital` = :starting_capital WHERE `users`.`userID` = :userid;  """),
                 ({"first_name": user.first_name, "userid": user.id, "last_name": user.last_name,
-                  "email": user.email, "money_available": user.money_available, "starting_capital": user.starting_capital}))
+                  "email": user.email, "money_available": user.money_available,
+                  "starting_capital": user.starting_capital}))
             returned = True
         return returned
 
@@ -367,8 +371,7 @@ class DatabaseConn:
             rs = con.execute(sqla.text("""SELECT * FROM `users` """))
             for row in rs:
                 users.append(User(row['userID'], row['first_name'], row['last_name'], row['email'], None,
-                            row['starting_capital'], row['money_available']))
-
+                                  row['starting_capital'], row['money_available']))
 
         return users
 
