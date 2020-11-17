@@ -50,26 +50,26 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
     api.
 
     :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
-    :return: StockValue - with the current stock_price
+    :return: StockValue - with the stock_price for date
     """
     today = datetime.datetime.now().date()
     stock_symbol = stock_description.symbol
 
     # making sure stock_value returnes valid data
     stock_value = 0
-    if history_date != today:
-        stock_value = staticglobaldb.dbconn.get_stock_price_from_date(stock_symbol, history_date) # StockValue Model
-    else:
-        stock_value = check_current_stock_price(stock_description)
+
+
+    stock_value = staticglobaldb.dbconn.get_stock_price_from_date(stock_symbol, history_date) # StockValue Model
 
     if stock_value is None: # StockValue
-        # get price for today
-        # stock_price = stock_value.stock_price # stock_price from StockValue
-        # get it from API
-        # + insert into table
+
         symbol = stock_description.symbol # Symbol from StockValue
-        stock_value = insert_stock_history_from_yfinance_to_db(symbol, "1d") # StockValue Model
-        # ^ this already calls the function insert_course for the DB
+        stock_value = insert_stock_history_for_date_to_db(symbol, history_date)
+        # print(stock_value)
+
+
+
+    print("StockValue for ", history_date,": ", stock_value)
 
     return stock_value
 
@@ -87,7 +87,6 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
 
     """
     df = yf.Ticker(symbol).history(period)
-    conn = DatabaseConn()
 
     value = None
     for index, row in df.iterrows():
@@ -96,7 +95,46 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
             continue
         date = index
         value = StockValue(None, symbol, float(open_value), str(date))
-        conn.insert_course(value)
+        staticglobaldb.dbconn.insert_course(value)
+    return value
+
+
+def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
+    """This function takes the symbol and period of a stock and sends the
+        data as a StockValue model to the function DatabaseConn.insert_course()
+
+
+    :param symbol: the ticker of the Stock
+    :param period: The period of which the data is requested from the API
+                (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
+                re.sub(regex, string, replace)
+    :return: StockValue
+
+    """
+    start_date = history_date
+    # get weekday number
+    weekday_no = history_date.weekday()
+    end_date = history_date + datetime.timedelta(days=1)
+    # print("Start: ", start_date, " End: ", end_date)
+
+    # insure its always getting the last weekday
+    if weekday_no <= 5:
+        df = yf.Ticker(symbol).history(start=start_date, end=end_date)
+    else:
+        df = pd.DataFrame()
+        while df.empty:
+            start_date += datetime.timedelta(days=-1)
+            df = yf.Ticker(symbol).history(start=start_date, end=end_date)
+
+    value = None
+    for index, row in df.iterrows():
+        open_value = row['Open']
+        if open_value is None or pd.isna(open_value):
+            continue
+        date = index
+        value = StockValue(None, symbol, float(open_value), str(date))
+        # print(value.stock_price)
+        staticglobaldb.dbconn.insert_course(value)
     return value
 
 

@@ -72,6 +72,15 @@ class DatabaseConn:
         return returned
 
     def delete_auth_key(self, authkey: str) -> bool:
+        """
+
+            desc: Function to remove the auth key out of the database, for example called after the log out of a user
+
+            param: (str) authKey,
+
+            test: Correct: If a valid authkey is passed to the function, it will get removed from the database. The function does return true if no SQL Error occurs.
+
+        """
         returned = True
         try:
             with self.engine.connect() as con:
@@ -84,6 +93,15 @@ class DatabaseConn:
         return returned
 
     def delete_user(self, user: User) -> bool:
+        """
+
+            desc: Function to remove the user out of the database, called when the user wants to delete its account
+
+            param: (User) The user object, all objects apart from the ID are nullable
+
+            test: Correct: If a valid user with the user.id variable set is passed to the function, it will get removed from the database. The function does return true if no SQL Error occurs.
+
+        """
         returned = True
         try:
             with self.engine.connect() as con:
@@ -96,6 +114,15 @@ class DatabaseConn:
         return returned
 
     def check_password(self, email: str, password: str) -> User:
+        """
+
+            desc: Function to validate a users login credentials
+
+            param: (str) email, (str) password
+
+            test: Correct: If a valid email/password combination is passed the function will return a User object. Otherwise it will return None
+
+        """
         user = None
         valid = False
         hashAndSalt = None
@@ -119,6 +146,15 @@ class DatabaseConn:
         return user
 
     def generate_auth_hash(self, userid: int) -> AuthKey:
+        """
+
+            desc: Function to generate an AuthHash/ SessionKey
+
+            param: (int) userid
+
+            test: Correct: If a valid userid is passed the inserted AuthKey obj is returned
+
+        """
         if userid is None:
             return None
         auth_key = ''.join((random.choice(string.ascii_letters + string.digits) for i in range(128)))
@@ -130,6 +166,15 @@ class DatabaseConn:
         return AuthKey(userid, auth_key, expiry)
 
     def check_auth_hash(self, auth_key: str) -> AuthKey:
+        """
+
+            desc: Function to generate an AuthHash/ SessionKey
+
+            param: (int) userid
+
+            test: Correct: If a valid userid is passed the inserted AuthKey obj is returned
+
+        """
         auth_key_returned = None
         with self.engine.connect() as con:
             rs = con.execute(
@@ -287,13 +332,24 @@ class DatabaseConn:
         return returned
 
     def get_stock_price_from_date(self, stock_symbol: str, history_date: datetime):
+        returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
-                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = history_date ORDER BY `timestamp` DESC LIMIT 1"""),
+                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol AND `timestamp` = :history_date ORDER BY `timestamp` DESC LIMIT 1"""),
+                ({"symbol": stock_symbol, "history_date": history_date}))
+            for row in rs:
+                returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
+        return returned
+
+    def get_latest_stock_price(self, stock_symbol: str):
+        with self.engine.connect() as con:
+            rs = con.execute(sqla.text(
+                """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol ORDER BY `timestamp` DESC LIMIT 1"""),
                 ({"symbol": stock_symbol}))
             for row in rs:
                 returned = StockValue(id=row['id'], symbol=row['symbol'],stock_price=row['market_value'],timestamp=row['timestamp'])
         return returned
+
 
     def update_user(self, user: User) -> bool:
         returned = False
