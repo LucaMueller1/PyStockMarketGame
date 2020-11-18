@@ -17,7 +17,7 @@ class PortfolioTable():
                                                        row_data["stock_buyin_price"])
         color = "green"
 
-        self.html += f"""<tr style="background-color:#f2f2f2">
+        self.html += f"""<tr>
                    <td style="text-align: center;"><img src="{row_data["logoUrl"]}", width="60em" border-radius="10%"></td>
                    <td style="font-weight:bold">{row_data["stockName"]}</td>
                    <td>{row_data["amount"]}</td>
@@ -35,7 +35,7 @@ class PortfolioTable():
         return round((current_price-buyin_price)/buyin_price*100,2)
 
     def add_headers(self):
-        self.html += f"""<tr style="background-color:transparent;color:black;font-size:small">
+        self.html += f"""<tr style="font-size:small">
                         <td></td>
                         <td>name</td>
                         <td>amount</td>
@@ -51,7 +51,7 @@ class PortfolioTable():
             self.__add_row(stock_data[i])
 
     def open_table(self):
-        self.html += """<table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:collapse">"""
+        self.html += """<table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:collapse;border-color:transparent;">"""
 
     def close_table(self):
         self.html += """</table>"""

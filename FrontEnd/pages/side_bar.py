@@ -8,7 +8,7 @@ import utilities.SessionState as SessionState
 
 def run(session_state):
 
-    utils.local_css("FrontEnd/css/style.css")
+    #utils.local_css("FrontEnd/css/style.css")
 
     st.sidebar.title("Navigation")
 
@@ -30,10 +30,29 @@ def run(session_state):
             session_state.page = "about"
             st.experimental_rerun()
 
-    st.sidebar.title("Log Out")
+    st.sidebar.title("Theme")
+
+    if session_state.theme == "dark":
+        if st.sidebar.button("🌝"):
+            session_state.theme = "light"
+            st.experimental_rerun()
+
+    if session_state.theme == "light":
+        if st.sidebar.button("🌚"):
+            session_state.theme = "dark"
+            st.experimental_rerun()
+
+    st.sidebar.subheader("Log Out")
 
     if st.sidebar.button("Bye 👋"):
         requests_server.logout(session_state.auth_key)
-        session_state = SessionState.get(page='login', auth_key='', stock_desc=None, stock_names=None, graph_data=None, buy_redirect=False)
+
+        session_state.auth_key=''
+        session_state.stock_desc=None
+        session_state.graph_data=None
+        session_state.buy_redirect=False
+        session_state.gif_tag=("AustinPowers", 0)
+        session_state.theme = "light"
         session_state.page = "login"
+
         st.experimental_rerun()

@@ -18,6 +18,8 @@ def run(session_state):
             for storing session variables.
     param:  (SessionState) session_state
     """
+    
+    st.write(session_state.auth_key)
 
     if st.button("↪️ signup"):
         session_state.page = "registration"

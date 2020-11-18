@@ -63,3 +63,7 @@ def post_settings(auth_key:str, transactionFee: float):
 
 def get_sustainability_info(auth_key: str, symbol: str):
     return requests.get(BASE_URL + f"stock/{symbol}/sustainability", headers={"api_key":auth_key}).json()
+
+@st.cache(show_spinner=False)
+def get_portfolio_history(auth_key: str):
+    return requests.get(BASE_URL + "portfolio/value", headers={"api_key": auth_key}).json()

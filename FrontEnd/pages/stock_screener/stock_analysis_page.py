@@ -14,7 +14,7 @@ def run(session_state):
 
     sustainibility_warnings = helperfunctions.get_sustainability_info(session_state.auth_key, session_state.stock_desc["symbol"])
 
-    utils.local_css("FrontEnd/css/style.css")
+    #utils.local_css("FrontEnd/css/style.css")
     description = session_state.stock_desc
 
     if st.button("🔍 return to search"):
@@ -22,7 +22,7 @@ def run(session_state):
         st.experimental_rerun()
 
     st.markdown(f"""<div id="stock-title-div"><h2><img id="stock-logo" src="{description["logoUrl"]}"> {description["stockName"]}</h2></div>""", unsafe_allow_html=True)
-    chart_generator.show_chart(session_state.graph_data, description["stockName"])
+    chart_generator.show_stock_chart(session_state.theme, session_state.graph_data, description["stockName"])
 
     general_information = st.beta_expander("General Information", expanded=True)
     general_information.write(f"""**Symbol:** {description["symbol"]}""")

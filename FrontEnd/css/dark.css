@@ -1,0 +1,187 @@
+
+.circle_and_center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.padding{
+  padding-left: 5%;
+}
+
+.greyish {
+  background-color: #212121;
+}
+.remove_space_headings{
+    margin-top:-5px;
+}
+
+.reportview-container .markdown-text-container {
+    font-family: "IBM Plex Sans", sans-serif;
+    margin-bottom:-1rem
+}
+.reportview-container .markdown-text-container pre code {
+    color:#262730
+}
+.reportview-container .markdown-text-container a {
+    color:#0068c9
+}
+
+.sidebar>div {
+  font-size: 15pt;
+  background-image: none;
+  background-color: #212121;
+}
+
+.streamlit-expanderContent
+{
+  color: white;
+  padding-left: 5%;
+  padding-right: 5%;
+  background-color: #212121;
+}
+
+.streamlit-expanderHeader
+{
+  font-size: 18pt;
+}
+
+.box{
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+#stock-title-div {
+  color: white;
+  padding-bottom: 0.5%;
+  margin-bottom: 5%;
+  text-align: center;
+  border-width: 0.1em;
+  background-color: #383838;
+}
+#stock-logo {
+  border-radius: 10%; 
+  max-width:3em; 
+  filter: drop-shadow(0 0.2rem 0.25rem rgba(0, 0, 0, 0.5));
+}
+
+.reportview-container .markdown-text-container tr {
+  background-color: transparent;
+}
+
+.reportview-container .markdown-text-container td, .reportview-container .markdown-text-container th {
+  border-color: transparent;
+}
+
+body {
+  background-color:#1a1a1a;
+  color: white;
+}
+
+p {
+  color: white;
+}
+
+.Widget > label {
+  color: white;
+}
+
+.sidebar .sidebar-content
+{
+background-color: #212121;
+background-image: none;
+}
+
+.st-de {
+  color:white;
+}
+
+.st-db {
+  color:white;
+}
+
+.st-fk {
+  color:white;
+}
+
+.st-ct {
+  color: white;
+  background-color: #212121;
+  padding-left: 2%;
+}
+
+.st-eo {
+  background-color: #212121;
+}
+
+.st-dj {
+  background-color: #212121;
+  color:white;
+}
+
+.st-el {
+  background-color: #212121;
+}
+
+.st-dg {
+  background-color: #212121;
+}
+
+.streamlit-button.primary-button {
+  background-color: #383838;
+  color:white;
+  border-color: #292929;
+}
+
+.stNumberInput div.input-container input[type="number"] {
+  background-color: #212121;
+  color: white;
+}
+
+.dropdownListItem .noTextOverflow {
+  color: white;
+}
+
+header > .toolbar {
+  display: none;
+}
+
+.st-c8 {
+  background-color: #212121;
+  color: white;
+}
+
+.dropdownListItem {
+  background-color: #212121;
+  color: white;
+}
+
+.st-e0 {
+  background-color: #212121;
+  color: white;
+}
+
+Widget > row-widget > stRadio {
+  color: white;
+}
+
+.st-er {
+  color: white;
+}
+
+.streamlit-button.icon-button.medium-button {
+  background-color: #212121;
+  color: white;
+}
+
+.st-ba {
+  color:white;
+  background-color: #1a1a1a;
+}
+
+table {
+  background-color: #212121;
+}

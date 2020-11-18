@@ -11,6 +11,7 @@ import pages.about_settings.about_page as about_page
 # UTILITIES IMPORTS
 import utilities.requests_server as requests_server
 import utilities.SessionState as SessionState
+import utilities.utils as utils
 
 # MODULES IMPORTS
 import streamlit as st
@@ -29,8 +30,12 @@ footer {visibility: hidden;}
 
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-session_state = SessionState.get(page='login', auth_key='', stock_desc=None, graph_data=None, buy_redirect=False, gif_tag=("Gay", 2))
+session_state = SessionState.get(page='login', auth_key='', stock_desc=None, graph_data=None, buy_redirect=False, gif_tag=("AustinPowers", 0), theme="light")
 
+if session_state.theme == "dark":
+    utils.local_css("FrontEnd/css/dark.css")
+if session_state.theme == "light":
+    utils.local_css("FrontEnd/css/light.css")
 
 if session_state.page == "login":
     login_page.run(session_state)

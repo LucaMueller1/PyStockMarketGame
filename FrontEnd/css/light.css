@@ -34,11 +34,6 @@
   background-image: none;
 }
 
-body {
-  background-color: #fbfbfd;
-  color: black;
-}
-
 .streamlit-expanderContent
 {
   background-color: #ececec;
