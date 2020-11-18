@@ -39,38 +39,20 @@ def create_transaction(transaction_prepare_param):  # noqa: E501
             return ApiError(detail="Invalid stock quantity", status=400, title="Bad Request",
                             type="/portfolio/transaction"), 400
 
-        user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user is authorized
-        settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+        user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)  # will never return None because user must be authorized to call this request
 
-        stock_quotation = finance_data.insert_stock_history_from_yfinance_to_db(transaction_prepare_param.symbol, "1d")
-        transaction_value = (abs(transaction_prepare_param.amount) * stock_quotation.stock_price)
-
-        print(transaction_prepare_param.transaction_type + "-Transaction from user: " + user.first_name + " of " + str(transaction_prepare_param.amount) + " " + transaction_prepare_param.symbol + ": " + str(transaction_value))
+        print(transaction_prepare_param.transaction_type + "-Transaction from user: " + user.first_name + " of " + str(transaction_prepare_param.amount) + " " + transaction_prepare_param.symbol)
 
         if transaction_prepare_param.transaction_type.lower() == "buy":  # buy stock
-            if user.money_available >= transaction_value:
-                transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-                user.money_available = user.money_available - transaction_value - abs(float(settings.transaction_fee))  # absoulte value to make sure that user doesnt cheat
-                staticglobaldb.dbconn.update_user(user)  # Update User in database
+            transaction = trading_service.buy_stocks(user, transaction_prepare_param.symbol, transaction_prepare_param.amount)
+            if transaction is not None:
                 return transaction
             else:
                 return ApiError(detail="Insufficient cash", status=400, title="Bad Request",
                                 type="/portfolio/transaction"), 400
         else:  # sell stock
-            # check if buy-amount is sufficient
-            available_positions = trading_service.stock_values_available(user)
-
-            stock_available = False
-            for item in available_positions:
-                if item.symbol == transaction_prepare_param.symbol:
-                    if item.amount >= transaction_prepare_param.amount:
-                        stock_available = True
-                    break
-
-            if stock_available:
-                transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare_param, user)
-                user.money_available = (user.money_available + transaction_value) - abs(float(settings.transaction_fee))
-                staticglobaldb.dbconn.update_user(user)  # Update User in database
+            transaction = trading_service.sell_stocks(user, transaction_prepare_param.symbol, transaction_prepare_param.amount)
+            if transaction is not None:
                 return transaction
             else:
                 return ApiError(detail="Insufficient stock quantity to sell", status=400, title="Bad Request",
