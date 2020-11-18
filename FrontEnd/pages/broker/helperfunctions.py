@@ -90,7 +90,7 @@ def get_depo_array(auth_key):
     """
     API GET request for different stocks in user portfolio is written into a list.
 
-    :param auth_key: (String) API key authorizing the user to use described GET request.
+    :param auth_key: (String) API key authorizing and identifying the user.
     :return: depo_array --> (List), user_portfolio --> (List)
     :test Correct: A valid auth_key is provided in order for the GET request to the API to work. Both the depo array and the user portfolio is acquired and returned. Incorrect: No auth key is provided leading to a failed GET request and returning a 401 unauthorized error.
     """
@@ -105,7 +105,7 @@ def get_stock_quantity_in_depot(depot_information, stock_ticker):
     """
     Retrieve the stock quantity in portfolio for a selected stock from the user.
 
-    :param depot_information: (list) This is the second return parameter returned from the get_depo_array function.
+    :param depot_information: (List) This is the second return parameter returned from the get_depo_array function.
     :param stock_ticker: (String) Stock selected by user
     :return: (Int) Quantity of selected stock in portfolio
     :test Correct: A valid list for depot information is being passed into the method as well as a valid stock ticker. The stock ticker can be found in the portfolio information and the quantity of the specific stock in the portfolio can be returned. Incorrect: A valid list for stock description is passed into the method, however the stock ticker can not be found inside the description.
@@ -120,7 +120,7 @@ def get_buyin_for_stock(depot_information, stock_ticker):
     """
     Retrieve the  buy in price for a selected stock from user.
 
-    :param depot_information: (list) This is the second return parameter returned from the get_depo_array function.
+    :param depot_information: (List) This is the second return parameter returned from the get_depo_array function.
     :param stock_ticker: (String) Stock selected by user
     :return: (Float) Buy in price of selected stock in portfolio
     :test Correct: A valid list for depot information is passed into the method as well as a valid stock ticker. Therefore, the buy in price for the specified stock ticker will be returned. Incorrect: Instead of a list for depot information a numerical value such as an integer is passed into the method leading to an error in the for loop.
@@ -149,6 +149,15 @@ def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
 
 
 def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
+    """
+    Calculates the total change for a specific stock from buyin value to current current.
+
+    :param stock_buyin: (Float) Buy in price for specfic stock retrieved from depot_information using the get_buyin_for_stock method.
+    :param single_stock_price: (Float) Most recent value in stock market for stock specified. Calculated using the get_single_stock_value method.
+    :param stock_quantity: (Int) The quantity of chosen stock by user in portfolio.
+    :return: (HTML string) Both returns consists of an HTML String. They differentiate by the colour printed in Frontend. --> If change is negative (red colour) --> If change is positive (green colour)
+    :test Correct: Parameter stock_buyin, single_stock_price are passed as a Float, stock_quantity is passed as an Integer, therefore the total change can be calculated successfully and the corresponding HTML string is returned. Incorrect: A parameter is missed as an input, such as the stock quantity. The method will fail at calculating the total change.
+    """
     total_change = round((float(single_stock_price * stock_quantity) - float(stock_buyin * stock_quantity)), 2)
     if total_change < 0:
         total_change = str(total_change) + "$"
@@ -158,11 +167,26 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
         return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>""" + total_change + """</code></p></div> """
 
 def get_user_balance(auth_key):
+    """
+    Returns the users portfolio balance by authorizing a get request and acquiring the attribute "moneyAvailable" in the User object.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :return: (String) User balance is returned as a string.
+    :test Correct: the request is successful with a valid auth_key and returns a user object with the attribute "moneyAvailable" Incorrect: The method is called using an invalid auth key resulting in a failed get request.
+    """
     user = requests_server.get_user(auth_key)
     user_balance = user["moneyAvailable"]
     return user_balance
 
 def get_sustainability_info(auth_key, stock_ticker):
+    """
+    Returns a list of warnings for a specific stock chosen by the user by processing an API request and looping through the returned dictionary for keys holding the boolean value True. The corresponding value of said key is written into an array.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param stock_ticker: (String) Stock selected by user
+    :return: (List) List of warnings for a specific stock
+    :test Correct: A valid auth_key is supplied, as well as a valid stock ticker. Thus the Get request will succeed and the loop through the returned dictionary is functional and the created list of warnings is returned. Incorrect: The Get request fails due to an invalid auth key. Thus the loop is rendered non functional and returns an error.
+    """
     sustainability_info = requests_server.get_sustainability_info(auth_key, stock_ticker)
     sustainability_warning_list = []
     for key in sustainability_info:

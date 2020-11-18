@@ -55,7 +55,7 @@ def get_user_portfolio(auth_key: str):
     return requests.get(BASE_URL + "portfolio", headers={"api_key": auth_key}).json()
 
 def delete_user(auth_key: str):
-    return requests.delete(BASE_URL + "user/TEST", headers={"api_key": auth_key}).json()
+    return requests.delete(BASE_URL + "user", headers={"api_key": auth_key}).json()
 
 def post_settings(auth_key:str, transactionFee: float):
     json = {"transactionFee": transactionFee}
