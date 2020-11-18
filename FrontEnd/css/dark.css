@@ -185,3 +185,7 @@ Widget > row-widget > stRadio {
 table {
   background-color: #212121;
 }
+
+.st-h8 {
+  border-style: solid;
+}

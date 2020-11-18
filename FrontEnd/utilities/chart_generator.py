@@ -63,9 +63,9 @@ def __show_stock_chart_dark(historical_data, name:str):
         "text": f"Chart for {name}",
         "textStyle": {
         "fontSize": 16,
-        "color": "#000000"},
+        "color": "rgba(255, 255, 255, 1)"},
         },
-        "textStyle": {"color": "#000000"},
+        "textStyle": {"color": "rgba(255, 255, 255, 1)"},
         "tooltip": {
         "trigger": 'axis'
         },
