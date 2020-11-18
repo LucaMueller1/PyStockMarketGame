@@ -311,8 +311,6 @@ class DatabaseConn:
     def insert_course(self, stock_value: StockValue):
         returned = False
         key = 0
-        print(stock_value.timestamp)
-        print(stock_value.symbol)
         if (self.get_stock_price_from_date(stock_value.symbol, stock_value.timestamp)) is not None:
             return True
         with self.engine.connect() as con:
