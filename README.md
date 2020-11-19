@@ -22,4 +22,6 @@ python3 -m swagger_server
 To test the frontend, have all requirements from FrontEnd/requirements.txt installed. Then first run the python file you want to test like follows: ```python3 depot_page.py``` and then run ```streamlit run depot_page.py```. This will run the streamlit server.
 
 ## Note about the Code:
-![Info](important.PNG)
+![Info](https://preview.redd.it/6ihfuz3c6q251.jpg?width=640&crop=smart&auto=webp&s=dad5b7caaaf0ed82425997bfc731433fa155ec9e)
+![Info2](https://preview.redd.it/k4o9e5e0zlu51.jpg?width=640&crop=smart&auto=webp&s=7d69a25ab67393ab0956a4733940fc7fa0a2dbdd)
+![Info3](https://i.redd.it/jsn52i9flyv51.jpg)

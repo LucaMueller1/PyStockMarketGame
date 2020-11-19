@@ -15,18 +15,19 @@ def run(session_state):
     transaction_fee = st.slider("Gebühren:", 1.0, 30.0, step=0.5, value=float(transaction_fee_current))
     if st.button("Apply"):
         hf.post_new_transaction_fees(session_state.auth_key, transaction_fee)
-        st.success("The transaction fee have been changed successfully!")
-
-
-    if st.button("Delete User"):
-        st.warning("Are you sure that you want to delete your Profile? This action can not be reversed.")
-        if st.button("I am sure"):
-            hf.delete_user(session_state.auth_key)
-            session_state.page = "login"
-            st.experimental_rerun()
+        st.success("The transaction fee has been changed successfully!")
+    st.write("---")
+    st.header("Loading Screen GIF selection")
     gifs = ["AustinPowers", "TheOffice", "Gay", "Penis", "Cats", "Dogs", "Cute_Animals"]
     pre_selected_index_of_gif = session_state.gif_tag[1]
     gif_selected = st.selectbox("GIF Topic:", gifs, index=pre_selected_index_of_gif)
     index_in_gif = gifs.index(gif_selected)
-    session_state.gif_tag=(gif_selected, index_in_gif)
+    session_state.gif_tag = (gif_selected, index_in_gif)
+    st.write("---")
+    st.header("Delete Profile")
+    st.warning("This action cannot be reversed")
+    if st.button("Delete User"):
+        hf.delete_user(session_state.auth_key)
+        session_state.page = "login"
+        st.experimental_rerun()
 
