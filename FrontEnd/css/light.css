@@ -6,6 +6,10 @@
   width: 50%;
 }
 
+header > .toolbar {
+  display: none;
+}
+
 .padding{
   padding-left: 5%;
   padding-bottom: 10%;

@@ -27,14 +27,16 @@ def run(session_state):
 
     st.title("Portfolio")
     st.header("Hello " + user["firstName"] + ".")
+    st.write(f"""💰 Amount not invested: {user["moneyAvailable"]}$""")
 
-    #st.header(portfolio_history[-1]["marketValue"])
+
     st.write("-----")
 
     if not "status" in portfolio_history:
         chart_generator.show_portfolio_chart(session_state.theme, portfolio_history)
 
     st.write("-----")
+
     st.subheader("Investments:")
     html_table = PortfolioTable()
     html_table.open_table()
@@ -44,8 +46,13 @@ def run(session_state):
 
     st.markdown(html_table.get_html(), unsafe_allow_html=True)
 
+    if not "status" in portfolio_history:
+        daily_change = portfolio_history[-1]["marketValue"]/portfolio_history[-2]["marketValue"]
+        st.subheader(f"""Sum: {round(portfolio_history[-1]["marketValue"]-user["moneyAvailable"],2)}$""")
+        st.subheader(f"""Today: {round(100-daily_change*100,4)}% """)
+
+
     st.write("-----")
-    st.subheader("Current portfolio value: 5000$")
-    st.subheader("Available cash: " + str(user["moneyAvailable"]) + "$")
+
 
     side_bar.run(session_state)
