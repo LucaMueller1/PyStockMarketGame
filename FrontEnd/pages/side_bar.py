@@ -30,15 +30,15 @@ def run(session_state):
             session_state.page = "about"
             st.experimental_rerun()
 
-    st.sidebar.title("Theme")
+    st.sidebar.subheader("Theme")
 
     if session_state.theme == "dark":
-        if st.sidebar.button("🌝"):
+        if st.sidebar.button("☀️"):
             session_state.theme = "light"
             st.experimental_rerun()
 
     if session_state.theme == "light":
-        if st.sidebar.button("🌚"):
+        if st.sidebar.button("🌑"):
             session_state.theme = "dark"
             st.experimental_rerun()
 

@@ -8,11 +8,11 @@
 
 .padding{
   padding-left: 5%;
+  padding-bottom: 10%;
 }
 
 .greyish {
   background-color: #F0F2F6;
-
 }
 .remove_space_headings{
     margin-top:-5px;
@@ -65,4 +65,8 @@
   border-radius: 10%; 
   max-width:3em; 
   filter: drop-shadow(0 0.2rem 0.25rem rgba(0, 0, 0, 0.5));
+}
+
+table {
+  overflow: auto;
 }

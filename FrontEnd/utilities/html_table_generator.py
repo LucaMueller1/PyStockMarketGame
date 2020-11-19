@@ -1,5 +1,7 @@
 import streamlit as st
 
+import utilities.utils as utils
+
 class PortfolioTable():
     """
     desc: main function, generates app
@@ -51,10 +53,10 @@ class PortfolioTable():
             self.__add_row(stock_data[i])
 
     def open_table(self):
-        self.html += """<table cellspacing="0" cellpadding="0" width="100%" style="border-collapse:collapse;border-color:transparent;">"""
+        self.html += """<div class="table-responsive"><table class="table" cellspacing="0" cellpadding="0" width="100%" style="border-collapse:collapse;border-color:transparent;">"""
 
     def close_table(self):
-        self.html += """</table>"""
+        self.html += """</table></div>"""
 
     def get_html(self):
         return self.html

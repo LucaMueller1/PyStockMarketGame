@@ -33,8 +33,10 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 session_state = SessionState.get(page='login', auth_key='', stock_desc=None, graph_data=None, buy_redirect=False, gif_tag=("AustinPowers", 0), theme="light")
 
 if session_state.theme == "dark":
+    utils.local_css("FrontEnd/css/bootstrap.min.css")
     utils.local_css("FrontEnd/css/dark.css")
 if session_state.theme == "light":
+    utils.local_css("FrontEnd/css/bootstrap.min.css")
     utils.local_css("FrontEnd/css/light.css")
 
 if session_state.page == "login":

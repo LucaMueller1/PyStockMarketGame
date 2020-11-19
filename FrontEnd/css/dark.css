@@ -8,6 +8,7 @@
 
 .padding{
   padding-left: 5%;
+  padding-bottom: 10%;
 }
 
 .greyish {
@@ -188,4 +189,8 @@ table {
 
 .st-h8 {
   border-style: solid;
+}
+
+.table {
+  color: white;
 }

@@ -22,7 +22,7 @@ import utilities.utils as utils
 
 def run(session_state):
     side_bar.run(session_state)
-    utils.local_css("FrontEnd/css/style.css")
+    #utils.local_css("FrontEnd/css/style.css")
 
     st.title("Broker")
     st.subheader("Welcome to your personalised broker. Here you can buy and sell your stocks.")
