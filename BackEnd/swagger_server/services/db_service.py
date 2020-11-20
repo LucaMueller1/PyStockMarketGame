@@ -105,7 +105,7 @@ class DatabaseConn:
         try:
             with self.engine.connect() as con:
                 con.execute(sqla.text(
-                    """"DELETE FROM `users` WHERE `users`.`userID` = :userid"""),
+                    """DELETE FROM `users` WHERE `users`.`userID` = :userid"""),
                     ({"userid": user.id}))
         except:
             returned = False
