@@ -3,7 +3,7 @@ info:
   description: "Absolute legendary PyBroker BackEnd API"
   version: "1.0.0"
   title: "PyBroker"
-host: "localhost:8080"
+host: "pybroker.vision"
 basePath: "/api"
 tags:
 - name: "portfolio"
