@@ -43,7 +43,7 @@ def buy_stocks(user: User, symbol: str, amount: int):
 
     # if stock_price already in stock_prices table:
     stock_value = finance_data.check_current_stock_price(symbol)
-    purchase_value = stock_value.stock_price * abs(amount) - abs(float(settings.transaction_fee))
+    purchase_value = stock_value.stock_price * abs(amount) + abs(float(settings.transaction_fee))
 
     # check money available?
     if purchase_value <= money_available:
