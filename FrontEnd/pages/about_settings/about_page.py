@@ -25,9 +25,10 @@ def run(session_state):
     session_state.gif_tag = (gif_selected, index_in_gif)
     st.write("---")
     st.header("Delete Profile")
-    st.warning("This action cannot be reversed")
     if st.button("Delete User"):
-        hf.delete_user(session_state.auth_key)
-        session_state.page = "login"
-        st.experimental_rerun()
+        st.warning("This action cannot be reversed")
+        if st.checkbox("I am sure", value=False):
+            hf.delete_user(session_state.auth_key)
+            session_state.page = "login"
+            st.experimental_rerun()
 
