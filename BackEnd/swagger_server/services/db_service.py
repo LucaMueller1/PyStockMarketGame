@@ -188,6 +188,15 @@ class DatabaseConn:
         return auth_key_returned
 
     def get_user_by_auth_key(self, auth_key: str) -> User:
+        """
+
+            desc: Function to get a User object based on the auth key
+
+            param: (int) userid
+
+            test: Correct: If a valid userid is passed the inserted AuthKey obj is returned
+
+        """
         user = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
@@ -383,5 +392,3 @@ class DatabaseConn:
                 symbols.append(row['symbol']);
 
         return symbols
-conn = DatabaseConn()
-conn.insert_course(StockValue(symbol="AMCR", stock_price=12, timestamp='2020-11-16'))
