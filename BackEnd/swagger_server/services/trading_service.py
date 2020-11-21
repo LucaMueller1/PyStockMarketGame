@@ -218,7 +218,7 @@ def get_portfolio_positions(user: User):
         logo_url = transaction[1].logo_url
         next_amount = transaction[0].amount # 5
         transaction_fee = transaction[0].transaction_fee # 10€
-        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
+        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/amount) # price at buy with fee
         transaction_type = transaction[0].transaction_type
 
 
@@ -301,7 +301,11 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
 def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
 
     date_list = []
-    change_list = []
+    symbol_list = []
+    amount_list = []
+    value_list = []
+
+    portfolio_df = pd.DataFrame
     
     current_portfolio = {}
 
@@ -317,7 +321,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                 logo_url = transaction[1].logo_url
                 amount = transaction[0].amount # 5
                 transaction_fee = transaction[0].transaction_fee # 10€
-                next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
+                stock_value = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
                 transaction_type = transaction[0].transaction_type
                 transaction_date = transaction[0].stock_value.timestamp.date()
 
@@ -325,6 +329,10 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                     print("Transaction found for ", date, "! It is: ", symbol)
 
                     if symbol not in current_portfolio:
+                        date_list.append(date)
+                        symbol_list.append(symbol)
+                        amount_list.append(amount)
+                        value_list.append(staticglobaldb.dbconn.get_stock_price_from_date(symbol, date))
                         current_portfolio[symbol] = amount
 
                     else if transaction_type == "buy":
@@ -332,6 +340,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
 
                     else:
                         current_portfolio[symbol] = current_portfolio[symbol] - amount
+                        
         print(current_portfolio)
         date += datetime.timedelta(days=1)
 
