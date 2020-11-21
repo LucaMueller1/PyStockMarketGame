@@ -13,6 +13,7 @@ from swagger_server.models.transaction_prepare import TransactionPrepare
 
 import datetime
 import re
+import pandas as pd
 
 # deadlock = False # might be used in the future to prevent simultaneous buying and selling
 
@@ -259,6 +260,44 @@ def get_portfolio_positions(user: User):
 
     return stocks
 
+def get_portfolio_history_pandas(user: User):
+    
+    """Wir bekommen: Eine Liste aus Transactions(Symbol, amount, stockvalue(datetime, stock_price: float), transaction_type, transaction_fee: int)
+        staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)"""
+
+    staticglobaldb.dbconn.get_stock_price_from_date(symbol, datetime)
+    
+    cash = user.starting_capital
+    # Verlauf PortfolioValue
+    # DATE CASH VALUE
+
+def __calculate_daily_change(user: User, transaction_list: list) -> list:
+
+    daily_change_df = pd.DataFrame()
+
+    date_list = []
+    change_list = []
+
+    # [(transaction, stock_search_result), ..., (transaction, stock_search_result)]
+    for transaction_and_info in transaction_and_info_list:
+        transaction = transaction_and_info[0]
+
+        date_list.append(transaction.stock_value.timestamp)
+
+        if transaction.transaction_type == "buy":
+            change_list.append(-transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
+        else:
+            change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
+
+        daily_change_df["date"] = date_list
+        daily_change_df["change"] = change_list
+        daily_change_df.groupby(["date"]).sum()
+
+        return daily_change_df
+
+user = User(id=12)
+transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
+print(__calculate_daily_change(user, transaction_list))
 
 def get_portfolio_history(user: User):
     """ Gives History of whole Portfolio for one User for use in a graph.
