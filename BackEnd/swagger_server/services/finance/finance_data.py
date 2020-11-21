@@ -108,20 +108,10 @@ def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     :return: StockValue
 
     """
-    start_date = history_date
-    # get weekday number
-    weekday_no = history_date.weekday()
-    end_date = history_date + datetime.timedelta(days=1)
-    # print("Start: ", start_date, " End: ", end_date)
+    print(history_date)
 
     # insure its always getting the last weekday
-    if weekday_no <= 5:
-        df = yf.Ticker(symbol).history(start=start_date, end=end_date)
-    else:
-        df = pd.DataFrame()
-        while df.empty:
-            start_date += datetime.timedelta(days=-1)
-            df = yf.Ticker(symbol).history(start=start_date, end=end_date)
+    df = yf.Ticker(symbol).history(start=start_date, end=start_date)
 
     value = None
     for index, row in df.iterrows():
@@ -240,5 +230,7 @@ def get_stock_sustainability(symbol: str):
 # print(get_stock_info_from_yfinance("SBUX"))
 # print(yf.Ticker("SBUX").info)
 # print(get_stock_info_from_yfinance("SBUX"))
-# print(get_stock_price_for_date('2020-11-18'))
+# description = StockDescription(symbol="IBM")
+# print(get_stock_price_for_date(description, '2020-11-02'))
 # print(get_stock_price_for_date('2020-11-19'))
+# print(yf.Ticker("IBM").history(start='2020-11-03', end='2020-11-03'))
