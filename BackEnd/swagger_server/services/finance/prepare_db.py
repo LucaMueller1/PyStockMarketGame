@@ -14,7 +14,7 @@ def insert_one_month_courses():
     for stock in stocks:
         symbol=stock
         df = pd.DataFrame()
-        df = yf.Ticker(symbol).history(period="1mo")
+        df = yf.Ticker('IBM').history(period="1mo")
         print(df)
 
         for index, row in df.iterrows():
