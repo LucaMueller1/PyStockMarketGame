@@ -270,10 +270,17 @@ def get_portfolio_history_pandas(user: User):
     cash = user.starting_capital
     # Verlauf PortfolioValue
     # DATE CASH VALUE
-
-def __calculate_daily_change(user: User, transaction_and_info_list: list) -> list:
-
+    
     daily_change_df = pd.DataFrame()
+    
+    date_list, change_list = __calculate_daily_cash_change()
+    
+    daily_change_df["date"] = date_list
+    daily_change_df["change"] = change_list
+    daily_change_df.groupby(["date"]).sum()
+
+
+def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
 
     date_list = []
     change_list = []
@@ -289,12 +296,45 @@ def __calculate_daily_change(user: User, transaction_and_info_list: list) -> lis
         else:
             change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
 
-    daily_change_df["date"] = date_list
-    daily_change_df["change"] = change_list
-    daily_change_df.groupby(["date"]).sum()
-    print(change_list)
+    return (date_list, change_list)
 
-    return daily_change_df
+def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
+
+    date_list = []
+    change_list = []
+    
+    current_portfolio = {}
+
+    now = datetime.datetime().now()
+
+    date = get_min_date(transaction_and_info_list)
+
+    while date <= now:
+        for transaction in transaction_and_info_list:
+
+                symbol = transaction[1].symbol #AAPL
+                stock_name = transaction[1].stock_name # Apple
+                logo_url = transaction[1].logo_url
+                amount = transaction[0].amount # 5
+                transaction_fee = transaction[0].transaction_fee # 10€
+                next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
+                transaction_type = transaction[0].transaction_type
+                transaction_date = transaction[0].stock_value.timestamp.date()
+
+                if transaction_date == date:
+                    print("Transaction found for ", date, "! It is: ", symbol)
+
+                    if symbol not in current_portfolio:
+                        current_portfolio[symbol] = amount
+
+                    else if transaction_type == "buy":
+                        current_portfolio[symbol] = current_portfolio[symbol] + amount
+
+                    else:
+                        current_portfolio[symbol] = current_portfolio[symbol] - amount
+        print(current_portfolio)
+        date += datetime.timedelta(days=1)
+
 
 user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
 print(user.first_name)
