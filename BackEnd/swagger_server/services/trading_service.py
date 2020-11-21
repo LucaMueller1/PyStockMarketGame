@@ -36,17 +36,17 @@ def buy_stocks(user: User, symbol: str, amount: int):
     """
 
     # is there enough money
-    money_avaiable = user.money_available
+    money_available = user.money_available
 
     # to fetch users transaction fee
     settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
 
     # if stock_price already in stock_prices table:
     stock_value = finance_data.check_current_stock_price(symbol)
-    purchase_value = stock_value.stock_price * abs(amount)
+    purchase_value = stock_value.stock_price * abs(amount) + abs(float(settings.transaction_fee))
 
     # check money available?
-    if purchase_value <= money_avaiable:
+    if purchase_value <= money_available:
         """ deadlock = "buy"
         # validate lock
         # if deadlock != "buy"
