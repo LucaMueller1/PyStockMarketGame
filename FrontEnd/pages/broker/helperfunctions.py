@@ -29,8 +29,10 @@ def get_total_purchase_value(total_stock_value, purchase_fees):
     """
 
     if total_stock_value != "N/A":
-        total_purchase_value = round((float(total_stock_value) + float(purchase_fees)), 2)
-        return (str(total_purchase_value) + "$")
+        total_purchase_value = round(
+            (float(total_stock_value) + float(purchase_fees)), 2
+        )
+        return str(total_purchase_value) + "$"
     else:
         return "N/A"
 
@@ -76,8 +78,8 @@ def check_for_sufficient_cash_user(buy_response):
     """
     buy_response = json.loads(buy_response.text)
     print(buy_response)
-    if ("status" in buy_response):
-        if (buy_response["status"] == 400):
+    if "status" in buy_response:
+        if buy_response["status"] == 400:
             sufficient_cash = False
             return sufficient_cash
     else:
@@ -115,7 +117,6 @@ def get_stock_quantity_in_depot(depot_information, stock_ticker):
             return item["amount"]
 
 
-
 def get_buyin_for_stock(depot_information, stock_ticker):
     """
     Retrieve the  buy in price for a selected stock from user.
@@ -142,10 +143,18 @@ def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
     change = round((float(single_stock_price) - float(stock_buyin)), 2)
     if change < 0:
         change = str(change) + "$"
-        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: #F52D5B;">""" + change + """</code></p></div> """
+        return (
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: #F52D5B;">"""
+            + change
+            + """</code></p></div> """
+        )
     else:
         change = "+" + str(change) + "$"
-        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code>""" + change + """</code></p></div> """
+        return (
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code>"""
+            + change
+            + """</code></p></div> """
+        )
 
 
 def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
@@ -158,13 +167,28 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
     :return: (HTML string) Both returns consists of an HTML String. They differentiate by the colour printed in Frontend. --> If change is negative (red colour) --> If change is positive (green colour)
     :test Correct: Parameter stock_buyin, single_stock_price are passed as a Float, stock_quantity is passed as an Integer, therefore the total change can be calculated successfully and the corresponding HTML string is returned. Incorrect: A parameter is missed as an input, such as the stock quantity. The method will fail at calculating the total change.
     """
-    total_change = round((float(single_stock_price * stock_quantity) - float(stock_buyin * stock_quantity)), 2)
+    total_change = round(
+        (
+            float(single_stock_price * stock_quantity)
+            - float(stock_buyin * stock_quantity)
+        ),
+        2,
+    )
     if total_change < 0:
         total_change = str(total_change) + "$"
-        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code style="color: #F52D5B;">""" + total_change + """</code></p></div> """
+        return (
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code style="color: #F52D5B;">"""
+            + total_change
+            + """</code></p></div> """
+        )
     else:
         total_change = "+" + str(total_change) + "$"
-        return """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>""" + total_change + """</code></p></div> """
+        return (
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>"""
+            + total_change
+            + """</code></p></div> """
+        )
+
 
 def get_user_balance(auth_key):
     """
@@ -178,6 +202,7 @@ def get_user_balance(auth_key):
     user_balance = user["moneyAvailable"]
     return user_balance
 
+
 def get_sustainability_info(auth_key, stock_ticker):
     """
     Returns a list of warnings for a specific stock chosen by the user by processing an API request and looping through the returned dictionary for keys holding the boolean value True. The corresponding value of said key is written into an array.
@@ -187,12 +212,15 @@ def get_sustainability_info(auth_key, stock_ticker):
     :return: (List) List of warnings for a specific stock
     :test Correct: A valid auth_key is supplied, as well as a valid stock ticker. Thus the Get request will succeed and the loop through the returned dictionary is functional and the created list of warnings is returned. Incorrect: The Get request fails due to an invalid auth key. Thus the loop is rendered non functional and returns an error.
     """
-    sustainability_info = requests_server.get_sustainability_info(auth_key, stock_ticker)
+    sustainability_info = requests_server.get_sustainability_info(
+        auth_key, stock_ticker
+    )
     sustainability_warning_list = []
     for key in sustainability_info:
         if sustainability_info[key] == True:
             sustainability_warning_list.append(key)
     return sustainability_warning_list
+
 
 def build_warning_html(sustainability_warning_list):
     return_string = ""
@@ -203,9 +231,13 @@ def build_warning_html(sustainability_warning_list):
     else:
         return_string = "✅No apparent warnings found."
         return return_string
+
+
 @st.cache(show_spinner=False)
 def get_single_stock_value(auth_key, ticker_code):
-    stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[0]
+    stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[
+        0
+    ]
     stock_price = stock_price["stock_price"]
     if stock_price != "N/A":
         return round(float(stock_price), 2)
@@ -215,13 +247,13 @@ def get_single_stock_value(auth_key, ticker_code):
 
 @st.cache(show_spinner=False)
 def get_transaction_fees(auth_key):
-    transaction_fees = (requests_server.get_user_transaction_fee(auth_key))["transactionFee"]
+    transaction_fees = (requests_server.get_user_transaction_fee(auth_key))[
+        "transactionFee"
+    ]
     return transaction_fees
 
 
 @st.cache(show_spinner=False)
 def get_stock_description(auth_key, ticker_code):
-    stock_description = requests_server.get_stock_description(auth_key,
-                                                              ticker_code)
+    stock_description = requests_server.get_stock_description(auth_key, ticker_code)
     return stock_description
-
