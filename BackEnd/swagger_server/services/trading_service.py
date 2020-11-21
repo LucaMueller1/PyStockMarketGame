@@ -270,10 +270,17 @@ def get_portfolio_history_pandas(user: User):
     cash = user.starting_capital
     # Verlauf PortfolioValue
     # DATE CASH VALUE
-
-def __calculate_daily_change(user: User, transaction_list: list) -> list:
-
+    
     daily_change_df = pd.DataFrame()
+    
+    date_list, change_list = __calculate_daily_cash_change()
+    
+    daily_change_df["date"] = date_list
+    daily_change_df["change"] = change_list
+    daily_change_df.groupby(["date"]).sum()
+
+
+def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
 
     date_list = []
     change_list = []
@@ -289,30 +296,61 @@ def __calculate_daily_change(user: User, transaction_list: list) -> list:
         else:
             change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
 
-        daily_change_df["date"] = date_list
-        daily_change_df["change"] = change_list
-        daily_change_df.groupby(["date"]).sum()
+    return (date_list, change_list)
 
-        return daily_change_df
+def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
 
-user = User(id=12)
-transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
-print(__calculate_daily_change(user, transaction_list))
+    date_list = []
+    change_list = []
+    
+    current_portfolio = {}
+
+    now = datetime.datetime.now()
+    print(transaction_and_info_list)
+    date = get_min_date(transaction_list)
+    print(date)
+    while date <= now:
+        for transaction in transaction_and_info_list:
+
+                symbol = transaction[1].symbol #AAPL
+                stock_name = transaction[1].stock_name # Apple
+                logo_url = transaction[1].logo_url
+                amount = transaction[0].amount # 5
+                transaction_fee = transaction[0].transaction_fee # 10€
+                transaction_type = transaction[0].transaction_type
+                transaction_date = transaction[0].stock_value.timestamp
+
+                if transaction_date == date:
+                    print("Transaction found for ", date, "! It is: ", symbol)
+
+                    if symbol not in current_portfolio:
+                        current_portfolio[symbol] = amount
+
+                    elif transaction_type == "buy":
+                        current_portfolio[symbol] = current_portfolio[symbol] + amount
+
+                    else:
+                        current_portfolio[symbol] = current_portfolio[symbol] - amount
+        print(current_portfolio)
+        date += datetime.timedelta(days=1)
+
+
+
 
 def get_portfolio_history(user: User):
     """ Gives History of whole Portfolio for one User for use in a graph.
-        get_portfolio_history takes the user as input and gets all the users
-        transactions from the DB. For each day since the first trade it goes
-        through the transactions and creates/updates PortfolioPositions.
-        Based on the positions it calculates it into a PortfolioValue for
-        each day.
+            get_portfolio_history takes the user as input and gets all the users
+            transactions from the DB. For each day since the first trade it goes
+            through the transactions and creates/updates PortfolioPositions.
+            Based on the positions it calculates it into a PortfolioValue for
+            each day.
 
-    :author: Jannik Sinz <jannik.sinz@ibm.com>
-    :date: 12.11.2020
-    :param user: the User from which the PortfolioValues (History) should be returned
-    :return: List[PortfolioValue]
-    :test: provide a user as input. You should receive a list of PortfolioValues
-    """
+        :author: Jannik Sinz <jannik.sinz@ibm.com>
+        :date: 12.11.2020
+        :param user: the User from which the PortfolioValues (History) should be returned
+        :return: List[PortfolioValue]
+        :test: provide a user as input. You should receive a list of PortfolioValues
+        """
 
     # get all stock transactions
     transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
@@ -402,6 +440,7 @@ def get_portfolio_history(user: User):
 
 
             # END IF date = transaction_date
+
         #END FOR - Transactions
         # stocks = remove_sold_stocks(stocks)
 
@@ -415,8 +454,9 @@ def get_portfolio_history(user: User):
             current_depot_value += d_stock_price * d_stock_amount
             # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
             # print("DepotValue: ", current_depot_value)
+
         current_depot_value = capital + current_depot_value
-############################
+        ############################
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
@@ -424,6 +464,7 @@ def get_portfolio_history(user: User):
         date += datetime.timedelta(days=1)
         # print("PortfolioValue for ", date, ": ", portfolio_value)
         # print("Cash for", date, ":", capital)
+
     # END WHILE day = now
     # print("PortfolioValues: ", returned)
     return returned
@@ -432,12 +473,12 @@ def get_portfolio_history(user: User):
 ## Support functions Portfolio
 def remove_sold_stocks(stocks: list) -> list:
     """
-    remove_sold_Stocks checks if a PortfolioPosition has a stock_value of zero
-    and removes the PortfolioPosition from the list
+        remove_sold_Stocks checks if a PortfolioPosition has a stock_value of zero
+        and removes the PortfolioPosition from the list
 
-    :param stocks: list() of PortfolioPositions
-    :return: list() of PortfolioPositions
-    """
+        :param stocks: list() of PortfolioPositions
+        :return: list() of PortfolioPositions
+        """
     for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
         if stocks[index].stock_value is None:
             # today's quotation from db
@@ -457,7 +498,7 @@ def remove_sold_stocks(stocks: list) -> list:
 def get_min_date(transactions: list) -> datetime:
     min_date = None
     for transaction in transactions:
-        current_date = transaction[0].stock_value.timestamp.date()
+        current_date = transaction[0].stock_value.timestamp
         if min_date == None:
             min_date = current_date
         elif current_date < min_date:
@@ -469,16 +510,22 @@ def get_min_date(transactions: list) -> datetime:
 def get_portfolio_analytics():
     pass
 
-
 user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
-user.money_available = 10000000
+print(user.first_name)
+transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
+# print(__calculate_daily_change(user, transaction_list))
+print(__calculate_daily_stock_change(user,transaction_list))
+# print(transaction_list)
+
+# user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
+# user.money_available = 10000000
 # staticglobaldb.dbconn.update_user(user)
 ## TEST stock_values_available
 # print(stock_values_available(user))
 
 ## TEST get_history
-history = get_portfolio_history(user)
-print(history)
+# history = get_portfolio_history(user)
+# print(history)
 
 
 # print(buy_stocks(user, "IBM", 1))
