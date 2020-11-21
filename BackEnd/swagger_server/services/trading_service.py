@@ -332,10 +332,6 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                     print("Transaction found for ", date, "! It is: ", symbol)
 
                     if symbol not in current_portfolio:
-                        date_list.append(date)
-                        symbol_list.append(symbol)
-                        amount_list.append(amount)
-                        value_list.append(staticglobaldb.dbconn.get_stock_price_from_date(symbol, date))
                         current_portfolio[symbol] = amount
 
                     elif transaction_type == "buy":
@@ -344,7 +340,8 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                     else:
                         current_portfolio[symbol] = current_portfolio[symbol] - amount
 
-        portfolio_list.append((date, current_portfolio))
+        temp_portfolio = current_portfolio
+        portfolio_list.append((date, temp_portfolio))
         date += datetime.timedelta(days=1)
 
     return portfolio_list
