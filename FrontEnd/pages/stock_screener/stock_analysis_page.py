@@ -46,7 +46,7 @@ def run(session_state: SessionState) -> None:
 
     show_general_info(description)
     show_financial_info(description)
-    show_sustainability_warnings(sustainibility_warnings)
+    show_sustainability_warnings(description, sustainibility_warnings)
 
     long_description = st.beta_expander(
         f"""Description for {description["stockName"]}"""
@@ -89,7 +89,7 @@ def show_financial_info(description: dict) -> None:
     )
 
 
-def show_sustainability_warnings(sustainibility_warnings: list):
+def show_sustainability_warnings(description: dict, sustainibility_warnings: list) -> None:
     warning_information = st.beta_expander(
         f"""Warnings for {description["stockName"]}""", expanded=True
     )
