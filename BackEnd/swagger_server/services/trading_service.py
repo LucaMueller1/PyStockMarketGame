@@ -218,7 +218,7 @@ def get_portfolio_positions(user: User):
         logo_url = transaction[1].logo_url
         next_amount = transaction[0].amount # 5
         transaction_fee = transaction[0].transaction_fee # 10€
-        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
+        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/amount) # price at buy with fee
         transaction_type = transaction[0].transaction_type
 
 
@@ -301,9 +301,15 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
 def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
 
     date_list = []
-    change_list = []
+    symbol_list = []
+    amount_list = []
+    value_list = []
+
+    portfolio_df = pd.DataFrame
     
     current_portfolio = {}
+    
+    portfolio_list = []
 
     now = datetime.datetime.now()
     print(transaction_and_info_list)
@@ -317,6 +323,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                 logo_url = transaction[1].logo_url
                 amount = transaction[0].amount # 5
                 transaction_fee = transaction[0].transaction_fee # 10€
+                stock_value = transaction[0].stock_value.stock_price
                 transaction_type = transaction[0].transaction_type
                 transaction_date = transaction[0].stock_value.timestamp
 
@@ -331,8 +338,11 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
 
                     else:
                         current_portfolio[symbol] = current_portfolio[symbol] - amount
-        print(current_portfolio)
+
+        portfolio_list.append((date, current_portfolio))
         date += datetime.timedelta(days=1)
+
+        return portfolio_list
 
 
 
@@ -514,7 +524,8 @@ user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMU
 print(user.first_name)
 transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
 # print(__calculate_daily_change(user, transaction_list))
-print(__calculate_daily_stock_change(user,transaction_list))
+for portfolio in __calculate_daily_stock_change(user,transaction_list)
+    print(portfolio)
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
