@@ -320,10 +320,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
         for transaction in transaction_and_info_list:
 
                 symbol = transaction[1].symbol #AAPL
-                stock_name = transaction[1].stock_name # Apple
-                logo_url = transaction[1].logo_url
                 amount = transaction[0].amount # 5
-                transaction_fee = transaction[0].transaction_fee # 10€
                 stock_value = transaction[0].stock_value.stock_price
                 transaction_type = transaction[0].transaction_type
                 transaction_date = transaction[0].stock_value.timestamp
