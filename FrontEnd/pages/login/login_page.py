@@ -12,7 +12,7 @@ import utilities.requests_server as requests_server
 import streamlit as st
 
 
-def run(session_state):
+def run(session_state: SessionState.SessionState) -> None:
     """
     desc:   run the log in page, requires SessionState object
             for storing session variables.

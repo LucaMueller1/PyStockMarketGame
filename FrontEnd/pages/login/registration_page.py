@@ -14,7 +14,7 @@ from time import sleep
 from email_validator import validate_email, EmailNotValidError
 
 
-def run(session_state):
+def run(session_state: SessionState.SessionState) -> None:
     """
     desc:   run the registration page, requires SessionState object
             for storing session variables.

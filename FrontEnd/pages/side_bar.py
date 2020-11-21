@@ -13,7 +13,7 @@ import utilities.utils as utils
 import utilities.SessionState as SessionState
 
 
-def run(session_state: SessionState.SessionState):
+def run(session_state: SessionState.SessionState) -> None:
     """
     desc:   run the side bar, requires SessionState object
             for storing session variables. Enables navigation to all pages
