@@ -16,10 +16,10 @@ def run(session_state):
     """
     desc:   run the log in page, requires SessionState object
             for storing session variables.
-    param:  (SessionState) session_state
+    param:  (SessionState.SessionState) session_state
+    test:   pass: proper SessionState.SessionState is provided
+            fail: provided SessionState.SessionState has the wrong variables
     """
-    
-    st.write(session_state.auth_key)
 
     if st.button("↪️ signup"):
         session_state.page = "registration"
