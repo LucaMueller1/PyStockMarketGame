@@ -310,7 +310,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
     portfolio_df = pd.DataFrame
     
     current_portfolio = {}
-    
+
     portfolio_list = []
 
     now = datetime.datetime.now()
@@ -332,6 +332,10 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                     print("Transaction found for ", date, "! It is: ", symbol)
 
                     if symbol not in current_portfolio:
+                        date_list.append(date)
+                        symbol_list.append(symbol)
+                        amount_list.append(amount)
+                        value_list.append(staticglobaldb.dbconn.get_stock_price_from_date(symbol, date))
                         current_portfolio[symbol] = amount
 
                     elif transaction_type == "buy":
@@ -523,8 +527,7 @@ user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMU
 print(user.first_name)
 transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
 # print(__calculate_daily_change(user, transaction_list))
-for portfolio in __calculate_daily_stock_change(user,transaction_list):
-    print(portfolio)
+print(__calculate_daily_stock_change(user,transaction_list))
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
