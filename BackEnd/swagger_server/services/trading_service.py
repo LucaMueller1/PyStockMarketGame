@@ -408,6 +408,7 @@ def remove_sold_stocks(stocks: list) -> list:
 
     return stocks
 
+
 def get_min_date(transactions: list) -> datetime:
     min_date = None
     for transaction in transactions:
@@ -424,28 +425,28 @@ def get_portfolio_analytics():
     pass
 
 
-user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
-user.money_available = 10000000
-staticglobaldb.dbconn.update_user(user)
+# user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+# user.money_available = 10000000
+# staticglobaldb.dbconn.update_user(user)
 ## TEST stock_values_available
 # print(stock_values_available(user))
 
 # print(buy_stocks(user, "IBM", 1))
 #
 # print(user.first_name, user.last_name)
-history = get_portfolio_history(user)
-print(history)
+# history = get_portfolio_history(user)
+# print(history)
 # history = staticglobaldb.dbconn.get_stock_price_from_date()
 # print(get_portfolio_positions(user))
-buy_stocks(user, "IBM", 1)
-
-history = get_portfolio_history(user)
-print(history)
+# buy_stocks(user, "IBM", 1)
 #
+# history = get_portfolio_history(user)
+# print(history)
+
 # print("Buying 1 IBM stock for 100$")
-buy_stocks(user, 'IBM', 1)
-history = get_portfolio_history(user)
-print(history)
+# buy_stocks(user, 'IBM', 1)
+# history = get_portfolio_history(user)
+# print(history)
 # print("Buying 1 IBM stock for 100$")
 # sell_stocks(user, 'IBM', 1)
 # history = get_portfolio_history(user)
