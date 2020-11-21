@@ -6,15 +6,7 @@ from swagger_server.services.db_service import DatabaseConn
 from swagger_server.controllers import staticglobaldb
 import datetime
 
-"""
 
-"""
-# print(staticglobaldb.dbconn.get_transactions_and_stock_by_user(User(id=3)))
-
-# stocks = (
-# "ADS.DE", "ALV.DE", "BAS.DE", "BAYN.DE", "BEI.DE", "BMW.DE", "CON.DE", "1COV.DE", "DAI.DE", "DHER.DE", "DKB.DE",
-# "DB1.DE", "DPW.DE", "DTE.DE", "DWNI.DE", "EOAN.DE", "FRE.DE", "FME.DE", "HEI.DE", "HEN3.DE", "IFX.DE", "LIN.DE",
-# "MRK.DE", "MTX.DE", "MUV2.DE", "RWE.DE", "SAP.DE", "SIE.DE", "VOW3.DE", "VNA.DE")
 
 def check_current_stock_price(symbol: str):
     """
@@ -22,6 +14,9 @@ def check_current_stock_price(symbol: str):
     checks if there is a price for the stock_description.symbol for today.
     If ther is none it will call the current stock_price from the yfinance
     api.
+
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date:
 
     :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
     :return: StockValue - with the current stock_price
@@ -49,10 +44,12 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
     If ther is none it will call the current stock_price from the yfinance
     api.
 
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date:
+
     :param StockDescription: it might only need the symbol attribute set in the StockDescription Model
     :return: StockValue - with the stock_price for date
     """
-    today = datetime.datetime.now().date()
     stock_symbol = stock_description.symbol
 
     # making sure stock_value returnes valid data
@@ -65,11 +62,7 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
 
         symbol = stock_description.symbol # Symbol from StockValue
         stock_value = insert_stock_history_for_date_to_db(symbol, history_date)
-        # print(stock_value)
-
-
-
-    print("StockValue for ", history_date,": ", stock_value)
+        # print("StockValue for ", history_date,": ", stock_value)
 
     return stock_value
 
@@ -77,6 +70,9 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
 def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
+
+    :author: Jannik Sinz <jannik.sinz@gmx.de>
+    :date:
 
 
     :param symbol: the ticker of the Stock
@@ -89,11 +85,10 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     df = yf.Ticker(symbol).history(period)
 
     value = None
-    for index, row in df.iterrows():
+    for date, row in df.iterrows():
         open_value = row['Open']
         if open_value is None or pd.isna(open_value):
             continue
-        date = index
         value = StockValue(None, symbol, float(open_value), str(date))
         staticglobaldb.dbconn.insert_course(value)
     return value
@@ -103,6 +98,8 @@ def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
 
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date:
 
     :param symbol: the ticker of the Stock
     :param period: The period of which the data is requested from the API
@@ -142,6 +139,9 @@ def get_stock_history_to_frontend(symbol: str, period: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
 
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date:
+
 
     :param symbol: the ticker of the Stock
     :param period: The period of which the data is requested from the API
@@ -163,19 +163,6 @@ def get_stock_history_to_frontend(symbol: str, period: str):
             multiplier*1.1
         return returned # StockValue
 
-    if symbol == "DDAIF":
-        df = yf.Ticker(symbol).history(period)
-        returned = []
-        multiplier = 1
-        for index, row in df.iterrows():
-            open_value = row['Open']*multiplier
-            if open_value is None or pd.isna(open_value):
-                continue
-            date = index
-            returned.append(StockValue(None, symbol, float(open_value), str(date)))
-            multiplier/1.1
-        return returned # StockValue
-
     df = yf.Ticker(symbol).history(period)
     returned = []
     for index, row in df.iterrows():
@@ -192,9 +179,14 @@ def get_stock_history_to_frontend(symbol: str, period: str):
 
 def get_stock_info_from_yfinance(symbol: str):
     """
+    get_stock_info_from_yfianace calls the yfinance Api and
+    returns the info about the stock as a StockDescription object
 
-    :param symbol:
-    :return:
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date:
+
+    :param symbol: the stock ticker
+    :return: StockDescription
     """
     indexes = ["shortName", "country", "logo_url", "longBusinessSummary", "industry", "trailingAnnualDividendYield", "marketCap", "fiftyTwoWeekLow", "fiftyTwoWeekHigh", "fullTimeEmployees"]
     # indexes = StockDescription().__dict__.keys()
@@ -212,17 +204,20 @@ def get_stock_info_from_yfinance(symbol: str):
     description = StockDescription(symbol, info['shortName'], info['country'], info['logo_url'], info['longBusinessSummary'], info['industry'], info['trailingAnnualDividendYield'], info['marketCap'], info['fiftyTwoWeekLow'], info['fiftyTwoWeekHigh'], info['fullTimeEmployees'])
 
     # print(description)
-    conn = DatabaseConn()
-    success = conn.update_stock(description)
+    success = staticglobaldb.dbconn.update_stock(description)
     # print("Status: ", success)
     return description
 
 
 def get_stock_sustainability(symbol: str):
     """
+    get_stock_sustainability calls the yfinance Api and returns
+    gets controversial information the company has
+    associations with. It then turns the information into a dict
+    and returns it.
 
-    :param symbol:
-    :return:
+    :param symbol: ticker of the stock
+    :return: dict
     """
     sus = yf.Ticker(symbol).sustainability
     if sus is not None:
@@ -232,7 +227,7 @@ def get_stock_sustainability(symbol: str):
         return {}
 
 
-
+# print(get_stock_sustainability("IBM"))
 
 #
 #

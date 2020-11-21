@@ -10,7 +10,6 @@ from swagger_server.models.portfolio_value import PortfolioValue
 from swagger_server.services.finance import finance_data
 import swagger_server.services.schedule_service as schedule_service
 from swagger_server.models.transaction_prepare import TransactionPrepare
-from swagger_server.models.settings import Settings
 
 import datetime
 import re
@@ -22,31 +21,33 @@ def buy_stocks(user: User, symbol: str, amount: int):
     """
     buy_stock is being called when there are stocks being bought. It checks if there is
     enough money available for the transaction the user wants to make and creates a
-    transaction with the current stock_price and transaction_fee
+    TransactionPrepare object with the current stock_price and transaction_fee.
+
+    It uses the inser_course function to insert the transaction and deducts
+    the value + fees from the users account.
 
     :author: Jannik Sinz <jannik.sinz@ibm.com>
     :date: '06-11-2020'
 
-    :param auth_key: auth key for the user meant to make the transaction
-    :param stock_description: might only need a StockDescription object with the symbol
+    :param user: user meant to make the transaction
+    :param symbol: symbol of the stock
     :param amount: amount of stocks being bought
     :return: Transaction - to check for mistakes
-            ApiError - in case of insufficient funds
+            None - in case of insufficient funds / unsuccessful purchase
     :test: create a transaction and check if the returned transaction has all the right values
     """
 
     # is there enough money
-    money_available = user.money_available
-
-    # to fetch users transaction fee
-    settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+    money_avaiable = user.money_available
+    settings = staticglobaldb.dbconn.get_settings_by_user(user)
+    transaction_fee = settings.transaction_fee
 
     # if stock_price already in stock_prices table:
     stock_value = finance_data.check_current_stock_price(symbol)
-    purchase_value = stock_value.stock_price * abs(amount) + abs(float(settings.transaction_fee))
+    purchase_value = stock_value.stock_price * abs(amount) + transaction_fee
 
     # check money available?
-    if purchase_value <= money_available:
+    if purchase_value <= money_avaiable:
         """ deadlock = "buy"
         # validate lock
         # if deadlock != "buy"
@@ -66,9 +67,8 @@ def buy_stocks(user: User, symbol: str, amount: int):
         # buy stocks (insert transaction)
         transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare, user)
 
-        # calculate new_portfolio_cash & update user
-        new_portfolio_cash = user.money_available - (transaction.stock_value.stock_price * abs(amount)) - abs(float(settings.transaction_fee))
-        user.money_available = new_portfolio_cash
+        # calculate new_depo_cash & update user
+        user.money_available = user.money_available - (transaction.stock_value.stock_price * abs(amount)) - transaction_fee
         staticglobaldb.dbconn.update_user(user)
         return transaction
     else:
@@ -95,11 +95,10 @@ def sell_stocks(user: User, symbol: str, amount: int):
 
     # check for stock price:
     stock_value = finance_data.check_current_stock_price(symbol) # gets current StockValue
+    settings = staticglobaldb.dbconn.get_settings_by_user(user)
+    transaction_fee = settings.transaction_fee
 
-    purchase_value = stock_value.stock_price * amount # gets price from StockValue * amount
-
-    # to fetch users transaction fee
-    settings: Settings = staticglobaldb.dbconn.get_settings_by_user(user)
+    purchase_value = stock_value.stock_price * amount + transaction_fee # gets price from StockValue * amount
 
     # are there enough stocks owned ?
     portfolio_positions = stock_values_available(user)
@@ -132,9 +131,8 @@ def sell_stocks(user: User, symbol: str, amount: int):
         # sell stocks (insert transaction)
         transaction = staticglobaldb.dbconn.insert_transaction(transaction_prepare, user)
 
-        # calculate new_portfolio_cash & update user
-        new_portfolio_cash = user.money_available + (transaction.stock_value.stock_price * abs(amount)) - abs(float(settings.transaction_fee))
-        user.money_available = new_portfolio_cash
+        # calculate new_depo_cash & update user
+        user.money_available = user.money_available + (transaction.stock_value.stock_price * abs(amount)) - transaction_fee
         staticglobaldb.dbconn.update_user(user)
 
         return transaction
@@ -154,8 +152,7 @@ def stock_values_available(user: User):
     :return: List of PortfolioPositions w/ only the current amount and the symbol
     :test: try to sell more stocks than you own. If it fails this function caught you cheating ;)
     """
-    conn = DatabaseConn()
-    transactions = conn.get_transactions_and_stock_by_user(user)
+    transactions = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
 
     stocks = []
     for transaction in transactions:
@@ -292,6 +289,7 @@ def get_portfolio_history(user: User):
     """
     now = datetime.datetime.now().date()
     date = min_date
+    capital = user.starting_capital
 
     stocks = []
     returned = [] # list of PortfolioValue
@@ -341,9 +339,11 @@ def get_portfolio_history(user: User):
                     if transaction_type == "buy":
                         prev_value += next_value                # 605 + 290 = 895€
                         prev_transaction.amount += next_amount     # 5   + 3   = 8stk
+                        capital -= next_value
                     else:
                         prev_value -= next_value
                         prev_transaction.amount -= next_amount
+                        capital += next_value
 
                         #new Buy-In price (division by zero)
                         if prev_transaction.amount <= 0:
@@ -370,14 +370,15 @@ def get_portfolio_history(user: User):
             # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
             # print("DepotValue: ", current_depot_value)
         cash = user.money_available
-        current_depot_value += cash
+        current_depot_value = capital - transaction_fee
+############################
 
         # portfolio_Value
         portfolio_value = PortfolioValue(current_depot_value, date)
         returned.append(portfolio_value)
         date += datetime.timedelta(days=1)
         # print("PortfolioValue for ", date, ": ", portfolio_value)
-
+        # print("Cash for", date, ":", capital)
     # END WHILE day = now
     # print("PortfolioValues: ", returned)
     return returned
@@ -423,11 +424,33 @@ def get_portfolio_analytics():
     pass
 
 
-# user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
+user.money_available = 10000000
+staticglobaldb.dbconn.update_user(user)
+## TEST stock_values_available
+# print(stock_values_available(user))
+
 # print(buy_stocks(user, "IBM", 1))
 #
 # print(user.first_name, user.last_name)
-# history = get_portfolio_history(user)
-# print(history)
+history = get_portfolio_history(user)
+print(history)
 # history = staticglobaldb.dbconn.get_stock_price_from_date()
 # print(get_portfolio_positions(user))
+buy_stocks(user, "IBM", 1)
+
+history = get_portfolio_history(user)
+print(history)
+#
+# print("Buying 1 IBM stock for 100$")
+buy_stocks(user, 'IBM', 1)
+history = get_portfolio_history(user)
+print(history)
+# print("Buying 1 IBM stock for 100$")
+# sell_stocks(user, 'IBM', 1)
+# history = get_portfolio_history(user)
+# print(history)
+# buy_stocks(user, "IBM", 1)
+
+# history = get_portfolio_history(user)
+# print(history)
