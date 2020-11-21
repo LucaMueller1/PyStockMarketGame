@@ -77,7 +77,6 @@ def check_for_sufficient_cash_user(buy_response):
     ). A "True" boolean is subsequently returned. Incorrect: Method is called using a reponse type object which status equals 400 and therefore returns False.
     """
     buy_response = json.loads(buy_response.text)
-    print(buy_response)
     if "status" in buy_response:
         if buy_response["status"] == 400:
             sufficient_cash = False

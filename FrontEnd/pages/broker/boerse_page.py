@@ -76,13 +76,14 @@ def run(session_state):
             total_purchase_value = hf.get_total_purchase_value(
                 total_stock_value, purchase_fees
             )  # Y
+            user_balance = hf.get_user_balance(session_state.auth_key)
+
             stock_description = hf.get_stock_description(
                 session_state.auth_key, ticker_code_entry
             )  # Y
             stock_name = str(stock_description["stockName"])  # Y
             image_source = hf.get_image_url(stock_description["logoUrl"])  # Y
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"])  # Y
-            user_balance = hf.get_user_balance(session_state.auth_key)  # Y
             sustainability_warnings_stock = hf.get_sustainability_info(
                 session_state.auth_key, ticker_code_entry
             )
@@ -114,7 +115,7 @@ def run(session_state):
                 st.write("----------------------")
                 st.subheader("Total Purchase Price:")
                 st.title(total_purchase_value)
-                print(total_purchase_value)
+
 
                 if st.button("Buy"):
                     # send post request to DB
@@ -144,7 +145,6 @@ def run(session_state):
 
             # Place stock information on the right side
             with col2:
-                hf.get_sustainability_info(session_state.auth_key, ticker_code_entry)
                 st.write("---")
                 st.write(
                     """

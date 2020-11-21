@@ -39,9 +39,7 @@ def run(session_state):
         ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + depot_array)
         if ticker_code_entry_raw != " ":
             ticker_code_entry = ticker_code_entry_raw.split(": ")[0]
-            quantity_in_user_portfolio = int(
-                hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry)
-            )
+            quantity_in_user_portfolio = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry))
             if quantity_in_user_portfolio > 1:
                 if st.checkbox("Sell all stocks", value=True):
                     # Set the Value of quantity to the amount user has in Depot
@@ -51,20 +49,14 @@ def run(session_state):
 
                     # Selection of quantity
                     with col1:
-                        quantity_input_method_choice = st.radio(
-                            "Input method", ("Slider", "TextInput")
-                        )
+                        quantity_input_method_choice = st.radio("Input method", ("Slider", "TextInput"))
 
                         # Slider
                         if quantity_input_method_choice == "Slider":
-                            stock_quantity_for_sale = st.slider(
-                                "Please choose the quantity of stocks",
-                                1,
-                                quantity_in_user_portfolio,
-                            )
+                            stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, quantity_in_user_portfolio)
 
                         # Textfeld & Button
-                        if quantity_input_method_choice == "TextInput":
+                        if quantity_input_method_choice == "NumberInput":
                             stock_quantity_for_sale_raw = st.number_input(
                                 "Please choose the quantity of stocks",
                                 min_value=1,
@@ -85,31 +77,21 @@ def run(session_state):
                             + """</h1>
                                 </div>
                                 """,
-                            unsafe_allow_html=True,
+                            unsafe_allow_html=True
                         )
             else:
                 stock_quantity_for_sale = quantity_in_user_portfolio
 
             # Get stockinformation
-            single_stock_price = hf.get_single_stock_value(
-                session_state.auth_key, ticker_code_entry
-            )
+            single_stock_price = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry)
             selling_fees = hf.get_transaction_fees(session_state.auth_key)
-            stock_sell_value_price = round(
-                float(stock_quantity_for_sale * single_stock_price), 2
-            )
-            total_sell_value = (
-                str(round((stock_sell_value_price - float(selling_fees)), 2)) + "$"
-            )
-            stock_description = hf.get_stock_description(
-                session_state.auth_key, ticker_code_entry
-            )
+            stock_sell_value_price = round(float(stock_quantity_for_sale * single_stock_price), 2)
+            total_sell_value = (str(round((stock_sell_value_price - float(selling_fees)), 2)) + "$")
+            stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry)
             stock_name = str(stock_description["stockName"])
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"])
             image_source = hf.get_image_url((stock_description["logoUrl"]))
-            stock_buyin_price = hf.get_buyin_for_stock(
-                depot_information, ticker_code_entry
-            )
+            stock_buyin_price = hf.get_buyin_for_stock(depot_information, ticker_code_entry)
 
             # Auflistung Verkaufspreis mit Ordergebühren
             col1, col2 = st.beta_columns(2)
@@ -138,30 +120,15 @@ def run(session_state):
                     unsafe_allow_html=True,
                 )
                 st.write("---")
-                st.write(
-                    hf.gethtml_for_change_buyin_current(
-                        stock_buyin_price, single_stock_price
-                    ),
-                    unsafe_allow_html=True,
-                )
-                st.write(
-                    hf.calculate_total_change(
-                        stock_buyin_price, single_stock_price, stock_quantity_for_sale
-                    ),
-                    unsafe_allow_html=True,
-                )
+                st.write(hf.gethtml_for_change_buyin_current(stock_buyin_price, single_stock_price), unsafe_allow_html=True)
+                st.write(hf.calculate_total_change(stock_buyin_price, single_stock_price, stock_quantity_for_sale), unsafe_allow_html=True)
                 st.write("---")
                 st.subheader("Total selling value:")
                 st.title(total_sell_value)
 
                 # Sell button
                 if st.button("Sell"):
-                    sell_response = requests_server.post_transaction(
-                        session_state.auth_key,
-                        ticker_code_entry,
-                        stock_quantity_for_sale,
-                        transaction_type="sell",
-                    )
+                    sell_response = requests_server.post_transaction(session_state.auth_key, ticker_code_entry, stock_quantity_for_sale, transaction_type="sell")
                     st.subheader("Sold")
                     caching.clear_cache()
                     session_state.page = "boerse"
