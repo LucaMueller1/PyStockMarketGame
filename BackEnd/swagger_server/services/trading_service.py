@@ -290,6 +290,7 @@ def get_portfolio_history(user: User):
     now = datetime.datetime.now().date()
     date = min_date
     capital = user.starting_capital
+    print(min_date)
 
     stocks = []
     returned = [] # list of PortfolioValue
@@ -315,7 +316,7 @@ def get_portfolio_history(user: User):
             # take transactions from date and add to PortfolioPositions
             # or create PortfolioPositions for the date
             if transaction_date == date:
-                # print("Transaction found for ", date, "! It is: ", symbol)
+                print("Transaction found for ", date, "! It is: ", symbol)
 
                 # check if portfolio is already in stocks
                 symbol_index = None
@@ -326,38 +327,44 @@ def get_portfolio_history(user: User):
                         symbol_index = i
                         break
 
+                # add PortfolioValue to list
                 if not found:
+                    print("new transaction insert")
                     stocks.append(PortfolioPosition(symbol=symbol, stock_name=stock_name, logo_url=logo_url, amount=next_amount, stock_value=None, stock_buyin_price=next_stock_buyin_price))
+                    print(stocks)
                 else:
+                    print("Entering stocks:", stocks)
                     # update PortfolioPosition
                     prev_transaction = stocks[symbol_index]
 
                     """ Buy-In/Amount calculation """
                     prev_value = prev_transaction.amount * prev_transaction.stock_buyin_price # 5*120 = 600 + 5€ = 605€
-                    next_value = next_amount * next_stock_buyin_price # 3*95€ + 5€ = 290€
-
+                    next_value = next_amount * next_stock_buyin_price # 1*110€ + 10€ = 120€
+                    print(prev_value, next_value)
                     if transaction_type == "buy":
-                        prev_value += next_value                # 605 + 290 = 895€
+                        prev_value += next_value-prev_value               # 605 + 290 = 895€
                         prev_transaction.amount += next_amount     # 5   + 3   = 8stk
-                        capital -= next_value
+                        capital -= (next_value + transaction_fee)
                     else:
-                        prev_value -= next_value
+                        prev_value -= next_value-prev_value
                         prev_transaction.amount -= next_amount
-                        capital += next_value
+                        capital += (next_value - transaction_fee)
 
-                        #new Buy-In price (division by zero)
-                        if prev_transaction.amount <= 0:
-                            stocks[symbol_index] = None
-                            stocks.pop(symbol_index)
-                        else:
-                            prev_transaction.stock_buyin_price = prev_value/prev_transaction.amount # 895€ / 8stk
-                            # override PortfolioPosition
-                            stocks[symbol_index] = prev_transaction
+                    #new Buy-In price (division by zero)
+                    if prev_transaction.amount <= 0:
+                        stocks[symbol_index] = None
+                        stocks.pop(symbol_index)
+                    else:
+                        prev_transaction.stock_buyin_price = prev_value/prev_transaction.amount # 895€ / 8stk
+                        # override PortfolioPosition
+                        stocks[symbol_index] = prev_transaction
+                    print("Leaving stocks", stocks)
 
-                # add PortfolioValue to list
+
+
             # END IF date = transaction_date
         #END FOR - Transactions
-        stocks = remove_sold_stocks(stocks)
+        # stocks = remove_sold_stocks(stocks)
 
         current_depot_value = 0
         # get stock_price for date
@@ -369,8 +376,7 @@ def get_portfolio_history(user: User):
             current_depot_value += d_stock_price * d_stock_amount
             # print(d_stock_symbol, " on ", date, ": ", d_stock_price, "Amount: ", d_stock_amount)
             # print("DepotValue: ", current_depot_value)
-        cash = user.money_available
-        current_depot_value = capital - transaction_fee
+        current_depot_value = capital + current_depot_value
 ############################
 
         # portfolio_Value
@@ -425,11 +431,16 @@ def get_portfolio_analytics():
     pass
 
 
-# user = staticglobaldb.dbconn.get_user_by_auth_key("zwsKmSFc64qqcK2TykZRasrOHk5JK4d7TRHZYCAjshuaXIuDJUeOqIA4TaL3PlDCryJid7HutJOmzH0sEenWh5YDfsI3J0UzQ2zzKdwV7KE08pFhu99i9P2ysLXZnm13")
-# user.money_available = 10000000
+user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
+user.money_available = 10000000
 # staticglobaldb.dbconn.update_user(user)
 ## TEST stock_values_available
 # print(stock_values_available(user))
+
+## TEST get_history
+history = get_portfolio_history(user)
+print(history)
+
 
 # print(buy_stocks(user, "IBM", 1))
 #
