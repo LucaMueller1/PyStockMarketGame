@@ -12,7 +12,7 @@ import pages.broker.helperfunctions as hf
 import utilities.utils as utils
 
 """
-    desc: Creates FrontEnd page for buy portion of the broker page using the Streamlit framework.
+    desc: Creates FrontEnd page for buy part of the broker page using the Streamlit framework.
 
     author: Luca Weissbeck
 
@@ -26,7 +26,7 @@ def run(session_state):
 
     st.title("Broker")
     st.subheader(
-        "Welcome to your personalised broker. Here you can buy and sell your stocks."
+        "Welcome to your personalised broker. Here you can buy or sell stocks"
     )
 
     # Switch between BUY and SELL
@@ -46,47 +46,29 @@ def run(session_state):
             index = 0
 
         # Get the ticker_code from the User
-        st.write(
-            "Please enter your desired stock ticker and the quantity of your purchase:"
-        )
-        ticker_code_entry_raw = st.selectbox(
-            "Stock ticker:",
-            [" "] + requests_server.get_combined_stock_names(session_state.auth_key),
-            index,
-        )
+        st.write("Please enter your desired stock ticker and the quantity of your purchase:")
+        ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + requests_server.get_combined_stock_names(session_state.auth_key), index)
         if ticker_code_entry_raw != " ":
             ticker_code_entry = ticker_code_entry_raw.split(": ")[1]
 
             # Get the quantity from user
-            ticker_quantity_entry = st.number_input(
-                "Quantity: ", step=1, value=1, min_value=1
-            )
+            ticker_quantity_entry = st.number_input("Quantity: ", step=1, value=1, min_value=1)
             ticker_quantity_entry = int(ticker_quantity_entry)
 
             col1, col2 = st.beta_columns(2)
 
             # Collecting stock information
-            single_stock_value = hf.get_single_stock_value(
-                session_state.auth_key, ticker_code_entry
-            )  # Y
-            total_stock_value = hf.get_total_stock_value(
-                single_stock_value, ticker_quantity_entry
-            )  # Y
+            single_stock_value = hf.get_single_stock_value(session_state.auth_key, ticker_code_entry)  # Y
+            total_stock_value = hf.get_total_stock_value(single_stock_value, ticker_quantity_entry)  # Y
             purchase_fees = hf.get_transaction_fees(session_state.auth_key)  # Y
-            total_purchase_value = hf.get_total_purchase_value(
-                total_stock_value, purchase_fees
-            )  # Y
+            total_purchase_value = hf.get_total_purchase_value(total_stock_value, purchase_fees)  # Y
             user_balance = hf.get_user_balance(session_state.auth_key)
 
-            stock_description = hf.get_stock_description(
-                session_state.auth_key, ticker_code_entry
-            )  # Y
+            stock_description = hf.get_stock_description(session_state.auth_key, ticker_code_entry)  # Y
             stock_name = str(stock_description["stockName"])  # Y
             image_source = hf.get_image_url(stock_description["logoUrl"])  # Y
             dividend_yield = hf.get_dividend_yield(stock_description["dividend"])  # Y
-            sustainability_warnings_stock = hf.get_sustainability_info(
-                session_state.auth_key, ticker_code_entry
-            )
+            sustainability_warnings_stock = hf.get_sustainability_info(session_state.auth_key, ticker_code_entry)
 
             with col1:
                 st.write("----------------------")
@@ -118,38 +100,34 @@ def run(session_state):
 
 
                 if st.button("Buy"):
-                    # send post request to DB
+                    # Send post request to DB
                     buy_response = requests_server.post_transaction(
                         session_state.auth_key,
                         ticker_code_entry,
                         ticker_quantity_entry,
                         transaction_type="buy",
                     )
-                    user_has_sufficient_cash = hf.check_for_sufficient_cash_user(
-                        buy_response
-                    )
+                    user_has_sufficient_cash = hf.check_for_sufficient_cash_user(buy_response)
 
                     if user_has_sufficient_cash is False:
                         st.error("Insufficient funds")
                         sleep(2)
                         st.experimental_rerun()
 
-                    st.write(
-                        "Your specified stocks have been bought and can be viewed in your portfolio"
-                    )
+                    st.write("Your specified stocks have been bought and can be viewed in your portfolio")
                     st.balloons()
                     sleep(1)
                     caching.clear_cache()
                     session_state.page = "depot"
                     st.experimental_rerun()
 
-            # Place stock information on the right side
+            # Place stock information on the right hand side
             with col2:
                 st.write("---")
                 st.write(
                     """
                                 <div class="greyish padding box">
-                                <h2><u>Stock Information<u></h2>
+                                <h2>Stock Information</h2>
                                 <p>Stock Name: <b>"""
                     + str(stock_name)
                     + """<b></p>

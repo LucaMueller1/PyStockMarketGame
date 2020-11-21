@@ -6,13 +6,10 @@ date: 2020-11-07
 
 import re
 
+from swagger_server.controllers import staticglobaldb
 from swagger_server.models.api_error import ApiError  # noqa: E501
 from swagger_server.models.stock_description import StockDescription  # noqa: E501
-from swagger_server.models.stock_search_result import StockSearchResult  # noqa: E501
 from swagger_server.models.stock_sustainability import StockSustainability  # noqa: E501
-from swagger_server.models.stock_value import StockValue  # noqa: E501
-from swagger_server import util
-from swagger_server.controllers import staticglobaldb
 from swagger_server.services.finance import finance_data
 
 

@@ -9,10 +9,10 @@ from time import sleep
 # Utilities Import
 import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
-import utilities.utils as utils
+
 
 """
-    desc: Creates FrontEnd page page for the sell portion of the broker page using the Streamlit framework.
+    desc: Creates FrontEnd page for the sell part of the broker page using the Streamlit framework.
 
     author: Luca Weissbeck
 
@@ -25,15 +25,15 @@ def run(session_state):
 
     st.title("Broker")
     st.subheader(
-        "Welcome to your personalised broker. Here you can buy and sell your stocks."
+        "Welcome to your personalised broker. Here you can buy or sell stocks."
     )
 
-    # switch between BUY and SELL
+    # Switch between BUY and SELL
     mode_switch = st.radio(
         "Please choose whether you want to buy or sell stocks", ("Buy", "Sell")
     )
     if mode_switch == "Sell":
-        st.write("Please choose the stock, that you want to sell.")
+        st.write("Please choose the stock, that you want to sell")
 
         depot_array, depot_information = hf.get_depo_array(session_state.auth_key)
         ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + depot_array)
@@ -42,7 +42,7 @@ def run(session_state):
             quantity_in_user_portfolio = int(hf.get_stock_quantity_in_depot(depot_information, ticker_code_entry))
             if quantity_in_user_portfolio > 1:
                 if st.checkbox("Sell all stocks", value=True):
-                    # Set the Value of quantity to the amount user has in Depot
+                    # Set the value of quantity to the amount user has in portfolio
                     stock_quantity_for_sale = quantity_in_user_portfolio
                 else:
                     col1, col2 = st.beta_columns((4, 1))
@@ -55,10 +55,10 @@ def run(session_state):
                         if quantity_input_method_choice == "Slider":
                             stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, quantity_in_user_portfolio)
 
-                        # Textfeld & Button
+                        # NumberInput
                         if quantity_input_method_choice == "NumberInput":
                             stock_quantity_for_sale_raw = st.number_input(
-                                "Please choose the quantity of stocks",
+                                "Please enter the quantity of stocks:",
                                 min_value=1,
                                 max_value=quantity_in_user_portfolio,
                                 step=1,
@@ -66,7 +66,7 @@ def run(session_state):
                             )
                             stock_quantity_for_sale = int(stock_quantity_for_sale_raw)
 
-                    # Anzeige der Quantität der ausgewaählten Aktie im Depot
+                    # Quantity in Portfolio for specified stock
                     with col2:
                         st.markdown(
                             """
@@ -93,7 +93,7 @@ def run(session_state):
             image_source = hf.get_image_url((stock_description["logoUrl"]))
             stock_buyin_price = hf.get_buyin_for_stock(depot_information, ticker_code_entry)
 
-            # Auflistung Verkaufspreis mit Ordergebühren
+            # Sell Pricing information
             col1, col2 = st.beta_columns(2)
             with col1:
                 st.write("---")
@@ -123,7 +123,7 @@ def run(session_state):
                 st.write(hf.gethtml_for_change_buyin_current(stock_buyin_price, single_stock_price), unsafe_allow_html=True)
                 st.write(hf.calculate_total_change(stock_buyin_price, single_stock_price, stock_quantity_for_sale), unsafe_allow_html=True)
                 st.write("---")
-                st.subheader("Total selling value:")
+                st.subheader("Total Selling Value:")
                 st.title(total_sell_value)
 
                 # Sell button
@@ -134,13 +134,13 @@ def run(session_state):
                     session_state.page = "boerse"
                     st.experimental_rerun()
 
-            # Aktieninformationen neben der Verkaufsauflistung anzeigen
+            # Stock Information to the right hand side
             with col2:
                 st.write("---")
                 st.markdown(
                     """
                                             <div class="greyish padding box">
-                                            <h2><u>Stock Information</u></h2>
+                                            <h2>Stock Information</h2>
                                             <p>Stock name: <b>"""
                     + str(stock_name)
                     + """ </b></p>

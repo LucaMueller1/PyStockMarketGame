@@ -6,18 +6,12 @@ date: 2020-10-14
 
 import connexion
 
+from swagger_server.controllers import staticglobaldb
 from swagger_server.models.api_error import ApiError  # noqa: E501
-from swagger_server.models.portfolio_position import PortfolioPosition  # noqa: E501
-from swagger_server.models.portfolio_value import PortfolioValue  # noqa: E501
 from swagger_server.models.transaction import Transaction  # noqa: E501
 from swagger_server.models.transaction_prepare import TransactionPrepare  # noqa: E501
 from swagger_server.models.user import User
-from swagger_server.models.settings import Settings
-from swagger_server import util
-from swagger_server.controllers import staticglobaldb
-from swagger_server.services.finance import finance_data
 from swagger_server.services import trading_service
-from swagger_server.models.user import User
 
 
 def create_transaction(transaction_prepare_param):  # noqa: E501
