@@ -327,21 +327,28 @@ def __get_daily_absolute_value(row: pd.Series):
         return row.amount * row.value.stock_price
 
 def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
-
+    now = datetime.datetime.now()
+    # print(transaction_and_info_list)
+    date = get_min_date(transaction_list)
     date_list = []
     change_list = []
+    while date <= now:
+        transaction_tracker = False
+        # [(transaction, stock_search_result), ..., (transaction, stock_search_result)]
+        for transaction_and_info in transaction_and_info_list:
+            transaction_tracker = True
+            if transaction_and_info[0].stock_value.timestamp == date
+                transaction = transaction_and_info[0]
 
-    # [(transaction, stock_search_result), ..., (transaction, stock_search_result)]
-    for transaction_and_info in transaction_and_info_list:
-        transaction = transaction_and_info[0]
+                date_list.append(transaction.stock_value.timestamp)
 
-        date_list.append(transaction.stock_value.timestamp)
-
-        if transaction.transaction_type == "buy":
-            change_list.append(-transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
-        else:
-            change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
-
+                if transaction.transaction_type == "buy":
+                    change_list.append(-transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
+                else:
+                    change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
+        if transaction_tracker == False:
+            date_list.append(date)
+            change_list.append(changelist[-1])
     return (date_list, change_list)
 
 
