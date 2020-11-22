@@ -10,7 +10,6 @@ import swagger_server.services.schedule_service as schedule_service
 from swagger_server.models.transaction_prepare import TransactionPrepare
 
 import datetime
-import re
 import pandas as pd
 
 # deadlock = False # might be used in the future to prevent simultaneous buying and selling
