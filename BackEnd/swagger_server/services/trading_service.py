@@ -290,8 +290,7 @@ def get_portfolio_history_pandas(user: User):
         stock_change_temp_df["date"] = [date_list[i]] * len(stock_change_temp_df)
         stock_change_temp_df["value"] = stock_change_temp_df.apply(__get_value_for_postion, axis=1)
         stock_change_temp_df["total_value"] = stock_change_temp_df.apply(__get_daily_absolute_value, axis=1)
-        stock_change_df.append(stock_change_temp_df)
-
+        stock_change_df = stock_change_df.append(stock_change_temp_df)
     return stock_change_df
 
     # finance_data.insert_stock_history_for_date_to_db(symbol, date)
@@ -549,7 +548,8 @@ print(user.first_name)
 transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
 # print(__calculate_daily_change(user, transaction_list))
 print(__calculate_daily_stock_change(user,transaction_list))
-print(get_portfolio_history_pandas(user))
+df = get_portfolio_history_pandas(user)
+print(df[['date', 'symbol', 'total_value']])
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
