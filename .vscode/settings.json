@@ -1,5 +1,7 @@
 {
-    "python.linting.pylintEnabled": true,
+    "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": false,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "python.pythonPath": "/Users/benschaper/Library/Caches/pypoetry/virtualenvs/becker-python-sLJATsMa-py3.8/bin/python",
+    "python.linting.pycodestyleEnabled": true
 }

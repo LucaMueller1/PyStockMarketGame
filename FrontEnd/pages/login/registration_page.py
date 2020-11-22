@@ -33,7 +33,7 @@ def run(session_state: SessionState.SessionState) -> None:
     input_password = st.text_input("password:", type="password")
     input_first_name = st.text_input("first name:")
     input_name = st.text_input("last name:")
-    input_starting_capital = st.number_input("start capital (USD$)", value=0)
+    input_starting_capital = st.number_input("start capital (USD$)", value=0, step=100)
 
     st.warning("All fields are mandatory")
 
