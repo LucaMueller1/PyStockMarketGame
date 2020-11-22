@@ -191,6 +191,15 @@ def stock_values_available(user: User):
     return stocks
 
 
+def has_lost_game(user: User) -> bool:
+    positions = stock_values_available(user)
+
+    if user.money_available <= 0 and len(stock_values_available(user)) == 0:
+        print("User:", user.first_name, "lost this game. Deleting User!")
+        return True
+    else:
+        return False
+
 def get_portfolio_positions(user: User):
     """ !!! this does not calculate the history of the depot !!! -> get_portfolio_history
 
