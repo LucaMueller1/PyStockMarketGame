@@ -77,7 +77,17 @@ def get_combined_stock_names(auth_key: str) -> list:
     """
     return [f"""{stock_dict["stockName"]}: {stock_dict["symbol"]}""" for stock_dict in get_stock_names(auth_key)]
 
-def post_transaction(auth_key: str, symbol: str, amount: int, transaction_type: str):
+def post_transaction(auth_key: str, symbol: str, amount: float, transaction_type: str):
+    """
+    Send transaction details to backend, once a user buys or sells a stock in frontend.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param symbol: (String) Stock selected by user
+    :param amount: (Float) Total selling value or buy value.
+    :param transaction_type: (String) "buy" or "sell"
+    :return: (Dictionary)
+    :test Correct: All parameters are specified with the correct datatype and API request is successful. Incorrect: Typo in transaction_type --> API request fails.
+    """
     json = {"symbol": symbol,
             "amount": amount,
             "transactionType": transaction_type}
@@ -94,9 +104,25 @@ def get_stock_description(auth_key: str, symbol: str) -> dict:
 
 @st.cache(show_spinner=False)
 def get_stockprice_history(auth_key: str, symbol: str, period: str):
+    """
+    Returns stockprice history for specified period. This includes the stock price with a timestamp.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param symbol: (String) Stock selected by user
+    :param period: (String) Example: 1d stands for one day.
+    :return: (List) Returns a List with dictionaries inside.
+    :test Correct: Method is called using a valid authkey, valid symbol and a valid period and the API request is successful. Incorrect: Period input-parameter is invalid or specified incorrectly and API request fails.
+    """
     return requests.get(BASE_URL + f"stock/{symbol}/history?period={period}", headers={"api_key": auth_key}).json()
 
 def get_user_transaction_fee(auth_key: str):
+    """
+    API request to obtain current transaction fee from backend.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :return: (Dictionary)
+    :test Correct: Valid auth_key is provided and API request is successful. Incorrect: No auth_key is provided and API request fails.
+    """
     return requests.get(BASE_URL + "user/settings", headers={"api_key": auth_key}).json()
 
 @st.cache(show_spinner=False)
@@ -110,9 +136,24 @@ def get_user_portfolio(auth_key: str) -> dict:
     return requests.get(BASE_URL + "portfolio", headers={"api_key": auth_key}).json()
 
 def delete_user(auth_key: str):
+    """
+    API request to delete user.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :return: (Dictionary)
+    :test Correct: Valid auth key is provided and API request is successful. Incorrect: No auth key is supplied and API request fails.
+    """
     return requests.delete(BASE_URL + "user", headers={"api_key": auth_key}).json()
 
 def post_settings(auth_key:str, transactionFee: float):
+    """
+    API request to update the transaction fees in Backend, when user adjusts TransactionFees in Frontend.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param transactionFee: (Float) Float for new transaction fee
+    :return: (Dictionary)
+    :test Correct: Valid auth key and a float for transactionFee is provided, API request successful. Incorrect: transactionFee is passed as a String into the method and API request fails.
+    """
     json = {"transactionFee": transactionFee}
     return requests.post(BASE_URL + "user/settings", headers={"api_key": auth_key}, json=json)
 

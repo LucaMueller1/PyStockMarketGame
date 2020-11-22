@@ -277,7 +277,7 @@ def get_transaction_fees(auth_key):
 @st.cache(show_spinner=False)
 def get_stock_description(auth_key, ticker_code):
     """
-    Cached funtion that returns a dictionary with stock description attributes obtained by API request.
+    Cached function that returns a dictionary with stock description attributes obtained by API request.
 
     :param auth_key: (String) API key authorizing and identifying the user.
     :param ticker_code: (String) Stock selected by user
