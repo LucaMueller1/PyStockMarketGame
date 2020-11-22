@@ -27,7 +27,6 @@ class DatabaseConn:
 
     """
 
-    # def __init__(self, databaseAddress: str, databaseuser: str, databasePassword: str, databaseName: str):
     def __init__(self):
         """
 
@@ -35,10 +34,8 @@ class DatabaseConn:
 
             param: (str) databaseAddress, (str) databaseuser, (str) databasePassword, (str) databaseName
 
-            test: Correct:
 
         """
-        # self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',echo=True)
         self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
                                          echo=False, pool_size=5, pool_recycle=3600)
 
@@ -49,7 +46,7 @@ class DatabaseConn:
 
             param: (User) user
 
-            test: Correct:
+            test: Correct: If a valid user object is passed with all values tha need to be inserted, the method returns true. Incorrect: If an attribute has the wrong type inside the class, e.g. Money_available is passed as a String, the method returns false
 
         """
         auth_password = bcrypt.hashpw(str(user.password).encode('utf8'), bcrypt.gensalt())
@@ -77,7 +74,7 @@ class DatabaseConn:
 
             param: (str) authKey,
 
-            test: Correct: If a valid authkey is passed to the function, it will get removed from the database. The function does return true if no SQL Error occurs.
+            test: Correct: If a valid authkey is passed to the function, it will get removed from the database. Incorrect: The function does return false if a SQL Error occurs.
 
         """
         returned = True
@@ -98,7 +95,7 @@ class DatabaseConn:
 
             param: (User) The user object, all objects apart from the ID are nullable
 
-            test: Correct: If a valid user with the user.id variable set is passed to the function, it will get removed from the database. The function does return true if no SQL Error occurs.
+            test: Correct: If a valid user with the user.id variable set is passed to the function, it will get removed from the database. The function does return true if no SQL Error occurs. Incorrect: The userid is passed as a String -> is passed with the wrong type
 
         """
         returned = True
@@ -167,11 +164,11 @@ class DatabaseConn:
     def check_auth_hash(self, auth_key: str) -> AuthKey:
         """
 
-            desc: Function to generate an AuthHash/ SessionKey
+            desc: Function to validate an AuthHash/ SessionKey
 
-            param: (int) userid
+            param: (str) authkey
 
-            test: Correct: If a valid userid is passed the inserted AuthKey obj is returned
+            test: Correct: IF a valid authHash is passed as a String, the method will return an AuthKey object, filled with the userid the key belongs to and the expiry date. Otherwise, it will return None.
 
         """
         auth_key_returned = None
@@ -192,9 +189,9 @@ class DatabaseConn:
 
             desc: Function to get a User object based on the auth key
 
-            param: (int) userid
+            param: (str) auth_key
 
-            test: Correct: If a valid userid is passed the inserted AuthKey obj is returned
+            test: Correct: If a valid authkey belonging to a user is passed, the method returns an object of the type User. Otherwise it will return None
 
         """
         user = None
@@ -209,12 +206,30 @@ class DatabaseConn:
         return user
 
     def util_format_datetime_for_expiry(self, weeks: int) -> str:
+        """
+
+            desc: Helper function to generate an Datetime String two weeks in the future from the actual datetime
+
+            param: (int) weeks
+
+            test: Correct: If a calculateable number is passed , the method will return a string with the formatted (datetime now + the passed amount of weeks). If weeks is passed with a number too high for the datetime library to calculate it, it will throw an error
+
+        """
         now = datetime.now()
         result = now + relativedelta(weeks=weeks)
         result = result.strftime('%Y-%m-%d %H:%M:%S')
         return result
 
     def get_stock_search_results(self) -> list:
+        """
+
+            desc: Function to return all stocks with their symbol and their name only (Using the object StockSearchResult) from the database for the frontend search box.
+
+            param: None
+
+            test: Since the function does not take parameters, it will always return a list of StockSearchResult or throw an sqlError.
+
+        """
         returnlist = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("SELECT `symbol`, `name` FROM `tradable_values`   "))
@@ -223,6 +238,15 @@ class DatabaseConn:
         return returnlist
 
     def get_all_stocks(self) -> list:
+        """
+
+            desc: Function to return a list of StockDescription objects with all stocks in the database.
+
+            param: None
+
+            test: The function should always return a list of StockDescription or throw an sqlerror
+
+        """
         stockarray = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values`"""))
@@ -236,6 +260,15 @@ class DatabaseConn:
         return rs
 
     def get_stock_by_symbol(self, symbol: str) -> StockDescription:
+        """
+
+            desc: Function to return a StockDescription object of the stock found in the database with a specific symbol given.
+
+            param: (str) symbol
+
+            test: If a symbol that's present in the database is passed, a StockDescription object is returned. If the symbol is not found in the database, None will be returned
+
+        """
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `tradable_values` WHERE `symbol` = :symbol"""),
@@ -247,6 +280,15 @@ class DatabaseConn:
         return returned
 
     def insert_transaction(self, transaction: TransactionPrepare, user: User) -> Transaction:
+        """
+
+            desc: Function to insert a transaction into the database
+
+            param: (TransactionPrepare) transaction, (User) user
+
+            test: If all values in the TransactionPrepare object are set and the user object has a valid userid the function does insert the transaction into the database. Incorrect: The stock has not yet a course inserted and therefore the INSERT method will fail. The inserted Transaction is SELECTED and then returned.
+
+        """
         returned = None
         with self.engine.connect() as con:
             con.execute(sqla.text(
@@ -266,6 +308,15 @@ class DatabaseConn:
         return returned
 
     def get_transactions_and_stock_by_user(self, user: User) -> dict:
+        """
+
+            desc: Get all transactions from a specific user
+
+            param: (User) user
+
+            test: If a Userid present in the database is passed, the method will either return an empty list if no transactions are present yet or a tupel of objects of the type Transaction, paired with an object of the type StockDescription. Incorrect: Passed user object has no or wrong ID.
+
+        """
         returned = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
@@ -285,6 +336,15 @@ class DatabaseConn:
         return returned
 
     def get_settings_by_user(self, user: User) -> Settings:
+        """
+
+            desc: Get all Settings from a specified user
+
+            param: (User) user
+
+            test: If a user object is passed with a valid id, a Settings object is returned consisting of the users settings. Incorrect: The users settings are not found in the database
+
+        """
         transaction_fee = 10  # Default Value
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `user_settings` WHERE `userid` = :userid """),
@@ -295,7 +355,16 @@ class DatabaseConn:
 
         return returned
 
-    def update_settings_by_user(self, user: User, settings: Settings):  # Static for Transaction Fee, caution!!
+    def update_settings_by_user(self, user: User, settings: Settings):
+        """
+
+            desc: Update the settings for a specific user
+
+            param: (User) user, (Settings) settings
+
+            test: If the user object has a valid id in the database and the user settings were properly set, the method will return True
+
+        """
         returned = True
         transaction_fee = settings.transaction_fee
         with self.engine.connect() as con:
@@ -306,7 +375,15 @@ class DatabaseConn:
         return returned
 
     def update_stock(self, stock_description: StockDescription):
+        """
 
+            desc: Update the settings for a specific user
+
+            param: (User) user, (Settings) settings
+
+            test: If the user object has a valid id in the database and the user settings were properly set, the method will return True
+
+        """
         returned = False
         key = 0
         with self.engine.connect() as con:
@@ -318,6 +395,15 @@ class DatabaseConn:
         return returned
 
     def insert_course(self, stock_value: StockValue):
+        """
+
+            desc: Insert course into the database
+
+            param: (StockValue) stock_value
+
+            test: If all attributes in the StockValue object are properly set, the course gets inserted into the database. If for example the date is missing, an error is thrown.
+
+        """
         returned = False
         key = 0
         if (self.get_stock_price_from_date(stock_value.symbol, stock_value.timestamp)) is not None:
@@ -331,6 +417,15 @@ class DatabaseConn:
         return returned
 
     def get_stock_price_from_today(self, stock_symbol: str) -> StockValue:
+        """
+
+            desc: Get the stock price from today by a stock symbol
+
+            param: (str) stock_symbol
+
+            test: If a stock_price is available for the given symbol and the date of today, a StockValue object is returned. Otherwise None.
+
+        """
         # return StockValue Object
         returned = None
         with self.engine.connect() as con:
@@ -342,7 +437,16 @@ class DatabaseConn:
                                       timestamp=row['timestamp'])
         return returned
 
-    def get_stock_price_from_date(self, stock_symbol: str, history_date: datetime):
+    def get_stock_price_from_date(self, stock_symbol: str, history_date: datetime) -> StockValue:
+        """
+
+            desc: Get the stock price from a specific date by a stock symbol
+
+            param: (str) stock_symbol
+
+            test: If a stock_price is available for the given symbol and the given date, a StockValue object is returned. Otherwise None.
+
+        """
         returned = None
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
@@ -353,7 +457,16 @@ class DatabaseConn:
                                       timestamp=row['timestamp'])
         return returned
 
-    def get_latest_stock_price(self, stock_symbol: str):
+    def get_latest_stock_price(self, stock_symbol: str) -> StockValue:
+        """
+
+            desc: Get the latest stock price available
+
+            param: (str) stock_symbol
+
+            test: If any stock_price is available for the passed symbol, the latest value embedded in a StockValue object is returned. Otherwise None.
+
+        """
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
                 """SELECT * FROM `tradable_values_prices` WHERE `symbol` LIKE :symbol ORDER BY `timestamp` DESC LIMIT 1"""),
@@ -364,6 +477,15 @@ class DatabaseConn:
         return returned
 
     def update_user(self, user: User) -> bool:
+        """
+
+             desc: Update all attributes for a user in the database
+
+             param: (User) user
+
+             test: If all attirbutes have the right types, the method will return True. If money_available is passed as a string, it will return False.
+
+         """
         returned = False
         with self.engine.connect() as con:
             rs = con.execute(sqla.text(
@@ -375,6 +497,14 @@ class DatabaseConn:
         return returned
 
     def get_all_users(self) -> list:
+        """
+
+             desc: Get a list of all users in the database
+
+             param: None
+
+             test: Correct: Should always return a list of users and if the database is empty it will return an empty list.
+         """
         users = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT * FROM `users` """))
@@ -385,6 +515,14 @@ class DatabaseConn:
         return users
 
     def get_all_stocks_distinct_in_transactions(self) -> list:
+        """
+
+             desc: Get a distinct list symbols in the transaction table
+
+             param: None
+
+             test: Correct: Should always return a list of symbols and if the transactions table is empty an empty list.
+         """
         symbols = []
         with self.engine.connect() as con:
             rs = con.execute(sqla.text("""SELECT DISTINCT symbol FROM `transactions` """))
