@@ -302,10 +302,12 @@ def get_portfolio_history_pandas(user: User):
         stock_change_df = stock_change_df.append(stock_change_temp_df)
         stock_change_df = stock_change_df.dropna()
         stock_change_df = stock_change_df.groupby(["date"]).sum()
-        
-    result_df = pd.DataFrame(columns=) 
-    
-    return stock_change_df
+
+    result_df = pd.DataFrame()
+    result_df["date"] = stock_change_df["date"]
+    result_df["daily_sum"] = daily_change_df["absolute_change"] + stock_change_df["total_value"]
+
+    return result_df
 
     # finance_data.insert_stock_history_for_date_to_db(symbol, date)
 
