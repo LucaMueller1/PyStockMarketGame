@@ -56,7 +56,7 @@ def run(session_state):
                             stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, quantity_in_user_portfolio)
 
                         # NumberInput
-                        if quantity_input_method_choice == "NumberInput":
+                        if quantity_input_method_choice == "Number Input":
                             stock_quantity_for_sale_raw = st.number_input(
                                 "Please enter the quantity of stocks:",
                                 min_value=1,

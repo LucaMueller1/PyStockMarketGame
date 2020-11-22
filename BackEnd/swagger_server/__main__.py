@@ -21,6 +21,13 @@ def main():
 
 
 def start_scheduler():
+    """
+
+        desc: Function to start the Scheduler for the periodic insertion of the Stock Prices
+
+        param: None
+
+    """
     sched = BackgroundScheduler(daemon=True)
     sched.add_job(insert_stock_data, 'interval', minutes=15)
     sched.start()
