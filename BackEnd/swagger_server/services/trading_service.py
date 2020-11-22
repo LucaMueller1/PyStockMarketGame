@@ -10,7 +10,6 @@ import swagger_server.services.schedule_service as schedule_service
 from swagger_server.models.transaction_prepare import TransactionPrepare
 
 import datetime
-import re
 import pandas as pd
 
 # deadlock = False # might be used in the future to prevent simultaneous buying and selling
@@ -669,8 +668,8 @@ user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMU
 # print(stock_values_available(user))
 
 ## TEST get_history
-history = get_portfolio_history_pandas(user)
-print(history)
+# history = get_portfolio_history_pandas(user)
+# print(history)
 
 ## TEST buy and portfolioPositions
 # user.money_available = 10000
