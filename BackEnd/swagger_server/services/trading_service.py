@@ -316,9 +316,6 @@ def __get_value_for_postion(row: pd.Series):
     return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
-    print(row.amount)
-    print(row.value)
-    print(row.date)
     if pd.isna(row.amount):
         return 0
     elif pd.isna(row.value):
