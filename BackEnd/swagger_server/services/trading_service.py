@@ -298,7 +298,7 @@ def get_portfolio_history_pandas(user: User):
 def __get_value_for_postion(row: pd.Series):
     date = row.date
     date = date.to_pydatetime().date()
-    print(type(date))
+
     return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
@@ -549,7 +549,7 @@ transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user
 # print(__calculate_daily_change(user, transaction_list))
 print(__calculate_daily_stock_change(user,transaction_list))
 df = get_portfolio_history_pandas(user)
-print(df[['date', 'symbol', 'total_value']])
+print(df[['date', 'symbol', 'value']])
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
