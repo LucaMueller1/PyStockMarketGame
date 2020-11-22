@@ -303,7 +303,7 @@ def get_portfolio_history_pandas(user: User):
         stock_change_df = stock_change_df.dropna()
         stock_change_df = stock_change_df.groupby(["date"]).sum()
         
-    
+    result_df = pd.DataFrame(columns=) 
     
     return stock_change_df
 
