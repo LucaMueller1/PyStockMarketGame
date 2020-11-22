@@ -61,7 +61,7 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
     if stock_value is None: # StockValue
 
         symbol = stock_description.symbol # Symbol from StockValue
-        stock_value = insert_stock_history_for_date_to_db(symbol, history_date)
+        stock_value = __insert_stock_history_for_date_to_db(symbol, history_date)
         # print("StockValue for ", history_date,": ", stock_value)
 
     return stock_value
@@ -94,7 +94,7 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     return value
 
 
-def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
+def __insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
 
@@ -108,7 +108,9 @@ def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     :return: StockValue
 
     """
-    print(history_date)
+    date += datetime.timedelta(days=1)
+    start_date = history_date
+    end_date = history_date
 
     # insure its always getting the last weekday
     df = yf.Ticker(symbol).history(start=start_date, end=start_date)

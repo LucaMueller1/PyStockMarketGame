@@ -283,17 +283,35 @@ def get_portfolio_history_pandas(user: User):
 
     portfolio_list, date_list = __calculate_daily_stock_change(user, transaction_and_info_list)
 
-    stock_change_df = pd.DataFrame(portfolio_list.items(), columns=["symbol","amount"])
-    stock_change_df["date"] = date_list
-    stock_change_df["value"] = stock_change_df.apply(__get_value_for_postion, axis=1)
-    stock_change_df["total_value"] = stock_change_df.apply(__get_daily_absolute_value, axis=1)
+    stock_change_df = pd.DataFrame(columns=["symbol","amount","date","value","total_value"])
+
+    for i, portfolio in enumerate(portfolio_list):
+        stock_change_temp_df = pd.DataFrame(portfolio.items(), columns=["symbol","amount"])
+        stock_change_temp_df["date"] = [date_list[i]] * len(stock_change_temp_df)
+        stock_change_temp_df["value"] = stock_change_temp_df.apply(__get_value_for_postion, axis=1)
+        stock_change_temp_df["total_value"] = stock_change_temp_df.apply(__get_daily_absolute_value, axis=1)
+        stock_change_df.append(stock_change_temp_df)
+
     return stock_change_df
 
+    # finance_data.insert_stock_history_for_date_to_db(symbol, date)
+
 def __get_value_for_postion(row: pd.Series):
-    return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, row.date)
+    date = row.date
+    date = date.to_pydatetime().date()
+    print(type(date))
+    return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
-    return row.amount * row.value
+    print(row.amount)
+    print(row.value)
+    print(row.date)
+    if pd.isna(row.amount):
+        return 0
+    elif pd.isna(row.value):
+        return None
+    else:
+        return row.amount * row.value.stock_price
 
 def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
 
