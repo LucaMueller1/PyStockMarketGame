@@ -299,18 +299,17 @@ def get_portfolio_history_pandas(user: User):
         stock_change_temp_df["date"] = [date_list[i]] * len(stock_change_temp_df)
         stock_change_temp_df["value"] = stock_change_temp_df.apply(__get_value_for_postion, axis=1)
         stock_change_temp_df["total_value"] = stock_change_temp_df.apply(__get_daily_absolute_value, axis=1)
-
-    stock_change_df = stock_change_df.append(stock_change_temp_df)
+        stock_change_df = stock_change_df.append(stock_change_temp_df)
     stock_change_df = stock_change_df.dropna()
     stock_change_df = stock_change_df.groupby(["date"]).sum()
 
+    print(stock_change_df)
+    print(stock_change_df[['total_value']])
     result_df = pd.DataFrame()
-    result_df["date"] = stock_change_df.index
-    result_df["cash_change"] =  daily_change_df["absolute_change"]
+    result_df["cash_change"] = daily_change_df["absolute_change"]
     result_df["stock_change"] = stock_change_df["total_value"]
     result_df["daily_sum"] = result_df.apply(__calculate_total_value, axis=1)
-    print(result_df)
-    return result_df[["date","daily_sum"]]
+    return result_df[["daily_sum"]].dropna()
 
 def __calculate_total_value(row: pd.Series):
     return row.cash_change + row.stock_change
