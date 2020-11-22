@@ -37,7 +37,7 @@ def get_transaction_fees(auth_key):
 
     :param auth_key: (String) API key authorizing and identifying the user.
     :return: (String)
-    :test Correct: Method is called using a valid authkey which results in successful.
+    :test Correct: Method is called using a valid authkey which results in successful. Incorrect: No auth_key is provided when method is called.
     """
     transaction_fees = (requests_server.get_user_transaction_fee(auth_key))[
         "transactionFee"

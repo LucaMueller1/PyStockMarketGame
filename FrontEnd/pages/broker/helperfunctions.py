@@ -143,7 +143,7 @@ def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
     if change < 0:
         change = str(change) + "$"
         return (
-            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: #F52D5B;">"""
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change Since Buy (single stock): <code style="color: #F52D5B;">"""
             + change
             + """</code></p></div> """
         )
@@ -241,7 +241,7 @@ def get_single_stock_value(auth_key, ticker_code):
     :param auth_key: (String) API key authorizing and identifying the user.
     :param ticker_code: (String) Stock selected by user
     :return: (Float or String) Returns either the float for the stock price or "N/A" if no stock price is found
-    :test Correct: Function is called using a valid authkey and tickercode and subsequently returns either "N/A" or the stock price. Incorrect: ticker code cannot be found and thus the API request returns an error.
+    :test Correct: Function is called using a valid authkey and ticker_code and subsequently returns either "N/A" or the stock price. Incorrect: ticker code cannot be found and thus the API request returns an error.
     """
     stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[
         0
