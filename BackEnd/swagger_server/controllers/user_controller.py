@@ -12,6 +12,7 @@ from swagger_server.models.auth_key import AuthKey  # noqa: E501
 from swagger_server.models.settings import Settings  # noqa: E501
 from swagger_server.models.user import User  # noqa: E501
 from swagger_server.models.user_prepare_login import UserPrepareLogin  # noqa: E501
+from swagger_server.services import trading_service
 
 
 def create_user(user_param):  # noqa: E501
@@ -109,6 +110,7 @@ def get_user_settings():  # noqa: E501
 
 def login_user(user_prepare_login_param):  # noqa: E501
     """Logs user into the system and returns api key
+    checks for endgame.
 
     Authenticates user and returns api key for other requests # noqa: E501
 
@@ -126,6 +128,9 @@ def login_user(user_prepare_login_param):  # noqa: E501
         if user is None:
             return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login"), 404
         auth_key = conn.generate_auth_hash(user.id)
+        if trading_service.has_lost_game(user):
+            # staticglobaldb.dbconn.delete_user(user)
+            print("Game ended for", user.first_name)
 
     return auth_key
 

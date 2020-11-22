@@ -37,7 +37,7 @@ def check_current_stock_price(symbol: str):
     return stock_value
 
 
-def get_stock_price_for_date(stock_description: StockDescription, history_date: datetime):
+def get_stock_price_for_date(symbol: str, history_date: datetime):
     """
     get_stock_price_for_date is a helper function that calls the DB and
     checks if there is a price for the stock_description.symbol for the date provided.
@@ -61,7 +61,7 @@ def get_stock_price_for_date(stock_description: StockDescription, history_date: 
     if stock_value is None: # StockValue
 
         symbol = stock_description.symbol # Symbol from StockValue
-        stock_value = insert_stock_history_for_date_to_db(symbol, history_date)
+        stock_value = __insert_stock_history_for_date_to_db(symbol, history_date)
         # print("StockValue for ", history_date,": ", stock_value)
 
     return stock_value
@@ -94,7 +94,7 @@ def insert_stock_history_from_yfinance_to_db(symbol: str, period: str):
     return value
 
 
-def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
+def __insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     """This function takes the symbol and period of a stock and sends the
         data as a StockValue model to the function DatabaseConn.insert_course()
 
@@ -108,7 +108,9 @@ def insert_stock_history_for_date_to_db(symbol: str, history_date: str):
     :return: StockValue
 
     """
-    print(history_date)
+    date += datetime.timedelta(days=1)
+    start_date = history_date
+    end_date = history_date
 
     # insure its always getting the last weekday
     df = yf.Ticker(symbol).history(start=start_date, end=start_date)
@@ -217,20 +219,3 @@ def get_stock_sustainability(symbol: str):
         return {}
 
 
-# print(get_stock_sustainability("IBM"))
-
-#
-#
-# def get_stock_data_from_db(symbol: str, period: str):
-#     print(symbol)
-#     print(period)
-
-#     pass
-# insert_stock_history_from_yfinance_to_db("IBM", "1d")
-# print(get_stock_info_from_yfinance("SBUX"))
-# print(yf.Ticker("SBUX").info)
-# print(get_stock_info_from_yfinance("SBUX"))
-# description = StockDescription(symbol="IBM")
-# print(get_stock_price_for_date(description, '2020-11-02'))
-# print(get_stock_price_for_date('2020-11-19'))
-# print(yf.Ticker("IBM").history(start='2020-11-03', end='2020-11-03'))
