@@ -208,7 +208,7 @@ class DatabaseConn:
 
         return user
 
-    def __util_format_datetime_for_expiry(self, weeks: int) -> str:
+    def util_format_datetime_for_expiry(self, weeks: int) -> str:
         now = datetime.now()
         result = now + relativedelta(weeks=weeks)
         result = result.strftime('%Y-%m-%d %H:%M:%S')
