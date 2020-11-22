@@ -218,7 +218,7 @@ def get_portfolio_positions(user: User):
         logo_url = transaction[1].logo_url
         next_amount = transaction[0].amount # 5
         transaction_fee = transaction[0].transaction_fee # 10€
-        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/amount) # price at buy with fee
+        next_stock_buyin_price = transaction[0].stock_value.stock_price + (transaction_fee/next_amount) # price at buy with fee
         transaction_type = transaction[0].transaction_type
 
 
