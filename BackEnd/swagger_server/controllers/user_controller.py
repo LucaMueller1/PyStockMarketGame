@@ -110,6 +110,7 @@ def get_user_settings():  # noqa: E501
 
 def login_user(user_prepare_login_param):  # noqa: E501
     """Logs user into the system and returns api key
+    checks for endgame.
 
     Authenticates user and returns api key for other requests # noqa: E501
 

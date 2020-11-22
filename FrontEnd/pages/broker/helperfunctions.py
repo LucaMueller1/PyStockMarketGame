@@ -150,7 +150,7 @@ def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
     else:
         change = "+" + str(change) + "$"
         return (
-            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code>"""
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: green;">"""
             + change
             + """</code></p></div> """
         )
@@ -166,13 +166,7 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
     :return: (HTML string) Both returns consists of an HTML String. They differentiate by the colour printed in Frontend. --> If change is negative (red colour) --> If change is positive (green colour)
     :test Correct: Parameter stock_buyin, single_stock_price are passed as a Float, stock_quantity is passed as an Integer, therefore the total change can be calculated successfully and the corresponding HTML string is returned. Incorrect: A parameter is missed as an input, such as the stock quantity. The method will fail at calculating the total change.
     """
-    total_change = round(
-        (
-            float(single_stock_price * stock_quantity)
-            - float(stock_buyin * stock_quantity)
-        ),
-        2,
-    )
+    total_change = round((float(single_stock_price * stock_quantity) - float(stock_buyin * stock_quantity)),2,)
     if total_change < 0:
         total_change = str(total_change) + "$"
         return (
@@ -183,7 +177,7 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
     else:
         total_change = "+" + str(total_change) + "$"
         return (
-            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>"""
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code style="color: green;">"""
             + total_change
             + """</code></p></div> """
         )
@@ -222,6 +216,13 @@ def get_sustainability_info(auth_key, stock_ticker):
 
 
 def build_warning_html(sustainability_warning_list):
+    """
+    Build a warning HTML string, containing the warnings returned by the Yahoo Finance API.
+
+    :param sustainability_warning_list: (List) List with all sustainability warnings.
+    :return: (HTML String) Can be embedded into a st.write() method. Two different HTML strings: One for when the list is empty and one for when the list contains elements.
+    :test Correct: Function is called with a valid list as input and returns one of the HTML strings. Incorrect: Function is called without any input and will therefore fail at looping through the list.
+    """
     return_string = ""
     if len(sustainability_warning_list) > 0:
         for item in sustainability_warning_list:
@@ -234,6 +235,14 @@ def build_warning_html(sustainability_warning_list):
 
 @st.cache(show_spinner=False)
 def get_single_stock_value(auth_key, ticker_code):
+    """
+    Cached functions that returns the most recent stock value for a specified stock ticker.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param ticker_code: (String) Stock selected by user
+    :return: (Float or String) Returns either the float for the stock price or "N/A" if no stock price is found
+    :test Correct: Function is called using a valid authkey and tickercode and subsequently returns either "N/A" or the stock price. Incorrect: ticker code cannot be found and thus the API request returns an error.
+    """
     stock_price = (requests_server.get_stockprice_history(auth_key, ticker_code, "1d"))[
         0
     ]
@@ -246,6 +255,13 @@ def get_single_stock_value(auth_key, ticker_code):
 
 @st.cache(show_spinner=False)
 def get_transaction_fees(auth_key):
+    """
+    Cached function that sends API request to backend and returns the current transaction fee.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :return: (String) Transaction fees.
+    :test Correct: Valid auth key is provided and transaction fees are successfully returned. Incorrect: No auth key is supplied and API request fails.
+    """
     transaction_fees = (requests_server.get_user_transaction_fee(auth_key))[
         "transactionFee"
     ]
@@ -254,5 +270,13 @@ def get_transaction_fees(auth_key):
 
 @st.cache(show_spinner=False)
 def get_stock_description(auth_key, ticker_code):
+    """
+    Cached function that returns a dictionary with stock description attributes obtained by API request.
+
+    :param auth_key: (String) API key authorizing and identifying the user.
+    :param ticker_code: (String) Stock selected by user
+    :return: (Dictionary) Contains different stock attributes.
+    :test Correct: Auth_key is valid and stock can be found, thus the API request is successful and returns a dictionary. Incorrect: Authkey is valid, but stock key cannot be found. Thus the API request an unwanted dictionary containing the error code.
+    """
     stock_description = requests_server.get_stock_description(auth_key, ticker_code)
     return stock_description

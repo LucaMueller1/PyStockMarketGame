@@ -75,7 +75,7 @@ def run(session_state):
                 st.subheader("Buy - Overview")
                 st.write("----------------------")
                 st.write(
-                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Available Funds: <b><code>"""
+                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Available Funds: <b><code style="color: black;">"""
                     + str(user_balance)
                     + "$"
                     + """</code></b></p></div> """,

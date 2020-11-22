@@ -49,14 +49,14 @@ def run(session_state):
 
                     # Selection of quantity
                     with col1:
-                        quantity_input_method_choice = st.radio("Input method", ("Slider", "TextInput"))
+                        quantity_input_method_choice = st.radio("Input method", ("Slider", "Number Input"))
 
                         # Slider
                         if quantity_input_method_choice == "Slider":
                             stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, quantity_in_user_portfolio)
 
                         # NumberInput
-                        if quantity_input_method_choice == "NumberInput":
+                        if quantity_input_method_choice == "Number Input":
                             stock_quantity_for_sale_raw = st.number_input(
                                 "Please enter the quantity of stocks:",
                                 min_value=1,
