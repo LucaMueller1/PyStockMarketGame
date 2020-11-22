@@ -83,5 +83,5 @@ def get_portfolio_value():  # noqa: E501
     api_key = connexion.request.headers['api_key']
     user: User = staticglobaldb.dbconn.get_user_by_auth_key(api_key)
 
-    portfolio_value = trading_service.get_portfolio_history(user)
+    portfolio_value = trading_service.get_portfolio_history_pandas(user)
     return portfolio_value
