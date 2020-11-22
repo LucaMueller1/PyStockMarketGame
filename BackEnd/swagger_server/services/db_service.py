@@ -36,7 +36,7 @@ class DatabaseConn:
 
 
         """
-        self.engine = sqla.create_engine('mysql+pymysql://username:password@hostname/database',
+        self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
                                          echo=False, pool_size=5, pool_recycle=3600)
 
     def insert_user(self, user: User) -> bool:
