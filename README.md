@@ -9,9 +9,7 @@ Project Start: 24.10.2020
 Project End: 22.11.2020  
 
 ## Requirements
-Python 3.8
-
-## Install all requirements
+Python: 3.8
 ### with pip:
 ```
 pip3 install -r requirements.txt
