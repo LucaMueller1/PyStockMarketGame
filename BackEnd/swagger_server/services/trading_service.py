@@ -269,17 +269,26 @@ def get_portfolio_history_pandas(user: User):
     #staticglobaldb.dbconn.get_stock_price_from_date(symbol, datetime)
 
     transaction_and_info_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
-    cash = user.starting_capital
     # Verlauf PortfolioValue
     # DATE CASH VALUE
 
-    #daily_change_df = pd.DataFrame()
+    daily_change_df = pd.DataFrame()
 
-    #date_list, change_list = __calculate_daily_cash_change()
+    date_list, change_list = __calculate_daily_cash_change()
 
-    #daily_change_df["date"] = date_list
-    #daily_change_df["change"] = change_list
-    #daily_change_df.groupby(["date"]).sum()
+    daily_change_df["date"] = date_list
+    daily_change_df["change"] = change_list
+    daily_change_df = daily_change_df.groupby(["date"]).sum()
+
+    temp_cash_sum = user.starting_capital
+    total_cash_per_day = []
+
+    for index,row in daily_change_df.iterrows():
+        temp_cash_sum += row.change
+        total_cash_per_day.append(temp_cash_sum)
+
+    daily_change_df["absolute_change"] = total_cash_per_day
+    print(total_cash_per_day)
 
     portfolio_list, date_list = __calculate_daily_stock_change(user, transaction_and_info_list)
 
@@ -291,6 +300,11 @@ def get_portfolio_history_pandas(user: User):
         stock_change_temp_df["value"] = stock_change_temp_df.apply(__get_value_for_postion, axis=1)
         stock_change_temp_df["total_value"] = stock_change_temp_df.apply(__get_daily_absolute_value, axis=1)
         stock_change_df = stock_change_df.append(stock_change_temp_df)
+        stock_change_df = stock_change_df.dropna()
+        stock_change_df = stock_change_df.groupby(["date"]).sum()
+        
+    
+    
     return stock_change_df
 
     # finance_data.insert_stock_history_for_date_to_db(symbol, date)
