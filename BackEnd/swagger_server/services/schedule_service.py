@@ -19,7 +19,7 @@ import datetime
 def insert_stock_data():
     """
 
-        desc: Function that is periodically called every 15 minutes. Checks if the stock market is open and if yes, retrieves and inserts the course for every stock present in the transactions table into the database
+        desc: Function that is periodically called every 15 minutes. Checks if the stock market is open and if yes, retrieves and inserts the course for every stock present in the transactions table if a course is missing for today into the database
 
         param: None
 
