@@ -262,24 +262,38 @@ def get_portfolio_positions(user: User):
 
 
 def get_portfolio_history_pandas(user: User):
-    
+
     """Wir bekommen: Eine Liste aus Transactions(Symbol, amount, stockvalue(datetime, stock_price: float), transaction_type, transaction_fee: int)
         staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)"""
 
-    staticglobaldb.dbconn.get_stock_price_from_date(symbol, datetime)
-    
+    #staticglobaldb.dbconn.get_stock_price_from_date(symbol, datetime)
+
+    transaction_and_info_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
     cash = user.starting_capital
     # Verlauf PortfolioValue
     # DATE CASH VALUE
-    
-    daily_change_df = pd.DataFrame()
-    
-    date_list, change_list = __calculate_daily_cash_change()
-    
-    daily_change_df["date"] = date_list
-    daily_change_df["change"] = change_list
-    daily_change_df.groupby(["date"]).sum()
 
+    #daily_change_df = pd.DataFrame()
+
+    #date_list, change_list = __calculate_daily_cash_change()
+
+    #daily_change_df["date"] = date_list
+    #daily_change_df["change"] = change_list
+    #daily_change_df.groupby(["date"]).sum()
+
+    portfolio_list, date_list = __calculate_daily_stock_change(user, transaction_and_info_list)
+
+    stock_change_df = pd.DataFrame(portfolio_list.items(), columns=["symbol","amount"])
+    stock_change_df["date"] = date_list
+    stock_change_df["value"] = stock_change_df.apply(__get_value_for_postion, axis=1)
+    stock_change_df["total_value"] = stock_change_df.apply(__get_daily_absolute_value, axis=1)
+    return stock_change_df
+
+def __get_value_for_postion(row: pd.Series):
+    return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, row.date)
+
+def __get_daily_absolute_value(row: pd.Series):
+    return row.amount * row.value
 
 def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
 
@@ -302,16 +316,10 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
 
 def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
 
-    date_list = []
-    symbol_list = []
-    amount_list = []
-    value_list = []
-
-    portfolio_df = pd.DataFrame
-    
     current_portfolio = {}
 
     portfolio_list = []
+    date_list = []
 
     now = datetime.datetime.now()
     # print(transaction_and_info_list)
@@ -337,11 +345,12 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                     else:
                         current_portfolio[symbol] = current_portfolio[symbol] - amount
 
-        temp_portfolio = current_portfolio
-        portfolio_list.append((date, temp_portfolio))
+        date_list.append(date)
+        temp_portfolio = current_portfolio.copy()
+        portfolio_list.append((temp_portfolio))
         date += datetime.timedelta(days=1)
 
-    return portfolio_list
+    return (portfolio_list, date_list)
 
 
 def get_portfolio_history(user: User):
@@ -522,6 +531,7 @@ print(user.first_name)
 transaction_list = staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)
 # print(__calculate_daily_change(user, transaction_list))
 print(__calculate_daily_stock_change(user,transaction_list))
+print(get_portfolio_history_pandas(user))
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
