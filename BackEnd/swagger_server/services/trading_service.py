@@ -309,7 +309,7 @@ def get_portfolio_history_pandas(user: User):
         total_cash_per_day.append(temp_cash_sum)
 
     daily_change_df["absolute_change"] = total_cash_per_day
-    print("Total:", total_cash_per_day)
+    # print("Total cash:", total_cash_per_day)
 
     portfolio_list, date_list = __calculate_daily_stock_change(user, transaction_and_info_list)
 
@@ -324,8 +324,8 @@ def get_portfolio_history_pandas(user: User):
     stock_change_df = stock_change_df.dropna()
     stock_change_df = stock_change_df.groupby(["date"]).sum()
 
-    print(stock_change_df)
-    print(stock_change_df[['total_value']])
+    # print(stock_change_df)
+    # print(stock_change_df[['total_value']])
     result_df = pd.DataFrame()
     result_df["cash_change"] = daily_change_df["absolute_change"]
     result_df["stock_change"] = stock_change_df["total_value"]
@@ -336,16 +336,16 @@ def get_portfolio_history_pandas(user: User):
     
     for index, row in result_df.iterrows():
         portfolio_value_list.append(PortfolioValue(market_value=row.daily_sum, timestamp=index))
-    
+    # print(result_df)
     return portfolio_value_list
 
+## Support functions Portfolio
 def __calculate_total_value(row: pd.Series):
     return row.cash_change + row.stock_change
     # finance_data.insert_stock_history_for_date_to_db(symbol, date)
 
 def __get_value_for_postion(row: pd.Series):
     date = row.date.to_pydatetime().date()
-
     return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
@@ -355,6 +355,7 @@ def __get_daily_absolute_value(row: pd.Series):
         return None
     else:
         return row.amount * row.value.stock_price
+
 
 def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
     now = datetime.datetime.now()
@@ -380,8 +381,8 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
             date_list.append(date)
             change_list.append(0)
         date += datetime.timedelta(days=1)
+    # print(date_list, change_list)
     return (date_list, change_list)
-
 
 def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
 
@@ -403,7 +404,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
                 transaction_date = transaction[0].stock_value.timestamp
 
                 if transaction_date == date:
-                    print("Transaction found for ", date, "! It is: ", symbol)
+                    # print("Transaction found for ", date, "! It is: ", symbol)
 
                     if symbol not in current_portfolio:
                         current_portfolio[symbol] = amount
@@ -418,7 +419,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
         temp_portfolio = current_portfolio.copy()
         portfolio_list.append((temp_portfolio))
         date += datetime.timedelta(days=1)
-
+    # print(portfolio_list, date_list)
     return (portfolio_list, date_list)
 
 
@@ -529,8 +530,6 @@ def get_portfolio_history(user: User):
     # END WHILE day = now
     return returned
 
-
-## Support functions Portfolio
 def remove_sold_stocks(stocks: list) -> list:
     """
         remove_sold_Stocks checks if a PortfolioPosition has a stock_value of zero
@@ -553,7 +552,6 @@ def remove_sold_stocks(stocks: list) -> list:
             stocks[index].stock_value = current_stock_price
 
     return stocks
-
 
 def __get_min_date(transactions: list) -> datetime:
     min_date = None
