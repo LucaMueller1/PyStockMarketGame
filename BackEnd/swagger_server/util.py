@@ -1,6 +1,5 @@
 """
 desc: Util is a utility class that contains operations needed to deserialize dynamic data-types
-author: Luca Mueller
 date: 2020-11-07
 """
 
