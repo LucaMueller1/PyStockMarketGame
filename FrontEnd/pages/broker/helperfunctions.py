@@ -150,7 +150,7 @@ def gethtml_for_change_buyin_current(stock_buyin, single_stock_price):
     else:
         change = "+" + str(change) + "$"
         return (
-            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code>"""
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Change per stock since buy: <code style="color: green;">"""
             + change
             + """</code></p></div> """
         )
@@ -166,13 +166,7 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
     :return: (HTML string) Both returns consists of an HTML String. They differentiate by the colour printed in Frontend. --> If change is negative (red colour) --> If change is positive (green colour)
     :test Correct: Parameter stock_buyin, single_stock_price are passed as a Float, stock_quantity is passed as an Integer, therefore the total change can be calculated successfully and the corresponding HTML string is returned. Incorrect: A parameter is missed as an input, such as the stock quantity. The method will fail at calculating the total change.
     """
-    total_change = round(
-        (
-            float(single_stock_price * stock_quantity)
-            - float(stock_buyin * stock_quantity)
-        ),
-        2,
-    )
+    total_change = round((float(single_stock_price * stock_quantity) - float(stock_buyin * stock_quantity)),2,)
     if total_change < 0:
         total_change = str(total_change) + "$"
         return (
@@ -183,7 +177,7 @@ def calculate_total_change(stock_buyin, single_stock_price, stock_quantity):
     else:
         total_change = "+" + str(total_change) + "$"
         return (
-            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code>"""
+            """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Total Change: <code style="color: green;">"""
             + total_change
             + """</code></p></div> """
         )

@@ -37,4 +37,19 @@ def run(session_state):
 
     # Print possible sustainability warnings
     st.title("About")
-    hf.write_sustainability_warning()
+    st.header("Possible Sustainability Warnings️")
+    st.write("🍺Alcoholic Beverages")
+    st.write("🔞Adult Entertainment")
+    st.write("🎰Gambling")
+    st.write("🚬Tobacco Products")
+    st.write("🐒Animal Testing")
+    st.write("🐮Fur and Specialty Leather")
+    st.write("💣Controversial Weapons")
+    st.write("🔫Small Arms")
+    st.write(
+        "🧪Catholic Values (Flags a company's involvement in abortion, contraceptives or human embryonic stem cell and fetal tissue research)")
+    st.write("🌽Genetically Modified Organism (GMO)")
+    st.write("🎖Military Contracting")
+    st.write("☠️Pesticides")
+    st.write("🏭Thermal Coal")
+    st.write("🌴Palm Oil")
