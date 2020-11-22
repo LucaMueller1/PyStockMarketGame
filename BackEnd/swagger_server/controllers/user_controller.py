@@ -24,7 +24,7 @@ def create_user(user_param):  # noqa: E501
     :type user_param: dict | bytes
 
     :rtype: None
-    :test Correct: Request with valid user as body - here: {"id": 0,"firstName": "Alf","lastName": "Becker","email": "becker.alfred0905@gmail.com","password": "farbissina1997","startingCapital": 85363,"moneyAvailable": 85363} adds user to database and returns HTTP 200. Incorrect: Request with invalid user_body returns API error object
+    :test Correct: Request with valid user as body - example: {"id": 0,"firstName": "Alf","lastName": "Becker","email": "becker.alfred0905@gmail.com","password": "farbissina1997","startingCapital": 85363,"moneyAvailable": 85363} adds user to database and returns HTTP 200. Incorrect: Request with invalid user_body returns API error object
     """
     insertion = False
     if connexion.request.is_json:
@@ -50,7 +50,7 @@ def create_user_settings(settings_param):  # noqa: E501
     :type settings_param: dict | bytes
 
     :rtype: None
-    :test Correct: Request with valid user as body - here: {"id": 0,"firstName": "Alf","lastName": "Becker","email": "becker.alfred0905@gmail.com","password": "farbissina1997","startingCapital": 85363,"moneyAvailable": 85363} adds user to database and returns HTTP 200. Incorrect: Request with invalid user_body returns API error object
+    :test Correct: Request with valid settings as body adds settings object to database and returns HTTP 200. Incorrect: Request with invalid settings object where the fee is of type string returns API error object
     """
     api_key = connexion.request.headers['api_key']
     if connexion.request.is_json:
@@ -129,8 +129,9 @@ def login_user(user_prepare_login_param):  # noqa: E501
             return ApiError(detail="User not found", status=404, title="Not Found", type="/user/login"), 404
         auth_key = conn.generate_auth_hash(user.id)
         if trading_service.has_lost_game(user):
-            # staticglobaldb.dbconn.delete_user(user)
+            staticglobaldb.dbconn.delete_user(user)
             print("Game ended for", user.first_name)
+            return ApiError(detail="User has lost the game", status=404, title="Not Found", type="/user/login"), 404
 
     return auth_key
 
