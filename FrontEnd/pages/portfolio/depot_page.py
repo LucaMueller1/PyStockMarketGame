@@ -49,7 +49,7 @@ def run(session_state: SessionState) -> None:
 
     st.markdown(html_table.get_html(), unsafe_allow_html=True)
 
-    if not "status" in portfolio_history:
+    if not "status" in portfolio_history and len(portfolio_history) >= 2:
         daily_change = (
             portfolio_history[-1]["marketValue"] / portfolio_history[-2]["marketValue"]
         )
