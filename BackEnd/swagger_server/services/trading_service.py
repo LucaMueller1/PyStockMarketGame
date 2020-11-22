@@ -316,9 +316,6 @@ def __get_value_for_postion(row: pd.Series):
     return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
-    print(row.amount)
-    print(row.value)
-    print(row.date)
     if pd.isna(row.amount):
         return 0
     elif pd.isna(row.value):
@@ -336,8 +333,8 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
         transaction_tracker = False
         # [(transaction, stock_search_result), ..., (transaction, stock_search_result)]
         for transaction_and_info in transaction_and_info_list:
-            transaction_tracker = True
-            if transaction_and_info[0].stock_value.timestamp == date
+            if transaction_and_info[0].stock_value.timestamp == date:
+                transaction_tracker = True
                 transaction = transaction_and_info[0]
 
                 date_list.append(transaction.stock_value.timestamp)
@@ -348,7 +345,8 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
                     change_list.append(transaction.stock_value.stock_price * transaction.amount - transaction.transaction_fee)
         if transaction_tracker == False:
             date_list.append(date)
-            change_list.append(changelist[-1])
+            change_list.append(0)
+        date += datetime.timedelta(days=1)
     return (date_list, change_list)
 
 
