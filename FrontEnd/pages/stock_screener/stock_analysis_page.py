@@ -61,6 +61,12 @@ def run(session_state: SessionState) -> None:
 
 
 def show_general_info(description: dict) -> None:
+    """
+    desc:   show general info for stock
+    param:  (dict) description
+    test:   pass: description contains all necessary information
+            fail: description is faulty
+    """
     general_information = st.beta_expander("General Information", expanded=True)
     general_information.write(f"""**Symbol:** {description["symbol"]}""")
     general_information.write(f"""**Country:** {description["country"]}""")
@@ -72,6 +78,12 @@ def show_general_info(description: dict) -> None:
 
 
 def show_financial_info(description: dict) -> None:
+    """
+    desc:   show financial info for stock
+    param:  (dict) description
+    test:   pass: description contains all necessary information
+            fail: description is faulty
+    """
     financial_information = st.beta_expander("Financial Information", expanded=True)
     if type(description["marketCap"]) is not str:
         financial_information.write(
@@ -90,6 +102,12 @@ def show_financial_info(description: dict) -> None:
 
 
 def show_sustainability_warnings(description: dict, sustainibility_warnings: list) -> None:
+    """
+    desc:   show general info for stock
+    param:  (dict) description, (list) sustainibility_warnings
+    test:   pass: sustainibility warning is displayed
+            fail: sustainibility warning fails to be displayed
+    """
     warning_information = st.beta_expander(
         f"""Warnings for {description["stockName"]}""", expanded=True
     )

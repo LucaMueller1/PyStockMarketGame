@@ -56,7 +56,7 @@ def run(session_state: SessionState) -> None:
         st.subheader(
             f"""Positions (Sum): {round(portfolio_history[-1]["marketValue"]-user["moneyAvailable"],2)}$"""
         )
-        st.subheader(f"""Today: {round(100-daily_change*100,4)}% """)
+        st.subheader(f"""Today: {round(100-daily_change*100,2)}% """)
 
     st.write("-----")
 

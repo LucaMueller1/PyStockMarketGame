@@ -45,6 +45,7 @@ def __show_stock_chart_light(historical_data: dict, name: str) -> None:
         "yAxis": {
             "type": "value",
             "splitLine": {"show": False},
+            "scale": True
         },
         "series": [
             {
@@ -53,6 +54,11 @@ def __show_stock_chart_light(historical_data: dict, name: str) -> None:
                     for data_point in historical_data
                 ],
                 "type": "line",
+                "smooth": 0.1,
+                "areaStyle": {
+                     "color": "#f63366",
+                "opacity": 0.1},
+                "lineStyle": {"color": "#f63366"},
             }
         ],
         "dataZoom": [
@@ -96,6 +102,7 @@ def __show_stock_chart_dark(historical_data: dict, name: str) -> None:
             "splitLine": {"show": False},
         },
         "yAxis": {
+            "scale": True,
             "type": "value",
             "splitLine": {"show": False},
         },
@@ -106,6 +113,11 @@ def __show_stock_chart_dark(historical_data: dict, name: str) -> None:
                     for data_point in historical_data
                 ],
                 "type": "line",
+                "smooth": 0.1,
+                "areaStyle": {
+                     "color": "#f63366",
+                "opacity": 0.1},
+                "lineStyle": {"color": "#f63366"},
             }
         ],
         "dataZoom": [
@@ -163,6 +175,7 @@ def __show_portfolio_chart_dark(historical_data: dict) -> None:
             "splitLine": {"show": False},
         },
         "yAxis": {
+            "scale": True,
             "showGrid": "false",
             "splitLine": {"show": False},
         },
@@ -173,6 +186,10 @@ def __show_portfolio_chart_dark(historical_data: dict) -> None:
                     for data_point in historical_data
                 ],
                 "type": "line",
+                "smooth": 0.05,
+                "areaStyle": {
+                     "color": "#f63366",
+                "opacity": 0.1},
                 "lineStyle": {"color": "#f63366"},
             }
         ],
@@ -209,6 +226,7 @@ def __show_portfolio_chart_light(historical_data: dict) -> None:
             "splitLine": {"show": False},
         },
         "yAxis": {
+            "scale":True,
             "showGrid": "false",
             "splitLine": {"show": False},
         },
@@ -219,6 +237,10 @@ def __show_portfolio_chart_light(historical_data: dict) -> None:
                     for data_point in historical_data
                 ],
                 "type": "line",
+                "smooth": 0.05,
+                "areaStyle": {
+                     "color": "#f63366",
+                "opacity": 0.1},
                 "lineStyle": {"color": "#f63366"},
             }
         ],
@@ -228,7 +250,7 @@ def __show_portfolio_chart_light(historical_data: dict) -> None:
                 "start": 0,
                 "end": 10,
             },
-        ],
+        ]
     }
 
     st_echarts(options=options, height="25em")
