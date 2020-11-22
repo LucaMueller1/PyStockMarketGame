@@ -49,7 +49,7 @@ def run(session_state):
 
                     # Selection of quantity
                     with col1:
-                        quantity_input_method_choice = st.radio("Input method", ("Slider", "TextInput"))
+                        quantity_input_method_choice = st.radio("Input method", ("Slider", "Number Input"))
 
                         # Slider
                         if quantity_input_method_choice == "Slider":
