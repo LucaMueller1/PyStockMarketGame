@@ -18,8 +18,8 @@ import pandas as pd
 
 def buy_stocks(user: User, symbol: str, amount: int):
     """
-    buy_stock is being called when there are stocks being bought. It checks if there is
-    enough money available for the transaction the user wants to make and creates a
+    buy_stock is being called when there are stocks being bought. It checks for
+     constrains about the transaction the user wants to make and creates a
     TransactionPrepare object with the current stock_price and transaction_fee.
 
     It uses the inser_course function to insert the transaction and deducts
@@ -32,7 +32,7 @@ def buy_stocks(user: User, symbol: str, amount: int):
     :param symbol: symbol of the stock
     :param amount: amount of stocks being bought
     :return: Transaction - to check for mistakes
-            None - in case of insufficient funds / unsuccessful purchase
+             None - in case of insufficient funds / unsuccessful purchase
     :test: create a transaction and check if the returned transaction has all the right values
     """
 
@@ -47,6 +47,7 @@ def buy_stocks(user: User, symbol: str, amount: int):
 
     # check money available?
     if purchase_value <= money_avaiable:
+        purchase_value -= transaction_fee
         """ deadlock = "buy"
         # validate lock
         # if deadlock != "buy"
@@ -93,11 +94,8 @@ def sell_stocks(user: User, symbol: str, amount: int):
     """
 
     # check for stock price:
-    stock_value = finance_data.check_current_stock_price(symbol) # gets current StockValue
     settings = staticglobaldb.dbconn.get_settings_by_user(user)
     transaction_fee = settings.transaction_fee
-
-    purchase_value = stock_value.stock_price * amount + transaction_fee # gets price from StockValue * amount
 
     # are there enough stocks owned ?
     portfolio_positions = stock_values_available(user)
@@ -140,13 +138,15 @@ def sell_stocks(user: User, symbol: str, amount: int):
 
 
 def stock_values_available(user: User):
-    """ stock_values_available is a smaller version of get_portfolio_positions.
-        It only calculates the current amount of stocks owned and the corresponding symbol
+    """
+    stock_values_available is a smaller version of get_portfolio_positions.
+    It only calculates the current amount of stocks owned and the corresponding symbol
 
-        !!! This does not return a complete PortfolioPosition !!!
+    !!! This does not return a complete PortfolioPosition !!!
 
     :author: Jannik Sinz <jannik.sinz@ibm.com>
     :date: 05.11.2020
+
     :param user: provides the user of which the transaction will be pulled from the db
     :return: List of PortfolioPositions w/ only the current amount and the symbol
     :test: try to sell more stocks than you own. If it fails this function caught you cheating ;)
