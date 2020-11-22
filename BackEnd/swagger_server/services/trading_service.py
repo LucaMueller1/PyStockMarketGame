@@ -516,8 +516,7 @@ def get_portfolio_history(user: User):
         for stock in stocks:
             d_stock_symbol = stock.symbol
             d_stock_amount = stock.amount
-            d_stock_description = StockDescription(symbol=d_stock_symbol)
-            d_stock_price = finance_data.get_stock_price_for_date(d_stock_description, date).stock_price
+            d_stock_price = finance_data.get_stock_price_for_date(d_stock_symbol, date).stock_price
             current_depot_value += d_stock_price * d_stock_amount
 
         current_depot_value = capital + current_depot_value
@@ -568,10 +567,10 @@ def __get_min_date(transactions: list) -> datetime:
 def get_portfolio_analytics():
     pass
 
-user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
+# user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
 # print(__calculate_daily_change(user, transaction_list))
-df = get_portfolio_history_pandas(user)
-print(df)
+# df = get_portfolio_history_pandas(user)
+# print(df)
 # print(transaction_list)
 
 # user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")

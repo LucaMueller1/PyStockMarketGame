@@ -37,7 +37,7 @@ def check_current_stock_price(symbol: str):
     return stock_value
 
 
-def get_stock_price_for_date(stock_description: StockDescription, history_date: datetime):
+def get_stock_price_for_date(symbol: str, history_date: datetime):
     """
     get_stock_price_for_date is a helper function that calls the DB and
     checks if there is a price for the stock_description.symbol for the date provided.
@@ -219,20 +219,3 @@ def get_stock_sustainability(symbol: str):
         return {}
 
 
-# print(get_stock_sustainability("IBM"))
-
-#
-#
-# def get_stock_data_from_db(symbol: str, period: str):
-#     print(symbol)
-#     print(period)
-
-#     pass
-# insert_stock_history_from_yfinance_to_db("IBM", "1d")
-# print(get_stock_info_from_yfinance("SBUX"))
-# print(yf.Ticker("SBUX").info)
-# print(get_stock_info_from_yfinance("SBUX"))
-# description = StockDescription(symbol="IBM")
-# print(get_stock_price_for_date(description, '2020-11-02'))
-# print(get_stock_price_for_date('2020-11-19'))
-# print(yf.Ticker("IBM").history(start='2020-11-03', end='2020-11-03'))
