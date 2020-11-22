@@ -133,8 +133,7 @@ class DatabaseConn:
                 money_available = row[5]
                 starting_capital = row[6]
 
-                print(hashAndSalt)
-                print(row)
+
         if password is not None and hashAndSalt is not None:
             valid = bcrypt.checkpw(password.encode('utf8'), bytes(hashAndSalt, 'utf-8'))
         if valid:
