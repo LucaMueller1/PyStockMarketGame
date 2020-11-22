@@ -318,7 +318,14 @@ def get_portfolio_history_pandas(user: User):
     result_df["cash_change"] = daily_change_df["absolute_change"]
     result_df["stock_change"] = stock_change_df["total_value"]
     result_df["daily_sum"] = result_df.apply(__calculate_total_value, axis=1)
-    return result_df[["daily_sum"]].dropna()
+    result_df = result_df[["daily_sum"]].dropna()
+    
+    portfolio_value_list = []
+    
+    for index, row in result_df.iterrows():
+        portfolio_value_list.append(PortfolioValue(market_value=row.daily_sum, timestamp=index))
+    
+    return portfolio_value_list
 
 def __calculate_total_value(row: pd.Series):
     return row.cash_change + row.stock_change
