@@ -283,10 +283,15 @@ def get_portfolio_history_pandas(user: User):
 
     portfolio_list, date_list = __calculate_daily_stock_change(user, transaction_and_info_list)
 
-    stock_change_df = pd.DataFrame(portfolio_list.items(), columns=["symbol","amount"])
-    stock_change_df["date"] = date_list
-    stock_change_df["value"] = stock_change_df.apply(__get_value_for_postion, axis=1)
-    stock_change_df["total_value"] = stock_change_df.apply(__get_daily_absolute_value, axis=1)
+    stock_change_df = pd.DataFrame(columns=["symbol","amount","date","value","total_value"])
+
+    for i, portfolio in enum(portfolio_list):
+        stock_change_temp_df = pd.DataFrame(portfolio.items(), columns=["symbol","amount"])
+        stock_change_temp_df["date"] = [date_list[i]] * len(stock_change_temp_df)
+        stock_change_temp_df["value"] = stock_change_temp_df.apply(__get_value_for_postion, axis=1)
+        stock_change_temp_df["total_value"] = stock_change_temp_df.apply(__get_daily_absolute_value, axis=1)
+        stock_change_df.append(stock_change_temp_df)
+
     return stock_change_df
 
 def __get_value_for_postion(row: pd.Series):
