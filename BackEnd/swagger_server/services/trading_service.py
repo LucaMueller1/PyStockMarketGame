@@ -668,8 +668,8 @@ user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMU
 # print(stock_values_available(user))
 
 ## TEST get_history
-history = get_portfolio_history_pandas(user)
-print(history)
+# history = get_portfolio_history_pandas(user)
+# print(history)
 
 ## TEST buy and portfolioPositions
 # user.money_available = 10000
