@@ -4,7 +4,7 @@ import pages.side_bar as side_bar
 # Modules Import
 import streamlit as st
 from streamlit import caching
-from time import sleep
+
 
 # Utilities Import
 import utilities.requests_server as requests_server
@@ -21,6 +21,12 @@ import pages.broker.helperfunctions as hf
 
 
 def run(session_state):
+    """
+    This method runs the sell part of the broker page by encapsulating every other Streamlit function.
+
+    :param session_state: (Object)
+    :test Correct: Method is called using a valid session_state. Incorrect: Method is called without any parameters.
+    """
     side_bar.run(session_state)
 
     st.title("Broker")
@@ -30,10 +36,10 @@ def run(session_state):
 
     # Switch between BUY and SELL
     mode_switch = st.radio(
-        "Please choose whether you want to buy or sell stocks", ("Buy", "Sell")
+        "Please choose whether you want to buy or sell stocks.", ("Buy", "Sell")
     )
     if mode_switch == "Sell":
-        st.write("Please choose the stock, that you want to sell")
+        st.write("Please choose a stock, that you want to sell.")
 
         depot_array, depot_information = hf.get_depo_array(session_state.auth_key)
         ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + depot_array)
@@ -49,16 +55,16 @@ def run(session_state):
 
                     # Selection of quantity
                     with col1:
-                        quantity_input_method_choice = st.radio("Input method", ("Slider", "Number Input"))
+                        quantity_input_method_choice = st.radio("Input method:", ("Slider", "Number Input"))
 
                         # Slider
                         if quantity_input_method_choice == "Slider":
-                            stock_quantity_for_sale = st.slider("Please choose the quantity of stocks", 1, quantity_in_user_portfolio)
+                            stock_quantity_for_sale = st.slider("Please choose the quantity of stocks you want to sell:", 1, quantity_in_user_portfolio)
 
                         # NumberInput
                         if quantity_input_method_choice == "Number Input":
                             stock_quantity_for_sale_raw = st.number_input(
-                                "Please enter the quantity of stocks:",
+                                "Please enter the quantity of stocks you want to sell:",
                                 min_value=1,
                                 max_value=quantity_in_user_portfolio,
                                 step=1,
@@ -141,10 +147,10 @@ def run(session_state):
                     """
                                             <div class="greyish padding box">
                                             <h2>Stock Information</h2>
-                                            <p>Stock name: <b>"""
+                                            <p>Stock Name: <b>"""
                     + str(stock_name)
                     + """ </b></p>
-                                            <p>Single stock value: <b>"""
+                                            <p>Single Stock Value: <b>"""
                     + str(single_stock_price)
                     + "$"
                     + """<b></p>

@@ -9,7 +9,7 @@ from streamlit import caching
 # Utilities IMPORTS
 import utilities.requests_server as requests_server
 import pages.broker.helperfunctions as hf
-import utilities.utils as utils
+
 
 """
     desc: Creates FrontEnd page for buy part of the broker page using the Streamlit framework.
@@ -21,6 +21,12 @@ import utilities.utils as utils
 
 
 def run(session_state):
+    """
+    This method runs the buy part of the broker page by encapsulating every other Streamlit function.
+
+    :param session_state: (Object)
+    :test Correct: Method is called using a valid session_state. Incorrect: Method is called without any parameters.
+    """
     side_bar.run(session_state)
     session_state.buy_redirect = False
 
@@ -31,7 +37,7 @@ def run(session_state):
 
     # Switch between BUY and SELL
     mode_switch = st.radio(
-        "Please choose whether you want to buy or sell stocks", ("Buy", "Sell")
+        "Please choose whether you want to buy or sell stocks.", ("Buy", "Sell")
     )
     if mode_switch == "Buy":
         if session_state.stock_desc:
@@ -46,7 +52,7 @@ def run(session_state):
             index = 0
 
         # Get the ticker_code from the User
-        st.write("Please enter your desired stock ticker and the quantity of your purchase:")
+        st.write("Please choose a stock, that you want to buy.")
         ticker_code_entry_raw = st.selectbox("Stock ticker:", [" "] + requests_server.get_combined_stock_names(session_state.auth_key), index)
         if ticker_code_entry_raw != " ":
             ticker_code_entry = ticker_code_entry_raw.split(": ")[1]
@@ -88,7 +94,7 @@ def run(session_state):
                     unsafe_allow_html=True,
                 )
                 st.markdown(
-                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase fees: <code style="color: #F52D5B;">"""
+                    """<div class="markdown-text-container stMarkdown" style="width: 349px;"><p>Purchase Fees: <code style="color: #F52D5B;">"""
                     + str(purchase_fees)
                     + "$"
                     + """</code></p></div> """,
@@ -145,7 +151,7 @@ def run(session_state):
                     + "$"
                     + """</h2>
                                 <hr>
-                                <h4 style="text-align:center;">WARNING:</h4>
+                                <h4 style="text-align:center;">WARNING(S):</h4>
                                 """
                     + hf.build_warning_html(sustainability_warnings_stock)
                     + """

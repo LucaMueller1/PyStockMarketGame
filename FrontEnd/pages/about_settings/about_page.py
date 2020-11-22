@@ -1,7 +1,7 @@
 # PAGE IMPORTS
 import pages.side_bar as side_bar
 import streamlit as st
-import pages.about_settings.helperfunctions as hf
+import pages.about_settings.helperfunctions2 as hf
 
 
 def run(session_state):
