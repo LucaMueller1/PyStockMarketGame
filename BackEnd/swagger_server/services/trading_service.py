@@ -170,7 +170,7 @@ def stock_values_available(user: User):
         if not found:
             stocks.append(PortfolioPosition(symbol=symbol, stock_name=None, logo_url=None, amount=next_amount, stock_value=None, stock_buyin_price=None))
         else:
-            # get Portfoliopostition out of list
+            # get PortfolioPosition out of list
             prev_position = stocks[symbol_index]  # 5 Stocks 120€ + 5€
 
             if transaction_type == "buy":
@@ -199,6 +199,7 @@ def get_portfolio_positions(user: User):
 
     :author: Jannik Sinz <jannik.sinz@ibm.com>
     :date: 05.11.2020
+
     :param user: current user
     :return: Array of PortfolioPositions
     :test: make some transactions and go to the portfolio site of the stock. Amount and Buy-In
@@ -265,12 +266,14 @@ def has_lost_game(user: User) -> bool:
     and the user has sold his stocks with a negative or too little value the money is
     negative and there are no stocks to sell left. This queues the removal of the user.
 
-    :author:
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
     :date: 22.11.2020
 
     :param user: the user logging in
     :return: True: endgame
              False: no endgame
+    :test: provide a user with some money to buy stocks -> user won't be deleted
+           provide a user with negative money and no stocks -> the game should end
     """
     positions = stock_values_available(user)
 
@@ -283,9 +286,24 @@ def has_lost_game(user: User) -> bool:
 
 
 def get_portfolio_history_pandas(user: User):
+    """
+    get_portfolio_positions_pandas provides the Frondend with the
 
-    """Wir bekommen: Eine Liste aus Transactions(Symbol, amount, stockvalue(datetime, stock_price: float), transaction_type, transaction_fee: int)
-        staticglobaldb.dbconn.get_transactions_and_stock_by_user(user)"""
+    :authors: Ben Schaper <ben.schaoer@ibm.com>
+              Christopher Lohse <christopher.lohse@ibm.com>
+              Jannik Sinz <jannik.sinz@ibm.com>
+              Daniel Ebert <daniel.ebert@ibm.com>
+              Luca Müller <luca.mueller1@ibm.com
+              Luca Weissbeck <luca.weissbeck@ibm.com>
+    :date: 20.11.2020
+
+    :param user: the user of the portfolio
+    :return: list[PortfolioValue]
+    :test: provide a user with transactions in the past and compare the
+           transaction history with the returned list
+           OR have a look at the portfolio chart
+    """
+
 
     #staticglobaldb.dbconn.get_stock_price_from_date(symbol, datetime)
 
@@ -341,14 +359,44 @@ def get_portfolio_history_pandas(user: User):
 
 ## Support functions Portfolio
 def __calculate_total_value(row: pd.Series):
+    """
+    __calculate_total_value
+
+    authors: see get_portfolio_history_pandas
+
+    :param row:
+    :return:
+    """
     return row.cash_change + row.stock_change
     # finance_data.insert_stock_history_for_date_to_db(symbol, date)
 
 def __get_value_for_postion(row: pd.Series):
+    """
+    __get_value_for_position takes a row from a DataFrame and gets the stock price
+    for the symbol and date provided as columns
+
+    :authors: see get_portfolio_history_pandas
+    :date: 20.11.2020
+
+    :param row: a row from a pd.DataFrame()
+    :return: int (stock price from a specific date)
+    """
     date = row.date.to_pydatetime().date()
     return staticglobaldb.dbconn.get_stock_price_from_date(row.symbol, date)
 
 def __get_daily_absolute_value(row: pd.Series):
+    """
+    __get_daily_absolute_value takes a row of a DataFrame with a value and a amount row and
+    returns the product
+
+    :authors: see get_portfolio_history_pandas
+    :date: 20.11.2020
+
+    :param row: a row from a pd.DataFrame()
+    :return: int (amount of stocks * value of stocks)
+    :test: start get_portfolio_history_pandas -> it need this function to work
+           provide a DataFrame row with the required columns -> it returns the product of the values
+    """
     if pd.isna(row.amount):
         return 0
     elif pd.isna(row.value):
@@ -358,6 +406,18 @@ def __get_daily_absolute_value(row: pd.Series):
 
 
 def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -> tuple:
+    """
+    __calculate_daily_cash_change calculates the relative cash change at any day
+    of a list of Transactions
+
+    :authors: see get_portfolio_history_pandas
+    :date: 20.11.2020
+
+
+    :param user: user of the portfolio
+    :param transaction_and_info_list: list[Transaction]
+    :return: list[datetime], list[int]
+    """
     now = datetime.datetime.now()
     # print(transaction_and_info_list)
     date = __get_min_date(transaction_and_info_list)
@@ -385,6 +445,18 @@ def __calculate_daily_cash_change(user: User, transaction_and_info_list: list) -
     return (date_list, change_list)
 
 def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) -> pd.DataFrame:
+    """
+    __calculate_daily_stock_change calculates the amount of stocks owned per day grouped by symbol
+
+    :authors: see get_portfolio_history_pandas
+    :date: 20.11.2020
+
+    :param user:
+    :param transaction_and_info_list:
+    :return: list[dict{str: int, str:int, ...}]
+    :test: provide a list of transactions and see if the function returns
+           the right amount of stocks per day
+    """
 
     current_portfolio = {}
 
@@ -419,7 +491,7 @@ def __calculate_daily_stock_change(user: User, transaction_and_info_list: list) 
         temp_portfolio = current_portfolio.copy()
         portfolio_list.append((temp_portfolio))
         date += datetime.timedelta(days=1)
-    # print(portfolio_list, date_list)
+    print(portfolio_list, date_list)
     return (portfolio_list, date_list)
 
 
@@ -434,6 +506,7 @@ def get_portfolio_history(user: User):
 
         :author: Jannik Sinz <jannik.sinz@ibm.com>
         :date: 12.11.2020
+
         :param user: the User from which the PortfolioValues (History) should be returned
         :return: List[PortfolioValue]
         :test: provide a user as input. You should receive a list of PortfolioValues
@@ -531,11 +604,16 @@ def get_portfolio_history(user: User):
 
 def remove_sold_stocks(stocks: list) -> list:
     """
-        remove_sold_Stocks checks if a PortfolioPosition has a stock_value of zero
+        remove_sold_stocks checks if a PortfolioPosition has a stock_value of zero
         and removes the PortfolioPosition from the list
+
+        :author: Jannik Sinz <jannik.sinz@ibm.com>
+        :date: 13.11.2020
 
         :param stocks: list() of PortfolioPositions
         :return: list() of PortfolioPositions
+        :test: provide a list of PortfolioPositions with one PortfolioPosition.amount = 0 -> wird gelöscht
+               provide a list of PortfolioPositions with no PortfolioPosition.amount = 0 -> nichts wird gelöscht
         """
     for index in range(len(stocks)):  # Moved insertion of current stock prices here to exclude stocks that are completely sold already
         if stocks[index].stock_value is None:
@@ -553,6 +631,17 @@ def remove_sold_stocks(stocks: list) -> list:
     return stocks
 
 def __get_min_date(transactions: list) -> datetime:
+    """
+    This function returns the date of the first transaction provided in the list
+
+    :author: Jannik Sinz <jannik.sinz@ibm.com>
+    :date: 12.11.2020
+
+    :param transactions:
+    :return: timestamp
+    :test: provide a list of transactions -> it returns the date of the first transaction
+           call get_portfolio_history_pandas() -> it needs this funtion to work
+    """
     min_date = None
     for transaction in transactions:
         current_date = transaction[0].stock_value.timestamp
@@ -567,7 +656,7 @@ def __get_min_date(transactions: list) -> datetime:
 def get_portfolio_analytics():
     pass
 
-# user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
+user = staticglobaldb.dbconn.get_user_by_auth_key("06eqq7LpJQOf9MS35yRcErFMxmMMUKdcRhEZ4dhXMQN2WHeVQnu1Dlvh6RZhNTeJvxM7moMCTghAE3i79KIV4Ynzzbql3m5KVxay2HDsKTgdok0UGz8qzwpk8NIxWREB")
 # print(__calculate_daily_change(user, transaction_list))
 # df = get_portfolio_history_pandas(user)
 # print(df)
@@ -580,7 +669,10 @@ def get_portfolio_analytics():
 # print(stock_values_available(user))
 
 ## TEST get_history
-# history = get_portfolio_history(user)
-# print(history)
+history = get_portfolio_history_pandas(user)
+print(history)
 
+## TEST buy and portfolioPositions
+# user.money_available = 10000
+# staticglobaldb.update_user(user)
 
