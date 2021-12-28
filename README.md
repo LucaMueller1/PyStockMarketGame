@@ -34,6 +34,3 @@ https://pybroker.readme.io/
 ## Start FrontEnd:
 
 To start the frontend, change directory to the root folder of the repository. Then run ```streamlit run FrontEnd/orchestrator.py```. This will run the streamlit server.
-
-## Funny Python Meme:
-![Info2](https://preview.redd.it/k4o9e5e0zlu51.jpg?width=640&crop=smart&auto=webp&s=7d69a25ab67393ab0956a4733940fc7fa0a2dbdd)
