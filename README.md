@@ -1,5 +1,5 @@
 # This is the Pycharm Broker Game by PythonicInquisition
-Available under **[Pybroker.vision](https://pybroker.vision)**
+Available under **[Pybroker.de](https://pybroker.de)**
 
 
 Authors: Daniel Ebert, Luca Müller, Luca Weissbeck, Ben Schaper, Jannik Sinz
