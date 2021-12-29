@@ -36,11 +36,11 @@ class DatabaseConn:
 
 
         """
-        self.engine = sqla.create_engine('mysql+pymysql://pybroker:mSWcwbTpuTv4Liwb@pma.tutorialfactory.org/pybroker',
+        self.engine = sqla.create_engine('<INSERT_DB_CONNECTION_STRING>',
                                          echo=False, pool_size=5, pool_recycle=3600)
 
     def insert_user(self, user: User) -> bool:
-        """
+        """ 
 
             desc: insert User into Database Function. Called after registering
 

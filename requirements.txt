@@ -12,7 +12,7 @@ python-dateutil>=2.8.1
 requests>=2.24.0
 html5lib == 1.1
 APScheduler == 3.6.3
-pandas-market-calendars == 1.6.1
+pandas-market-calendars == 3.1
 streamlit == 0.70.0
 streamlit-echarts == 0.1.0
 requests == 2.24.0
