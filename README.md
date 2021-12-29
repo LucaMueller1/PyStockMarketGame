@@ -21,6 +21,8 @@ Project End: 22.11.2020
 ### Dark Mode Ready
 <img width="1788" alt="Screenshot 2021-12-29 at 13 46 12" src="https://user-images.githubusercontent.com/62757957/147664203-9744ad3e-5e24-4fdd-b00d-b979019699ce.png">
 
+## Architecture / Infrastructure
+![Uberblick_der_AnwendungsarchitekturPRESET](https://user-images.githubusercontent.com/62757957/147664785-f0758d24-0dc3-43ee-9b5f-f0791451d412.png)
 
 ## Requirements
 Python: 3.8
